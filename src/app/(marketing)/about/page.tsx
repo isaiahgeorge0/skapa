@@ -24,16 +24,16 @@ export default function AboutPage() {
       </div>
 
       <div className="md:col-span-6">
-        {/* Placeholder Unsplash image — replace with commissioned/licensed photography before public launch. */}
-        <Image
-          src="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=1200&q=80"
-          alt="Editorial portrait in warm, muted tones"
-          width={1200}
-          height={1500}
-          className="h-auto w-full object-cover"
-          sizes="(max-width: 768px) 100vw, 50vw"
-          priority
-        />
+        <div className="relative aspect-[4/5] w-full">
+          <Image
+            src="/images/pexels-tima-miroshnichenko-5701742.jpg"
+            alt="Man using a tablet in a rustic industrial loft space"
+            fill
+            className="object-cover"
+            sizes="(max-width: 768px) 100vw, 50vw"
+            priority
+          />
+        </div>
       </div>
     </div>
   );

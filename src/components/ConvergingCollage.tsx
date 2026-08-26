@@ -4,7 +4,7 @@ import { motion, useScroll, useTransform } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 
 export default function ConvergingCollage() {
-  const containerRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
   const [reducedMotion, setReducedMotion] = useState(false);
 
   useEffect(() => {
@@ -15,115 +15,106 @@ export default function ConvergingCollage() {
     return () => mq.removeEventListener("change", sync);
   }, []);
 
-  // Animation plays out as the container scrolls from just below the
-  // fold (90% down the viewport) to just above center (30% down) —
-  // this is what makes it feel scrubbed/tracked rather than a one-shot trigger.
+  // The track is much taller than the visible stage. Progress is measured
+  // across the ENTIRE track height (start of track hits top of viewport,
+  // through to end of track hitting bottom of viewport) — this is what
+  // gives the animation a long, deliberate scroll distance to play out
+  // over, rather than the ~60% of one viewport-height it had before.
   const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start 0.9", "start 0.3"],
+    target: trackRef,
+    offset: ["start start", "end end"],
   });
 
-  // Image A: final position is left-0 top-6, tilted -3deg. Enters from the left.
   const aX = useTransform(scrollYProgress, [0, 1], [-260, 0]);
   const aY = useTransform(scrollYProgress, [0, 1], [30, 0]);
   const aRotate = useTransform(scrollYProgress, [0, 1], [-18, -3]);
-  const aOpacity = useTransform(scrollYProgress, [0, 0.6], [0, 1]);
+  const aOpacity = useTransform(scrollYProgress, (v) => Math.min(v / 0.6, 1));
 
-  // Image B: final position is right-0 top-0, tilted 2deg. Enters from the right.
   const bX = useTransform(scrollYProgress, [0, 1], [260, 0]);
   const bY = useTransform(scrollYProgress, [0, 1], [-20, 0]);
   const bRotate = useTransform(scrollYProgress, [0, 1], [16, 2]);
-  const bOpacity = useTransform(scrollYProgress, [0, 0.6], [0, 1]);
+  const bOpacity = useTransform(scrollYProgress, (v) => Math.min(v / 0.6, 1));
 
-  // Image C: final position is bottom-2 left-[22%], tilted 1deg. Enters from below.
   const cY = useTransform(scrollYProgress, [0, 1], [220, 0]);
   const cRotate = useTransform(scrollYProgress, [0, 1], [-12, 1]);
-  const cOpacity = useTransform(scrollYProgress, [0, 0.6], [0, 1]);
+  const cOpacity = useTransform(scrollYProgress, (v) => Math.min(v / 0.6, 1));
 
-  if (reducedMotion) {
-    // Static final layout, no motion at all — respects the OS preference.
-    return (
-      <div className="relative mx-auto h-[380px] w-full max-w-4xl md:h-[520px]">
-        <div className="absolute left-0 top-6 z-10 w-[58%] -rotate-3 md:left-[4%] md:top-8 md:w-[48%]">
+  const Stage = (
+    <div className="relative mx-auto h-[380px] w-full max-w-4xl md:h-[520px]">
+      <motion.div
+        style={
+          reducedMotion
+            ? undefined
+            : { x: aX, y: aY, rotate: aRotate, opacity: aOpacity }
+        }
+        className={`absolute left-0 top-6 z-10 w-[58%] md:left-[4%] md:top-8 md:w-[48%] ${
+          reducedMotion ? "-rotate-3" : ""
+        }`}
+      >
+        <div className="relative aspect-[4/5] w-full">
           <Image
-            src="https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=crop&w=1000&q=80"
-            alt="Candid workspace moment with a laptop and papers"
-            width={1000}
-            height={1250}
-            className="aspect-[4/5] w-full object-cover"
+            src="/images/pexels-tony-schnagl-5586315.jpg"
+            alt="Overhead flat-lay of a laptop and hands with a photo moodboard on screen"
+            fill
+            className="object-cover"
             sizes="(max-width: 768px) 60vw, 30vw"
           />
         </div>
-        <div className="absolute right-0 top-0 z-20 w-[48%] rotate-2 md:right-[6%] md:w-[40%]">
+      </motion.div>
+
+      <motion.div
+        style={
+          reducedMotion
+            ? undefined
+            : { x: bX, y: bY, rotate: bRotate, opacity: bOpacity }
+        }
+        className={`absolute right-0 top-0 z-20 w-[48%] md:right-[6%] md:w-[40%] ${
+          reducedMotion ? "rotate-2" : ""
+        }`}
+      >
+        <div className="relative aspect-[4/5] w-full">
           <Image
-            src="https://images.unsplash.com/photo-1453928582365-b6ad33cbcf64?auto=format&fit=crop&w=900&q=80"
-            alt="Editorial desk setup with camera and notebook"
-            width={900}
-            height={1100}
-            className="aspect-[4/5] w-full object-cover"
+            src="/images/pexels-rdne-10376162.jpg"
+            alt="Man reclining on a white sofa with a laptop among plants"
+            fill
+            className="object-cover"
             sizes="(max-width: 768px) 50vw, 28vw"
           />
         </div>
-        <div className="absolute bottom-2 left-[22%] z-30 w-[42%] rotate-1 md:bottom-4 md:left-[30%] md:w-[34%]">
+      </motion.div>
+
+      <motion.div
+        style={
+          reducedMotion ? undefined : { y: cY, rotate: cRotate, opacity: cOpacity }
+        }
+        className={`absolute bottom-2 left-[22%] z-30 w-[42%] md:bottom-4 md:left-[30%] md:w-[34%] ${
+          reducedMotion ? "rotate-1" : ""
+        }`}
+      >
+        <div className="relative aspect-[5/4] w-full">
           <Image
-            src="https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&w=900&q=80"
-            alt="Warm flatlay of a laptop and coffee on a wooden surface"
-            width={900}
-            height={700}
-            className="aspect-[5/4] w-full object-cover"
+            src="/images/pexels-cup-of-couple-6956904.jpg"
+            alt="Man on a sofa with shopping bags, a laptop, and a phone"
+            fill
+            className="object-cover"
             sizes="(max-width: 768px) 45vw, 25vw"
           />
         </div>
-      </div>
-    );
+      </motion.div>
+    </div>
+  );
+
+  if (reducedMotion) {
+    // No scroll track needed — just the static final composition,
+    // no extra page height, no motion.
+    return Stage;
   }
 
   return (
-    <div
-      ref={containerRef}
-      className="relative mx-auto h-[380px] w-full max-w-4xl md:h-[520px]"
-    >
-      <motion.div
-        style={{ x: aX, y: aY, rotate: aRotate, opacity: aOpacity }}
-        className="absolute left-0 top-6 z-10 w-[58%] md:left-[4%] md:top-8 md:w-[48%]"
-      >
-        <Image
-          src="https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=crop&w=1000&q=80"
-          alt="Candid workspace moment with a laptop and papers"
-          width={1000}
-          height={1250}
-          className="aspect-[4/5] w-full object-cover"
-          sizes="(max-width: 768px) 60vw, 30vw"
-        />
-      </motion.div>
-
-      <motion.div
-        style={{ x: bX, y: bY, rotate: bRotate, opacity: bOpacity }}
-        className="absolute right-0 top-0 z-20 w-[48%] md:right-[6%] md:w-[40%]"
-      >
-        <Image
-          src="https://images.unsplash.com/photo-1453928582365-b6ad33cbcf64?auto=format&fit=crop&w=900&q=80"
-          alt="Editorial desk setup with camera and notebook"
-          width={900}
-          height={1100}
-          className="aspect-[4/5] w-full object-cover"
-          sizes="(max-width: 768px) 50vw, 28vw"
-        />
-      </motion.div>
-
-      <motion.div
-        style={{ y: cY, rotate: cRotate, opacity: cOpacity }}
-        className="absolute bottom-2 left-[22%] z-30 w-[42%] md:bottom-4 md:left-[30%] md:w-[34%]"
-      >
-        <Image
-          src="https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&w=900&q=80"
-          alt="Warm flatlay of a laptop and coffee on a wooden surface"
-          width={900}
-          height={700}
-          className="aspect-[5/4] w-full object-cover"
-          sizes="(max-width: 768px) 45vw, 25vw"
-        />
-      </motion.div>
+    <div ref={trackRef} className="relative h-[240vh]">
+      <div className="sticky top-0 flex h-screen items-center justify-center">
+        {Stage}
+      </div>
     </div>
   );
 }

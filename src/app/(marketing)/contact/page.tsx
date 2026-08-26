@@ -10,16 +10,16 @@ export default function ContactPage() {
   return (
     <div className="mx-auto grid max-w-6xl items-start gap-12 px-6 py-24 md:grid-cols-12 md:gap-14 md:px-10 md:py-32">
       <div className="md:col-span-5">
-        {/* Placeholder Unsplash image — replace with commissioned/licensed photography before public launch. */}
-        <Image
-          src="https://images.unsplash.com/photo-1452860606245-08befc0ff44b?auto=format&fit=crop&w=1200&q=80"
-          alt="Hands making something by hand on a warm wooden surface"
-          width={1200}
-          height={1500}
-          className="h-auto w-full object-cover"
-          sizes="(max-width: 768px) 100vw, 40vw"
-          priority
-        />
+        <div className="relative aspect-[4/5] w-full">
+          <Image
+            src="/images/pexels-rdne-10376197.jpg"
+            alt="Man laughing on the phone with a colorful calendar on a laptop screen"
+            fill
+            className="object-cover"
+            sizes="(max-width: 768px) 100vw, 40vw"
+            priority
+          />
+        </div>
       </div>
 
       <div className="md:col-span-7">
