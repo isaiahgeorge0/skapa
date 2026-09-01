@@ -23,11 +23,22 @@ export default async function PortalLayout({
   if (profile?.role === "admin") redirect("/admin");
 
   const { data: projects } = profile?.client_id
-    ? await supabase
-        .from("projects")
-        .select("id, name")
-        .eq("client_id", profile.client_id)
-        .order("created_at", { ascending: false })
+    ? await (async () => {
+        const { data: additionalLinks } = await supabase
+          .from("project_clients")
+          .select("project_id")
+          .eq("client_id", profile.client_id);
+        const additionalIds = (additionalLinks ?? []).map((l) => l.project_id);
+        const orFilter = additionalIds.length
+          ? `client_id.eq.${profile.client_id},id.in.(${additionalIds.join(",")})`
+          : `client_id.eq.${profile.client_id}`;
+
+        return supabase
+          .from("projects")
+          .select("id, name")
+          .or(orFilter)
+          .order("created_at", { ascending: false });
+      })()
     : { data: [] };
 
   return (

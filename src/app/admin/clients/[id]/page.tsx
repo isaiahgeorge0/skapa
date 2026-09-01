@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
+import EditableClientDetails from "@/components/EditableClientDetails";
 
 export default async function AdminClientDetailPage({
   params,
@@ -32,11 +33,14 @@ export default async function AdminClientDetailPage({
         </p>
         <h1 className="mb-8 font-serif text-4xl text-black">{client.name}</h1>
 
-        <dl className="grid grid-cols-[120px_1fr] gap-y-3 border-t border-neutral-200 py-6 font-mono text-sm">
-          <dt className="text-neutral-500">Email</dt>
-          <dd className="text-black">{client.email}</dd>
-          <dt className="text-neutral-500">Company</dt>
-          <dd className="text-black">{client.company || "Not provided"}</dd>
+        <EditableClientDetails
+          clientId={client.id}
+          initialName={client.name}
+          initialEmail={client.email}
+          initialCompany={client.company}
+        />
+
+        <dl className="mt-6 grid grid-cols-[120px_1fr] gap-y-3 border-t border-neutral-200 pt-6 font-mono text-sm">
           <dt className="text-neutral-500">Client since</dt>
           <dd className="text-black">
             {new Date(client.created_at).toLocaleDateString("en-GB", {

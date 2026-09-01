@@ -9,7 +9,7 @@ import TasksChecklist from "@/components/TasksChecklist";
 import EditableDetails from "@/components/EditableDetails";
 import NotesLog from "@/components/NotesLog";
 import Card from "@/components/Card";
-import Avatar from "@/components/Avatar";
+import AssignedClients from "@/components/AssignedClients";
 
 const PHASE_LABELS: Record<string, string> = {
   onboarding: "Onboarding",
@@ -41,8 +41,14 @@ export default async function AdminProjectDetailPage({
 
   if (!project) notFound();
 
-  const [{ data: documents }, { data: messages }, { data: tasks }, { data: notes }] =
-    await Promise.all([
+  const [
+    { data: documents },
+    { data: messages },
+    { data: tasks },
+    { data: notes },
+    { data: additionalRows },
+    { data: allClients },
+  ] = await Promise.all([
       supabase
         .from("documents")
         .select(
@@ -65,13 +71,27 @@ export default async function AdminProjectDetailPage({
         .select("id, body, created_at")
         .eq("project_id", id)
         .order("created_at", { ascending: false }),
+      supabase
+        .from("project_clients")
+        .select("clients(id, name, email)")
+        .eq("project_id", id),
+      supabase.from("clients").select("id, name, email").order("name"),
     ]);
 
   const client = (
     project as unknown as {
-      clients: { id: string; name: string; email: string } | null;
+      clients: { id: string; name: string; email: string | null } | null;
     }
   ).clients;
+
+  const additionalClients = (additionalRows ?? []).flatMap((row) => {
+    const linked = row.clients as
+      | { id: string; name: string; email: string | null }
+      | { id: string; name: string; email: string | null }[]
+      | null;
+    if (!linked) return [];
+    return Array.isArray(linked) ? linked : [linked];
+  });
 
   return (
     <div className="min-h-screen bg-white">
@@ -121,18 +141,12 @@ export default async function AdminProjectDetailPage({
           <div className="space-y-6">
             {client && (
               <Card title="Client">
-                <Link
-                  href={`/admin/clients/${client.id}`}
-                  className="flex items-center gap-3 transition-opacity hover:opacity-70"
-                >
-                  <Avatar name={client.name} />
-                  <div className="min-w-0">
-                    <p className="truncate font-sans text-sm text-black">{client.name}</p>
-                    <p className="truncate font-mono text-xs text-neutral-500">
-                      {client.email}
-                    </p>
-                  </div>
-                </Link>
+                <AssignedClients
+                  projectId={project.id}
+                  primaryClient={client}
+                  initialAdditionalClients={additionalClients}
+                  allClients={allClients ?? []}
+                />
               </Card>
             )}
 
