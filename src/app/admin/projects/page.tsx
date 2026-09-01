@@ -20,7 +20,7 @@ export default async function AdminProjectsPage() {
 
   const { data: projects, error } = await supabase
     .from("projects")
-    .select("id, name, phase, status, target_completion_date, clients(name)")
+    .select("id, name, phase, status, target_completion_date, clients!client_id(name)")
     .order("created_at", { ascending: false });
 
   if (error) throw new Error(`Failed to load projects: ${error.message}`);

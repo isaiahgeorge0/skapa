@@ -34,7 +34,7 @@ export default async function AdminProjectDetailPage({
   const { data: project } = await supabase
     .from("projects")
     .select(
-      "id, name, service_type, phase, status, target_completion_date, client_id, clients(id, name, email)",
+      "id, name, service_type, phase, status, target_completion_date, client_id, clients!client_id(id, name, email)",
     )
     .eq("id", id)
     .single();

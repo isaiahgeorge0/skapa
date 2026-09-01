@@ -13,7 +13,7 @@ export default async function AdminDocumentsPage() {
 
   const { data: documents, error } = await supabase
     .from("documents")
-    .select("id, type, status, created_at, project_id, projects(name, clients(name))")
+    .select("id, type, status, created_at, project_id, projects(name, clients!client_id(name))")
     .order("created_at", { ascending: false });
 
   if (error) throw new Error(`Failed to load documents: ${error.message}`);
