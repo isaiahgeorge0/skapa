@@ -57,7 +57,7 @@ export default function HomePage() {
           </div>
 
           <div className="relative aspect-[4/3] w-full overflow-hidden md:aspect-auto md:flex-1 md:min-h-[240px]">
-            <ParallaxImage>
+            <ParallaxImage offset={["start end", "end -50%"]}>
               <Image
                 src="/images/pexels-anastasia-shuraeva-7278565.jpg"
                 alt="Two people collaborating on a laptop in a warm, plant-filled studio"
@@ -73,12 +73,12 @@ export default function HomePage() {
       </div>
 
       <div className="overflow-x-hidden md:hidden">
-        <section className="flex flex-col">
+        <section>
           <div
-            className="relative h-[32vh] overflow-hidden"
+            className="relative h-[calc(32vh+196px)] overflow-hidden"
             style={{ marginLeft: "calc(50% - 50vw)", marginRight: "calc(50% - 50vw)" }}
           >
-            <ParallaxImage offset={["start end", "end -30%"]}>
+            <ParallaxImage offset={["start end", "end -30%"]} className="absolute inset-0">
               <Image
                 src="/images/pexels-anastasia-shuraeva-7278565.jpg"
                 alt="Two people collaborating on a laptop in a warm, plant-filled studio"
@@ -88,7 +88,8 @@ export default function HomePage() {
                 priority
               />
             </ParallaxImage>
-            <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/75 via-black/10 to-transparent" />
+
+            <div className="pointer-events-none absolute inset-x-0 top-0 h-2/5 bg-gradient-to-b from-black/75 via-black/20 to-transparent" />
             <div className="absolute inset-x-0 top-0 px-6 pt-6">
               <p className="mb-2 font-mono text-xs uppercase tracking-widest text-white/80">
                 Creative &amp; digital agency
@@ -99,21 +100,20 @@ export default function HomePage() {
                 <span className="italic text-brand-pink">all under one roof.</span>
               </h1>
             </div>
-          </div>
 
-          <FadeInOnLoad className="mx-auto flex w-full max-w-6xl flex-1 flex-col justify-between gap-12 px-6 py-12">
-            <div className="flex flex-col items-start gap-6">
-              <p className="max-w-md font-serif text-xl italic leading-snug text-black">
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
+            <div className="absolute inset-x-0 bottom-0 px-6 pb-6">
+              <p className="mb-4 max-w-xs font-serif text-lg italic leading-snug text-white">
                 Kickstart your creative ideas now.
               </p>
               <Link
                 href="/start"
-                className="inline-block shrink-0 bg-black px-8 py-4 font-mono text-xs uppercase tracking-[0.14em] text-white transition-opacity hover:opacity-80"
+                className="inline-block bg-white px-6 py-3 font-mono text-xs uppercase tracking-[0.14em] text-black transition-opacity hover:opacity-80"
               >
                 Let&apos;s create something
               </Link>
             </div>
-          </FadeInOnLoad>
+          </div>
         </section>
       </div>
 

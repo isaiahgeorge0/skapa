@@ -1,6 +1,7 @@
 "use client";
 import { useMemo, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import SignDocumentPanel from "@/components/SignDocumentPanel";
 
 type DocType = "proposal" | "agreement" | "welcome" | "invoice" | "other";
 type DocStatus = "draft" | "sent" | "viewed" | "signed";
@@ -11,6 +12,11 @@ type Doc = {
   file_url: string;
   status: DocStatus;
   created_at: string;
+  signature_name?: string | null;
+  signed_at?: string | null;
+  signature_hash?: string | null;
+  signer_ip?: string | null;
+  signer_user_agent?: string | null;
 };
 
 const TYPES: DocType[] = ["proposal", "agreement", "welcome", "invoice", "other"];
@@ -37,6 +43,7 @@ export default function DocumentsPanel({
   const [pendingType, setPendingType] = useState<DocType>("proposal");
   const [uploading, setUploading] = useState(false);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
+  const [expandedAuditId, setExpandedAuditId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   async function handleUpload(e: React.ChangeEvent<HTMLInputElement>) {
@@ -104,6 +111,12 @@ export default function DocumentsPanel({
     }
   }
 
+  function handleSigned(docId: string) {
+    setDocs((curr) =>
+      curr.map((d) => (d.id === docId ? { ...d, status: "signed" as DocStatus } : d)),
+    );
+  }
+
   return (
     <div>
       {docs.length === 0 ? (
@@ -113,34 +126,82 @@ export default function DocumentsPanel({
       ) : (
         <ul className="mb-6 divide-y divide-neutral-100">
           {docs.map((doc) => (
-            <li key={doc.id} className="flex flex-wrap items-center justify-between gap-3 py-3 first:pt-0 last:pb-0">
-              <div>
-                <p className="font-sans text-sm capitalize text-black">{doc.type}</p>
-                <p className="font-mono text-xs text-neutral-400">
-                  {new Date(doc.created_at).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
-                </p>
-              </div>
-              <div className="flex items-center gap-3">
-                {canManage ? (
-                  <select
-                    value={doc.status}
-                    disabled={updatingId === doc.id}
-                    onChange={(e) => updateStatus(doc.id, e.target.value as DocStatus)}
-                    className={`rounded-full border-0 px-3 py-1 font-mono text-[11px] uppercase tracking-[0.08em] disabled:opacity-50 ${STATUS_STYLES[doc.status]}`}
+            <li key={doc.id} className="py-3 first:pt-0 last:pb-0">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <p className="font-sans text-sm capitalize text-black">{doc.type}</p>
+                  <p className="font-mono text-xs text-neutral-400">
+                    {new Date(doc.created_at).toLocaleDateString("en-GB", {
+                      day: "numeric",
+                      month: "short",
+                      year: "numeric",
+                    })}
+                  </p>
+                </div>
+                <div className="flex items-center gap-3">
+                  {canManage ? (
+                    <select
+                      value={doc.status}
+                      disabled={updatingId === doc.id || doc.status === "signed"}
+                      onChange={(e) => updateStatus(doc.id, e.target.value as DocStatus)}
+                      className={`rounded-full border-0 px-3 py-1 font-mono text-[11px] uppercase tracking-[0.08em] disabled:opacity-70 ${STATUS_STYLES[doc.status]}`}
+                    >
+                      {STATUSES.map((s) => (
+                        <option key={s} value={s}>{s}</option>
+                      ))}
+                    </select>
+                  ) : (
+                    <span className={`rounded-full px-3 py-1 font-mono text-[11px] uppercase tracking-[0.08em] ${STATUS_STYLES[doc.status]}`}>
+                      {doc.status}
+                    </span>
+                  )}
+                  <button
+                    onClick={() => downloadDoc(doc)}
+                    className="font-mono text-[11px] uppercase tracking-[0.08em] text-neutral-600 underline decoration-dotted hover:text-black"
                   >
-                    {STATUSES.map((s) => (
-                      <option key={s} value={s}>{s}</option>
-                    ))}
-                  </select>
-                ) : (
-                  <span className={`rounded-full px-3 py-1 font-mono text-[11px] uppercase tracking-[0.08em] ${STATUS_STYLES[doc.status]}`}>
-                    {doc.status}
-                  </span>
-                )}
-                <button onClick={() => downloadDoc(doc)} className="font-mono text-[11px] uppercase tracking-[0.08em] text-neutral-600 underline decoration-dotted hover:text-black">
-                  Download
-                </button>
+                    Download
+                  </button>
+                </div>
               </div>
+
+              {/* Client-side signing action */}
+              {!canManage && (doc.status === "sent" || doc.status === "viewed") && (
+                <SignDocumentPanel doc={doc} onSigned={() => handleSigned(doc.id)} />
+              )}
+
+              {/* Admin-side audit trail once signed */}
+              {canManage && doc.status === "signed" && (
+                <div className="mt-3">
+                  <button
+                    onClick={() =>
+                      setExpandedAuditId(expandedAuditId === doc.id ? null : doc.id)
+                    }
+                    className="font-mono text-[11px] uppercase tracking-[0.08em] text-neutral-500 underline decoration-dotted hover:text-black"
+                  >
+                    {expandedAuditId === doc.id ? "Hide" : "View"} signature details
+                  </button>
+                  {expandedAuditId === doc.id && (
+                    <dl className="mt-3 grid grid-cols-[100px_1fr] gap-y-2 rounded-lg bg-neutral-50 p-4 font-mono text-xs">
+                      <dt className="text-neutral-400">Signed by</dt>
+                      <dd className="text-black">{doc.signature_name}</dd>
+                      <dt className="text-neutral-400">Signed at</dt>
+                      <dd className="text-black">
+                        {doc.signed_at &&
+                          new Date(doc.signed_at).toLocaleString("en-GB", {
+                            dateStyle: "medium",
+                            timeStyle: "short",
+                          })}
+                      </dd>
+                      <dt className="text-neutral-400">IP address</dt>
+                      <dd className="text-black">{doc.signer_ip}</dd>
+                      <dt className="text-neutral-400">Browser</dt>
+                      <dd className="break-all text-black">{doc.signer_user_agent}</dd>
+                      <dt className="text-neutral-400">Document hash</dt>
+                      <dd className="break-all text-black">{doc.signature_hash}</dd>
+                    </dl>
+                  )}
+                </div>
+              )}
             </li>
           ))}
         </ul>
