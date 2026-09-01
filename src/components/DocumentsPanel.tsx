@@ -2,6 +2,7 @@
 import { useMemo, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import SignDocumentPanel from "@/components/SignDocumentPanel";
+import DocumentAuditTrail from "@/components/DocumentAuditTrail";
 
 type DocType = "proposal" | "agreement" | "welcome" | "invoice" | "other";
 type DocStatus = "draft" | "sent" | "viewed" | "signed";
@@ -43,8 +44,26 @@ export default function DocumentsPanel({
   const [pendingType, setPendingType] = useState<DocType>("proposal");
   const [uploading, setUploading] = useState(false);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
-  const [expandedAuditId, setExpandedAuditId] = useState<string | null>(null);
+  const [expandedActivityId, setExpandedActivityId] = useState<string | null>(null);
+  const [expandedSignatureId, setExpandedSignatureId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  async function logEvent(
+    documentId: string,
+    eventType: "created" | "sent" | "viewed" | "signed" | "status_changed",
+    detail?: string,
+  ) {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    await supabase.from("document_events").insert({
+      document_id: documentId,
+      event_type: eventType,
+      actor_id: user?.id,
+      actor_role: canManage ? "admin" : "client",
+      detail,
+    });
+  }
 
   async function handleUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -78,6 +97,7 @@ export default function DocumentsPanel({
       return;
     }
 
+    await logEvent(data.id, "created", `Uploaded as ${pendingType}`);
     setDocs((curr) => [data as Doc, ...curr]);
   }
 
@@ -91,6 +111,15 @@ export default function DocumentsPanel({
       setError("Couldn't generate a download link. Try again.");
       return;
     }
+
+    if (!canManage && doc.status === "sent") {
+      await supabase.from("documents").update({ status: "viewed" }).eq("id", doc.id);
+      await logEvent(doc.id, "viewed");
+      setDocs((curr) =>
+        curr.map((d) => (d.id === doc.id ? { ...d, status: "viewed" as DocStatus } : d)),
+      );
+    }
+
     window.open(data.signedUrl, "_blank");
   }
 
@@ -108,12 +137,13 @@ export default function DocumentsPanel({
     if (updateError) {
       console.error("Failed to update document status:", updateError);
       setDocs(previous);
+      return;
     }
-  }
 
-  function handleSigned(docId: string) {
-    setDocs((curr) =>
-      curr.map((d) => (d.id === docId ? { ...d, status: "signed" as DocStatus } : d)),
+    await logEvent(
+      id,
+      status === "sent" ? "sent" : "status_changed",
+      `Status set to ${status}`,
     );
   }
 
@@ -164,24 +194,50 @@ export default function DocumentsPanel({
                 </div>
               </div>
 
-              {/* Client-side signing action */}
               {!canManage && (doc.status === "sent" || doc.status === "viewed") && (
-                <SignDocumentPanel doc={doc} onSigned={() => handleSigned(doc.id)} />
+                <SignDocumentPanel
+                  doc={doc}
+                  onSigned={() => {
+                    setDocs((curr) =>
+                      curr.map((d) =>
+                        d.id === doc.id ? { ...d, status: "signed" as DocStatus } : d,
+                      ),
+                    );
+                  }}
+                />
               )}
 
-              {/* Admin-side audit trail once signed */}
-              {canManage && doc.status === "signed" && (
-                <div className="mt-3">
-                  <button
-                    onClick={() =>
-                      setExpandedAuditId(expandedAuditId === doc.id ? null : doc.id)
-                    }
-                    className="font-mono text-[11px] uppercase tracking-[0.08em] text-neutral-500 underline decoration-dotted hover:text-black"
-                  >
-                    {expandedAuditId === doc.id ? "Hide" : "View"} signature details
-                  </button>
-                  {expandedAuditId === doc.id && (
-                    <dl className="mt-3 grid grid-cols-[100px_1fr] gap-y-2 rounded-lg bg-neutral-50 p-4 font-mono text-xs">
+              {canManage && (
+                <div className="mt-3 space-y-3">
+                  <div className="flex flex-wrap gap-4">
+                    <button
+                      onClick={() =>
+                        setExpandedActivityId(expandedActivityId === doc.id ? null : doc.id)
+                      }
+                      className="font-mono text-[11px] uppercase tracking-[0.08em] text-neutral-500 underline decoration-dotted hover:text-black"
+                    >
+                      {expandedActivityId === doc.id ? "Hide" : "View"} activity
+                    </button>
+                    {doc.status === "signed" && (
+                      <button
+                        onClick={() =>
+                          setExpandedSignatureId(
+                            expandedSignatureId === doc.id ? null : doc.id,
+                          )
+                        }
+                        className="font-mono text-[11px] uppercase tracking-[0.08em] text-neutral-500 underline decoration-dotted hover:text-black"
+                      >
+                        {expandedSignatureId === doc.id ? "Hide" : "View"} signature details
+                      </button>
+                    )}
+                  </div>
+                  {expandedActivityId === doc.id && (
+                    <div className="rounded-lg bg-neutral-50 p-4">
+                      <DocumentAuditTrail documentId={doc.id} />
+                    </div>
+                  )}
+                  {expandedSignatureId === doc.id && doc.status === "signed" && (
+                    <dl className="grid grid-cols-[100px_1fr] gap-y-2 rounded-lg bg-neutral-50 p-4 font-mono text-xs">
                       <dt className="text-neutral-400">Signed by</dt>
                       <dd className="text-black">{doc.signature_name}</dd>
                       <dt className="text-neutral-400">Signed at</dt>

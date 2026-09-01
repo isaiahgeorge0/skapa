@@ -23,9 +23,6 @@ export async function signDocument(
     return { success: false, error: "Type your full name to sign." };
   }
 
-  // Capture these server-side, not from the browser — a client can lie
-  // about its own IP/user-agent, but it can't fake what actually arrived
-  // in the request headers.
   const headersList = await headers();
   const ip =
     headersList.get("x-forwarded-for")?.split(",")[0]?.trim() ||
@@ -33,9 +30,6 @@ export async function signDocument(
     "unknown";
   const userAgent = headersList.get("user-agent") || "unknown";
 
-  // Confirm this document actually belongs to a project this user has
-  // access to — RLS on the update below enforces this too, but checking
-  // explicitly here gives a clean error message instead of a silent no-op.
   const { data: doc, error: fetchError } = await supabase
     .from("documents")
     .select("id, status")
@@ -67,6 +61,16 @@ export async function signDocument(
     console.error("Failed to record signature:", updateError);
     return { success: false, error: "Something went wrong recording the signature. Try again." };
   }
+
+  // Log this as an audit event too, not just a field on the document —
+  // this is what lets the audit trail show a real history over time.
+  await supabase.from("document_events").insert({
+    document_id: documentId,
+    event_type: "signed",
+    actor_id: user.id,
+    actor_role: "client",
+    detail: `Signed by ${signatureName.trim()}`,
+  });
 
   return { success: true };
 }
