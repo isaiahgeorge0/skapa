@@ -3,6 +3,8 @@ import { useMemo, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import SignDocumentPanel from "@/components/SignDocumentPanel";
 import DocumentAuditTrail from "@/components/DocumentAuditTrail";
+import Card from "@/components/Card";
+import Modal from "@/components/Modal";
 
 type DocType = "proposal" | "agreement" | "welcome" | "invoice" | "other";
 type DocStatus = "draft" | "sent" | "viewed" | "signed";
@@ -22,7 +24,6 @@ type Doc = {
 
 const TYPES: DocType[] = ["proposal", "agreement", "welcome", "invoice", "other"];
 const STATUSES: DocStatus[] = ["draft", "sent", "viewed", "signed"];
-
 const STATUS_STYLES: Record<DocStatus, string> = {
   draft: "bg-neutral-100 text-neutral-500",
   sent: "bg-blue-50 text-blue-700",
@@ -42,10 +43,11 @@ export default function DocumentsPanel({
   const supabase = useMemo(() => createClient(), []);
   const [docs, setDocs] = useState<Doc[]>(initialDocuments);
   const [pendingType, setPendingType] = useState<DocType>("proposal");
+  const [uploadOpen, setUploadOpen] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
+  const [expandedAuditId, setExpandedAuditId] = useState<string | null>(null);
   const [expandedActivityId, setExpandedActivityId] = useState<string | null>(null);
-  const [expandedSignatureId, setExpandedSignatureId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   async function logEvent(
@@ -72,9 +74,7 @@ export default function DocumentsPanel({
     setError(null);
 
     const path = `${projectId}/${Date.now()}-${file.name}`;
-    const { error: uploadError } = await supabase.storage
-      .from("documents")
-      .upload(path, file);
+    const { error: uploadError } = await supabase.storage.from("documents").upload(path, file);
 
     if (uploadError) {
       setError(uploadError.message);
@@ -99,6 +99,7 @@ export default function DocumentsPanel({
 
     await logEvent(data.id, "created", `Uploaded as ${pendingType}`);
     setDocs((curr) => [data as Doc, ...curr]);
+    setUploadOpen(false);
   }
 
   async function downloadDoc(doc: Doc) {
@@ -140,32 +141,36 @@ export default function DocumentsPanel({
       return;
     }
 
-    await logEvent(
-      id,
-      status === "sent" ? "sent" : "status_changed",
-      `Status set to ${status}`,
-    );
+    await logEvent(id, status === "sent" ? "sent" : "status_changed", `Status set to ${status}`);
   }
 
   return (
-    <div>
+    <Card
+      title="Documents"
+      action={
+        canManage && (
+          <button
+            onClick={() => setUploadOpen(true)}
+            className="bg-black px-3 py-1.5 font-mono text-[11px] uppercase tracking-[0.14em] text-white transition-opacity hover:opacity-80"
+          >
+            + Upload document
+          </button>
+        )
+      }
+    >
       {docs.length === 0 ? (
-        <p className="mb-6 font-mono text-sm text-neutral-400">
+        <p className="font-mono text-sm text-neutral-400">
           No documents {canManage ? "uploaded yet." : "shared with you yet."}
         </p>
       ) : (
-        <ul className="mb-6 divide-y divide-neutral-100">
+        <ul className="divide-y divide-neutral-100">
           {docs.map((doc) => (
             <li key={doc.id} className="py-3 first:pt-0 last:pb-0">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div>
                   <p className="font-sans text-sm capitalize text-black">{doc.type}</p>
                   <p className="font-mono text-xs text-neutral-400">
-                    {new Date(doc.created_at).toLocaleDateString("en-GB", {
-                      day: "numeric",
-                      month: "short",
-                      year: "numeric",
-                    })}
+                    {new Date(doc.created_at).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
                   </p>
                 </div>
                 <div className="flex items-center gap-3">
@@ -197,65 +202,51 @@ export default function DocumentsPanel({
               {!canManage && (doc.status === "sent" || doc.status === "viewed") && (
                 <SignDocumentPanel
                   doc={doc}
-                  onSigned={() => {
+                  onSigned={() =>
                     setDocs((curr) =>
-                      curr.map((d) =>
-                        d.id === doc.id ? { ...d, status: "signed" as DocStatus } : d,
-                      ),
-                    );
-                  }}
+                      curr.map((d) => (d.id === doc.id ? { ...d, status: "signed" as DocStatus } : d)),
+                    )
+                  }
                 />
               )}
 
-              {canManage && (
-                <div className="mt-3 space-y-3">
-                  <div className="flex flex-wrap gap-4">
-                    <button
-                      onClick={() =>
-                        setExpandedActivityId(expandedActivityId === doc.id ? null : doc.id)
-                      }
-                      className="font-mono text-[11px] uppercase tracking-[0.08em] text-neutral-500 underline decoration-dotted hover:text-black"
-                    >
-                      {expandedActivityId === doc.id ? "Hide" : "View"} activity
-                    </button>
-                    {doc.status === "signed" && (
-                      <button
-                        onClick={() =>
-                          setExpandedSignatureId(
-                            expandedSignatureId === doc.id ? null : doc.id,
-                          )
-                        }
-                        className="font-mono text-[11px] uppercase tracking-[0.08em] text-neutral-500 underline decoration-dotted hover:text-black"
-                      >
-                        {expandedSignatureId === doc.id ? "Hide" : "View"} signature details
-                      </button>
-                    )}
-                  </div>
-                  {expandedActivityId === doc.id && (
-                    <div className="rounded-lg bg-neutral-50 p-4">
-                      <DocumentAuditTrail documentId={doc.id} />
-                    </div>
-                  )}
-                  {expandedSignatureId === doc.id && doc.status === "signed" && (
-                    <dl className="grid grid-cols-[100px_1fr] gap-y-2 rounded-lg bg-neutral-50 p-4 font-mono text-xs">
-                      <dt className="text-neutral-400">Signed by</dt>
-                      <dd className="text-black">{doc.signature_name}</dd>
-                      <dt className="text-neutral-400">Signed at</dt>
-                      <dd className="text-black">
-                        {doc.signed_at &&
-                          new Date(doc.signed_at).toLocaleString("en-GB", {
-                            dateStyle: "medium",
-                            timeStyle: "short",
-                          })}
-                      </dd>
-                      <dt className="text-neutral-400">IP address</dt>
-                      <dd className="text-black">{doc.signer_ip}</dd>
-                      <dt className="text-neutral-400">Browser</dt>
-                      <dd className="break-all text-black">{doc.signer_user_agent}</dd>
-                      <dt className="text-neutral-400">Document hash</dt>
-                      <dd className="break-all text-black">{doc.signature_hash}</dd>
-                    </dl>
-                  )}
+              <div className="mt-2 flex gap-4">
+                {canManage && doc.status === "signed" && (
+                  <button
+                    onClick={() => setExpandedAuditId(expandedAuditId === doc.id ? null : doc.id)}
+                    className="font-mono text-[11px] uppercase tracking-[0.08em] text-neutral-500 underline decoration-dotted hover:text-black"
+                  >
+                    {expandedAuditId === doc.id ? "Hide" : "View"} signature details
+                  </button>
+                )}
+                <button
+                  onClick={() => setExpandedActivityId(expandedActivityId === doc.id ? null : doc.id)}
+                  className="font-mono text-[11px] uppercase tracking-[0.08em] text-neutral-500 underline decoration-dotted hover:text-black"
+                >
+                  {expandedActivityId === doc.id ? "Hide" : "View"} activity
+                </button>
+              </div>
+
+              {canManage && doc.status === "signed" && expandedAuditId === doc.id && (
+                <dl className="mt-3 grid grid-cols-[100px_1fr] gap-y-2 rounded-lg bg-neutral-50 p-4 font-mono text-xs">
+                  <dt className="text-neutral-400">Signed by</dt>
+                  <dd className="text-black">{doc.signature_name}</dd>
+                  <dt className="text-neutral-400">Signed at</dt>
+                  <dd className="text-black">
+                    {doc.signed_at && new Date(doc.signed_at).toLocaleString("en-GB", { dateStyle: "medium", timeStyle: "short" })}
+                  </dd>
+                  <dt className="text-neutral-400">IP address</dt>
+                  <dd className="text-black">{doc.signer_ip}</dd>
+                  <dt className="text-neutral-400">Browser</dt>
+                  <dd className="break-all text-black">{doc.signer_user_agent}</dd>
+                  <dt className="text-neutral-400">Document hash</dt>
+                  <dd className="break-all text-black">{doc.signature_hash}</dd>
+                </dl>
+              )}
+
+              {expandedActivityId === doc.id && (
+                <div className="mt-3 rounded-lg bg-neutral-50 p-4">
+                  <DocumentAuditTrail documentId={doc.id} />
                 </div>
               )}
             </li>
@@ -264,23 +255,35 @@ export default function DocumentsPanel({
       )}
 
       {canManage && (
-        <div className="flex flex-wrap items-center gap-3">
-          <select
-            value={pendingType}
-            onChange={(e) => setPendingType(e.target.value as DocType)}
-            className="border border-neutral-300 px-3 py-2 font-mono text-xs uppercase tracking-[0.08em]"
-          >
-            {TYPES.map((t) => (
-              <option key={t} value={t}>{t}</option>
-            ))}
-          </select>
-          <label className="cursor-pointer bg-black px-5 py-2.5 font-mono text-[11px] uppercase tracking-[0.14em] text-white transition-opacity hover:opacity-80">
-            {uploading ? "Uploading…" : "Upload document"}
-            <input type="file" onChange={handleUpload} disabled={uploading} className="hidden" />
-          </label>
-        </div>
+        <Modal open={uploadOpen} onClose={() => setUploadOpen(false)} title="Upload document">
+          <div className="space-y-4">
+            <div>
+              <label className="mb-1 block font-mono text-[11px] uppercase tracking-widest text-neutral-500">
+                Document type
+              </label>
+              <select
+                value={pendingType}
+                onChange={(e) => setPendingType(e.target.value as DocType)}
+                className="w-full border border-neutral-300 px-3 py-2 text-sm"
+              >
+                {TYPES.map((t) => (
+                  <option key={t} value={t}>{t}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="mb-1 block font-mono text-[11px] uppercase tracking-widest text-neutral-500">
+                File
+              </label>
+              <label className="block w-full cursor-pointer border border-dashed border-neutral-300 px-4 py-6 text-center font-mono text-xs uppercase tracking-widest text-neutral-500 hover:border-black hover:text-black">
+                {uploading ? "Uploading…" : "Click to choose a file"}
+                <input type="file" onChange={handleUpload} disabled={uploading} className="hidden" />
+              </label>
+            </div>
+            {error && <p className="font-mono text-xs text-red-600">{error}</p>}
+          </div>
+        </Modal>
       )}
-      {error && <p className="mt-3 font-mono text-xs text-red-600">{error}</p>}
-    </div>
+    </Card>
   );
 }

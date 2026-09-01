@@ -85,22 +85,18 @@ export default async function PortalProjectDetailPage({
             />
           </Card>
 
-          <Card title="Tasks">
-            <TasksChecklist
-              projectId={project.id}
-              currentPhase={project.phase}
-              initialTasks={tasks ?? []}
-              canManage={false}
-            />
-          </Card>
+          <TasksChecklist
+            projectId={project.id}
+            currentPhase={project.phase}
+            initialTasks={tasks ?? []}
+            canManage={false}
+          />
 
-          <Card title="Documents">
-            <DocumentsPanel
-              projectId={project.id}
-              initialDocuments={documents ?? []}
-              canManage={false}
-            />
-          </Card>
+          <DocumentsPanel
+            projectId={project.id}
+            initialDocuments={documents ?? []}
+            canManage={false}
+          />
 
           <Card title="Messages">
             <MessagesPanel

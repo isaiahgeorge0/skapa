@@ -1,6 +1,8 @@
 "use client";
 import { useMemo, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import Card from "@/components/Card";
+import Modal from "@/components/Modal";
 
 type Task = { id: string; title: string; is_complete: boolean; phase: string };
 
@@ -17,6 +19,7 @@ export default function TasksChecklist({
 }) {
   const supabase = useMemo(() => createClient(), []);
   const [tasks, setTasks] = useState<Task[]>(initialTasks);
+  const [addOpen, setAddOpen] = useState(false);
   const [newTitle, setNewTitle] = useState("");
   const [adding, setAdding] = useState(false);
 
@@ -24,8 +27,13 @@ export default function TasksChecklist({
 
   async function toggleTask(task: Task) {
     const previous = tasks;
-    setTasks((curr) => curr.map((t) => (t.id === task.id ? { ...t, is_complete: !t.is_complete } : t)));
-    const { error } = await supabase.from("project_tasks").update({ is_complete: !task.is_complete }).eq("id", task.id);
+    setTasks((curr) =>
+      curr.map((t) => (t.id === task.id ? { ...t, is_complete: !t.is_complete } : t)),
+    );
+    const { error } = await supabase
+      .from("project_tasks")
+      .update({ is_complete: !task.is_complete })
+      .eq("id", task.id);
     if (error) {
       console.error("Failed to toggle task:", error);
       setTasks(previous);
@@ -46,6 +54,7 @@ export default function TasksChecklist({
     if (!error && data) {
       setTasks((curr) => [...curr, data as Task]);
       setNewTitle("");
+      setAddOpen(false);
     } else if (error) {
       console.error("Failed to add task:", error);
     }
@@ -62,20 +71,37 @@ export default function TasksChecklist({
   }
 
   return (
-    <div>
+    <Card
+      title="Tasks"
+      action={
+        canManage && (
+          <button
+            onClick={() => setAddOpen(true)}
+            className="bg-black px-3 py-1.5 font-mono text-[11px] uppercase tracking-[0.14em] text-white transition-opacity hover:opacity-80"
+          >
+            + Add task
+          </button>
+        )
+      }
+    >
       {phaseTasks.length === 0 ? (
         <p className="mb-4 font-mono text-sm text-neutral-400">
           No tasks for this phase yet.
         </p>
       ) : (
-        <ul className="mb-4 space-y-1">
+        <ul className="space-y-1">
           {phaseTasks.map((task) => (
-            <li key={task.id} className="group flex items-center gap-3 rounded-lg px-2 py-1.5 transition-colors hover:bg-neutral-50">
+            <li
+              key={task.id}
+              className="group flex items-center gap-3 rounded-lg px-2 py-1.5 transition-colors hover:bg-neutral-50"
+            >
               <button
                 onClick={() => toggleTask(task)}
                 aria-label={task.is_complete ? "Mark incomplete" : "Mark complete"}
                 className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 transition-colors ${
-                  task.is_complete ? "border-brand-pink bg-brand-pink text-white" : "border-neutral-300 hover:border-neutral-500"
+                  task.is_complete
+                    ? "border-brand-pink bg-brand-pink text-white"
+                    : "border-neutral-300 hover:border-neutral-500"
                 }`}
               >
                 {task.is_complete && (
@@ -88,7 +114,10 @@ export default function TasksChecklist({
                 {task.title}
               </span>
               {canManage && (
-                <button onClick={() => deleteTask(task.id)} className="font-mono text-[10px] uppercase tracking-widest text-neutral-400 opacity-0 transition-opacity hover:text-red-600 group-hover:opacity-100">
+                <button
+                  onClick={() => deleteTask(task.id)}
+                  className="font-mono text-[10px] uppercase tracking-widest text-neutral-400 opacity-0 transition-opacity hover:text-red-600 group-hover:opacity-100"
+                >
                   Remove
                 </button>
               )}
@@ -98,22 +127,30 @@ export default function TasksChecklist({
       )}
 
       {canManage && (
-        <form onSubmit={addTask} className="flex gap-2">
-          <input
-            value={newTitle}
-            onChange={(e) => setNewTitle(e.target.value)}
-            placeholder="Add a task…"
-            className="flex-1 border border-neutral-300 px-3 py-2 text-sm"
-          />
-          <button
-            type="submit"
-            disabled={adding || !newTitle.trim()}
-            className="bg-black px-4 py-2 font-mono text-[11px] uppercase tracking-[0.14em] text-white transition-opacity hover:opacity-80 disabled:opacity-50"
-          >
-            Add
-          </button>
-        </form>
+        <Modal open={addOpen} onClose={() => setAddOpen(false)} title="Add task">
+          <form onSubmit={addTask} className="space-y-4">
+            <div>
+              <label className="mb-1 block font-mono text-[11px] uppercase tracking-widest text-neutral-500">
+                Task
+              </label>
+              <input
+                autoFocus
+                value={newTitle}
+                onChange={(e) => setNewTitle(e.target.value)}
+                placeholder="e.g. Draft homepage wireframe"
+                className="w-full border border-neutral-300 px-3 py-2 text-sm"
+              />
+            </div>
+            <button
+              type="submit"
+              disabled={adding || !newTitle.trim()}
+              className="bg-black px-5 py-2.5 font-mono text-[11px] uppercase tracking-[0.14em] text-white transition-opacity hover:opacity-80 disabled:opacity-40"
+            >
+              {adding ? "Adding…" : "Add task"}
+            </button>
+          </form>
+        </Modal>
       )}
-    </div>
+    </Card>
   );
 }

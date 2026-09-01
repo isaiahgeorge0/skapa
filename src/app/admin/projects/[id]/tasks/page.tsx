@@ -1,6 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
 import TasksChecklist from "@/components/TasksChecklist";
-import Card from "@/components/Card";
 
 export default async function ProjectTasksPage({
   params,
@@ -23,12 +22,10 @@ export default async function ProjectTasksPage({
     .order("created_at", { ascending: true });
 
   return (
-    <Card title="Tasks">
-      <TasksChecklist
-        projectId={id}
-        currentPhase={project?.phase ?? "onboarding"}
-        initialTasks={tasks ?? []}
-      />
-    </Card>
+    <TasksChecklist
+      projectId={id}
+      currentPhase={project?.phase ?? "onboarding"}
+      initialTasks={tasks ?? []}
+    />
   );
 }

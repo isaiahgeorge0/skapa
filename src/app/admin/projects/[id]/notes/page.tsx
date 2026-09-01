@@ -1,6 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
 import NotesLog from "@/components/NotesLog";
-import Card from "@/components/Card";
 
 export default async function ProjectNotesPage({
   params,
@@ -16,9 +15,5 @@ export default async function ProjectNotesPage({
     .eq("project_id", id)
     .order("created_at", { ascending: false });
 
-  return (
-    <Card title="Internal notes">
-      <NotesLog projectId={id} initialNotes={notes ?? []} />
-    </Card>
-  );
+  return <NotesLog projectId={id} initialNotes={notes ?? []} />;
 }

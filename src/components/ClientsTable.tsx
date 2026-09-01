@@ -3,6 +3,7 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import Avatar from "@/components/Avatar";
+import Modal from "@/components/Modal";
 
 type Client = {
   id: string;
@@ -16,7 +17,7 @@ export default function ClientsTable({ initialClients }: { initialClients: Clien
   const supabase = useMemo(() => createClient(), []);
   const [clients, setClients] = useState<Client[]>(initialClients);
 
-  const [addingOpen, setAddingOpen] = useState(false);
+  const [addOpen, setAddOpen] = useState(false);
   const [addName, setAddName] = useState("");
   const [addEmail, setAddEmail] = useState("");
   const [addCompany, setAddCompany] = useState("");
@@ -40,7 +41,6 @@ export default function ClientsTable({ initialClients }: { initialClients: Clien
       .single();
 
     setAdding(false);
-
     if (error || !data) {
       setAddError(error?.message ?? "Something went wrong.");
       return;
@@ -50,25 +50,28 @@ export default function ClientsTable({ initialClients }: { initialClients: Clien
     setAddName("");
     setAddEmail("");
     setAddCompany("");
-    setAddingOpen(false);
+    setAddOpen(false);
   }
 
   return (
     <div>
-      <div className="mb-6 flex justify-end">
+      <div className="mb-10 flex items-baseline justify-between">
+        <div>
+          <p className="mb-2 font-mono text-xs uppercase tracking-widest text-neutral-500">
+            Admin
+          </p>
+          <h1 className="font-serif text-4xl text-black">Clients</h1>
+        </div>
         <button
-          onClick={() => setAddingOpen((v) => !v)}
+          onClick={() => setAddOpen(true)}
           className="bg-black px-4 py-2 font-mono text-[11px] uppercase tracking-[0.14em] text-white transition-opacity hover:opacity-80"
         >
-          {addingOpen ? "Cancel" : "+ Add client"}
+          + Add client
         </button>
       </div>
 
-      {addingOpen && (
-        <form
-          onSubmit={addClient}
-          className="mb-6 grid gap-3 rounded-xl border border-neutral-200 bg-neutral-50 p-5 sm:grid-cols-2"
-        >
+      <Modal open={addOpen} onClose={() => setAddOpen(false)} title="Add client">
+        <form onSubmit={addClient} className="space-y-4">
           <div>
             <label className="mb-1 block font-mono text-[11px] uppercase tracking-widest text-neutral-500">
               Name
@@ -77,7 +80,7 @@ export default function ClientsTable({ initialClients }: { initialClients: Clien
               value={addName}
               onChange={(e) => setAddName(e.target.value)}
               required
-              className="w-full border border-neutral-300 bg-white px-3 py-2 text-sm"
+              className="w-full border border-neutral-300 px-3 py-2 text-sm"
             />
           </div>
           <div>
@@ -88,33 +91,29 @@ export default function ClientsTable({ initialClients }: { initialClients: Clien
               type="email"
               value={addEmail}
               onChange={(e) => setAddEmail(e.target.value)}
-              className="w-full border border-neutral-300 bg-white px-3 py-2 text-sm"
+              className="w-full border border-neutral-300 px-3 py-2 text-sm"
             />
           </div>
-          <div className="sm:col-span-2">
+          <div>
             <label className="mb-1 block font-mono text-[11px] uppercase tracking-widest text-neutral-500">
               Company (optional)
             </label>
             <input
               value={addCompany}
               onChange={(e) => setAddCompany(e.target.value)}
-              className="w-full border border-neutral-300 bg-white px-3 py-2 text-sm"
+              className="w-full border border-neutral-300 px-3 py-2 text-sm"
             />
           </div>
-          {addError && (
-            <p className="sm:col-span-2 font-mono text-xs text-red-600">{addError}</p>
-          )}
-          <div className="sm:col-span-2">
-            <button
-              type="submit"
-              disabled={adding || !addName.trim()}
-              className="bg-black px-5 py-2.5 font-mono text-[11px] uppercase tracking-[0.14em] text-white transition-opacity hover:opacity-80 disabled:opacity-40"
-            >
-              {adding ? "Adding…" : "Add client"}
-            </button>
-          </div>
+          {addError && <p className="font-mono text-xs text-red-600">{addError}</p>}
+          <button
+            type="submit"
+            disabled={adding || !addName.trim()}
+            className="bg-black px-5 py-2.5 font-mono text-[11px] uppercase tracking-[0.14em] text-white transition-opacity hover:opacity-80 disabled:opacity-40"
+          >
+            {adding ? "Adding…" : "Add client"}
+          </button>
         </form>
-      )}
+      </Modal>
 
       <div className="overflow-hidden rounded-xl border border-neutral-200">
         {clients.length === 0 ? (

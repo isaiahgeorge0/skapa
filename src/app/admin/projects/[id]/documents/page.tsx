@@ -1,6 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
 import DocumentsPanel from "@/components/DocumentsPanel";
-import Card from "@/components/Card";
 
 export default async function ProjectDocumentsPage({
   params,
@@ -18,9 +17,5 @@ export default async function ProjectDocumentsPage({
     .eq("project_id", id)
     .order("created_at", { ascending: false });
 
-  return (
-    <Card title="Documents">
-      <DocumentsPanel projectId={id} initialDocuments={documents ?? []} />
-    </Card>
-  );
+  return <DocumentsPanel projectId={id} initialDocuments={documents ?? []} />;
 }

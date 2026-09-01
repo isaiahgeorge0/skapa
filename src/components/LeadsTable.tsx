@@ -3,8 +3,10 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import Avatar from "@/components/Avatar";
+import Modal from "@/components/Modal";
 
 type LeadStatus = "new" | "contacted" | "qualified" | "lost";
+type LeadSource = "contact_form" | "questionnaire" | "manual";
 
 type LeadAnswers = {
   brandName?: string;
@@ -23,19 +25,22 @@ type Lead = {
   status: LeadStatus;
   created_at: string;
   converted_client_id: string | null;
-  source: "contact_form" | "questionnaire";
+  source: LeadSource;
   answers: LeadAnswers | null;
 };
 
 const STATUS_OPTIONS: LeadStatus[] = ["new", "contacted", "qualified", "lost"];
-
 const STATUS_STYLES: Record<LeadStatus, string> = {
   new: "bg-brand-pink/10 text-brand-pink",
   contacted: "bg-blue-50 text-blue-700",
   qualified: "bg-green-50 text-green-700",
   lost: "bg-neutral-100 text-neutral-500",
 };
-
+const SOURCE_LABELS: Record<LeadSource, string> = {
+  contact_form: "Contact form",
+  questionnaire: "Questionnaire",
+  manual: "Added manually",
+};
 const FILTERS: Array<"all" | LeadStatus> = ["all", "new", "contacted", "qualified", "lost"];
 
 export default function LeadsTable({ initialLeads }: { initialLeads: Lead[] }) {
@@ -45,12 +50,50 @@ export default function LeadsTable({ initialLeads }: { initialLeads: Lead[] }) {
   const [convertingId, setConvertingId] = useState<string | null>(null);
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
+  const [addOpen, setAddOpen] = useState(false);
+  const [addName, setAddName] = useState("");
+  const [addEmail, setAddEmail] = useState("");
+  const [addMessage, setAddMessage] = useState("");
+  const [adding, setAdding] = useState(false);
+  const [addError, setAddError] = useState<string | null>(null);
+
   const supabase = useMemo(() => createClient(), []);
 
   const visibleLeads = useMemo(
     () => (filter === "all" ? leads : leads.filter((l) => l.status === filter)),
     [leads, filter],
   );
+
+  async function addLead(e: React.FormEvent) {
+    e.preventDefault();
+    if (!addName.trim() || !addEmail.trim()) return;
+    setAdding(true);
+    setAddError(null);
+
+    const { data, error } = await supabase
+      .from("leads")
+      .insert({
+        name: addName.trim(),
+        email: addEmail.trim(),
+        message: addMessage.trim() || null,
+        source: "manual",
+        status: "new",
+      })
+      .select()
+      .single();
+
+    setAdding(false);
+    if (error || !data) {
+      setAddError(error?.message ?? "Something went wrong.");
+      return;
+    }
+
+    setLeads((curr) => [data as Lead, ...curr]);
+    setAddName("");
+    setAddEmail("");
+    setAddMessage("");
+    setAddOpen(false);
+  }
 
   async function updateStatus(id: string, status: LeadStatus) {
     const previous = leads;
@@ -95,6 +138,69 @@ export default function LeadsTable({ initialLeads }: { initialLeads: Lead[] }) {
 
   return (
     <div>
+      <div className="mb-10 flex items-baseline justify-between">
+        <div>
+          <p className="mb-2 font-mono text-xs uppercase tracking-widest text-neutral-500">
+            Admin
+          </p>
+          <h1 className="font-serif text-4xl text-black">Leads</h1>
+        </div>
+        <button
+          onClick={() => setAddOpen(true)}
+          className="bg-black px-4 py-2 font-mono text-[11px] uppercase tracking-[0.14em] text-white transition-opacity hover:opacity-80"
+        >
+          + Add lead
+        </button>
+      </div>
+
+      <Modal open={addOpen} onClose={() => setAddOpen(false)} title="Add lead">
+        <form onSubmit={addLead} className="space-y-4">
+          <div>
+            <label className="mb-1 block font-mono text-[11px] uppercase tracking-widest text-neutral-500">
+              Name
+            </label>
+            <input
+              value={addName}
+              onChange={(e) => setAddName(e.target.value)}
+              required
+              className="w-full border border-neutral-300 px-3 py-2 text-sm"
+            />
+          </div>
+          <div>
+            <label className="mb-1 block font-mono text-[11px] uppercase tracking-widest text-neutral-500">
+              Email
+            </label>
+            <input
+              type="email"
+              value={addEmail}
+              onChange={(e) => setAddEmail(e.target.value)}
+              required
+              className="w-full border border-neutral-300 px-3 py-2 text-sm"
+            />
+          </div>
+          <div>
+            <label className="mb-1 block font-mono text-[11px] uppercase tracking-widest text-neutral-500">
+              Note (optional)
+            </label>
+            <textarea
+              value={addMessage}
+              onChange={(e) => setAddMessage(e.target.value)}
+              rows={2}
+              placeholder="How you got this lead, what they need, etc."
+              className="w-full border border-neutral-300 px-3 py-2 text-sm"
+            />
+          </div>
+          {addError && <p className="font-mono text-xs text-red-600">{addError}</p>}
+          <button
+            type="submit"
+            disabled={adding || !addName.trim() || !addEmail.trim()}
+            className="bg-black px-5 py-2.5 font-mono text-[11px] uppercase tracking-[0.14em] text-white transition-opacity hover:opacity-80 disabled:opacity-40"
+          >
+            {adding ? "Adding…" : "Add lead"}
+          </button>
+        </form>
+      </Modal>
+
       <div className="mb-6 flex flex-wrap gap-2">
         {FILTERS.map((f) => (
           <button
@@ -162,7 +268,7 @@ export default function LeadsTable({ initialLeads }: { initialLeads: Lead[] }) {
                         </td>
                         <td className="py-4 pr-4">
                           <span className="rounded-full bg-neutral-100 px-3 py-1 font-mono text-[11px] uppercase tracking-[0.08em] text-neutral-600">
-                            {lead.source === "questionnaire" ? "Questionnaire" : "Contact form"}
+                            {SOURCE_LABELS[lead.source]}
                           </span>
                         </td>
                         <td className="py-4 pr-4">
@@ -200,18 +306,12 @@ export default function LeadsTable({ initialLeads }: { initialLeads: Lead[] }) {
                         <tr className="border-b border-neutral-100 bg-neutral-50 last:border-b-0">
                           <td colSpan={6} className="px-5 py-5">
                             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                              {lead.answers.brandName && (
-                                <AnswerField label="Brand" value={lead.answers.brandName} />
-                              )}
+                              {lead.answers.brandName && <AnswerField label="Brand" value={lead.answers.brandName} />}
                               {lead.answers.need && <AnswerField label="Need" value={lead.answers.need} />}
                               {lead.answers.budget && <AnswerField label="Budget" value={lead.answers.budget} />}
                               {lead.answers.timeline && <AnswerField label="Timeline" value={lead.answers.timeline} />}
-                              {lead.answers.trigger && (
-                                <AnswerField label="What's prompting this" value={lead.answers.trigger} wide />
-                              )}
-                              {lead.answers.extra && (
-                                <AnswerField label="Anything else" value={lead.answers.extra} wide />
-                              )}
+                              {lead.answers.trigger && <AnswerField label="What's prompting this" value={lead.answers.trigger} wide />}
+                              {lead.answers.extra && <AnswerField label="Anything else" value={lead.answers.extra} wide />}
                             </div>
                           </td>
                         </tr>
