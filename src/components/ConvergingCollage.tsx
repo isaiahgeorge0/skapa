@@ -3,7 +3,41 @@ import Image from "next/image";
 import { motion, useScroll, useTransform } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 
+const SERVICES = [
+  {
+    key: "brand",
+    label: "Brand",
+    tagline: "Strategy, identity, and the systems that hold it together.",
+    image: "/images/service-brand.jpg",
+    alt: "Brand identity and strategy work in progress",
+  },
+  {
+    key: "digital",
+    label: "Digital",
+    tagline: "Sites and experiences built to convert, not just impress.",
+    image: "/images/service-digital.jpg",
+    alt: "Website and digital experience work in progress",
+  },
+  {
+    key: "social",
+    label: "Social",
+    tagline: "Content with a point of view, and a plan behind it.",
+    image: "/images/service-social.jpg",
+    alt: "Social media content and strategy work in progress",
+  },
+];
+
 export default function ConvergingCollage() {
+  return (
+    <>
+      <DesktopCollage />
+      <MobileFoldingCards />
+    </>
+  );
+}
+
+// ── Desktop: scroll-converge grid, unchanged from before ──────────────
+function DesktopCollage() {
   const trackRef = useRef<HTMLDivElement>(null);
   const [reducedMotion, setReducedMotion] = useState(false);
 
@@ -15,105 +49,90 @@ export default function ConvergingCollage() {
     return () => mq.removeEventListener("change", sync);
   }, []);
 
-  // The track is much taller than the visible stage. Progress is measured
-  // across the ENTIRE track height (start of track hits top of viewport,
-  // through to end of track hitting bottom of viewport) — this is what
-  // gives the animation a long, deliberate scroll distance to play out
-  // over, rather than the ~60% of one viewport-height it had before.
   const { scrollYProgress } = useScroll({
     target: trackRef,
-    offset: ["start start", "end end"],
+    offset: ["start 0.8", "end end"],
   });
 
-  const aX = useTransform(scrollYProgress, [0, 1], [-260, 0]);
-  const aY = useTransform(scrollYProgress, [0, 1], [30, 0]);
-  const aRotate = useTransform(scrollYProgress, [0, 1], [-18, -3]);
+  const aX = useTransform(scrollYProgress, [0, 1], [-200, 0]);
   const aOpacity = useTransform(scrollYProgress, (v) => Math.min(v / 0.6, 1));
-
-  const bX = useTransform(scrollYProgress, [0, 1], [260, 0]);
-  const bY = useTransform(scrollYProgress, [0, 1], [-20, 0]);
-  const bRotate = useTransform(scrollYProgress, [0, 1], [16, 2]);
+  const bY = useTransform(scrollYProgress, [0, 1], [160, 0]);
   const bOpacity = useTransform(scrollYProgress, (v) => Math.min(v / 0.6, 1));
-
-  const cY = useTransform(scrollYProgress, [0, 1], [220, 0]);
-  const cRotate = useTransform(scrollYProgress, [0, 1], [-12, 1]);
+  const cX = useTransform(scrollYProgress, [0, 1], [200, 0]);
   const cOpacity = useTransform(scrollYProgress, (v) => Math.min(v / 0.6, 1));
 
-  const Stage = (
-    <div className="relative mx-auto h-[380px] w-full max-w-4xl md:h-[520px]">
-      <motion.div
-        style={
-          reducedMotion
-            ? undefined
-            : { x: aX, y: aY, rotate: aRotate, opacity: aOpacity }
-        }
-        className={`absolute left-0 top-6 z-10 w-[58%] md:left-[4%] md:top-8 md:w-[48%] ${
-          reducedMotion ? "-rotate-3" : ""
-        }`}
-      >
-        <div className="relative aspect-[4/5] w-full">
-          <Image
-            src="/images/pexels-tony-schnagl-5586315.jpg"
-            alt="Overhead flat-lay of a laptop and hands with a photo moodboard on screen"
-            fill
-            className="object-cover"
-            sizes="(max-width: 768px) 60vw, 30vw"
-          />
-        </div>
-      </motion.div>
+  const columnMotion = [
+    { x: aX, opacity: aOpacity },
+    { y: bY, opacity: bOpacity },
+    { x: cX, opacity: cOpacity },
+  ] as const;
 
-      <motion.div
-        style={
-          reducedMotion
-            ? undefined
-            : { x: bX, y: bY, rotate: bRotate, opacity: bOpacity }
-        }
-        className={`absolute right-0 top-0 z-20 w-[48%] md:right-[6%] md:w-[40%] ${
-          reducedMotion ? "rotate-2" : ""
-        }`}
-      >
-        <div className="relative aspect-[4/5] w-full">
-          <Image
-            src="/images/pexels-rdne-10376162.jpg"
-            alt="Man reclining on a white sofa with a laptop among plants"
-            fill
-            className="object-cover"
-            sizes="(max-width: 768px) 50vw, 28vw"
-          />
-        </div>
-      </motion.div>
-
-      <motion.div
-        style={
-          reducedMotion ? undefined : { y: cY, rotate: cRotate, opacity: cOpacity }
-        }
-        className={`absolute bottom-2 left-[22%] z-30 w-[42%] md:bottom-4 md:left-[30%] md:w-[34%] ${
-          reducedMotion ? "rotate-1" : ""
-        }`}
-      >
-        <div className="relative aspect-[5/4] w-full">
-          <Image
-            src="/images/pexels-cup-of-couple-6956904.jpg"
-            alt="Man on a sofa with shopping bags, a laptop, and a phone"
-            fill
-            className="object-cover"
-            sizes="(max-width: 768px) 45vw, 25vw"
-          />
-        </div>
-      </motion.div>
+  const Grid = (
+    <div className="grid w-full gap-8 md:grid-cols-3">
+      {SERVICES.map((service, i) => (
+        <motion.div key={service.key} style={reducedMotion ? undefined : columnMotion[i]}>
+          <div className="relative aspect-[4/5] w-full overflow-hidden bg-neutral-100">
+            <Image
+              src={service.image}
+              alt={service.alt}
+              fill
+              className="object-cover"
+              sizes="33vw"
+            />
+          </div>
+          <p className="mt-4 font-serif text-xl text-black">{service.label}</p>
+          <p className="mt-1 font-mono text-sm leading-relaxed text-neutral-500">
+            {service.tagline}
+          </p>
+        </motion.div>
+      ))}
     </div>
   );
 
-  if (reducedMotion) {
-    // No scroll track needed — just the static final composition,
-    // no extra page height, no motion.
-    return Stage;
-  }
-
   return (
-    <div ref={trackRef} className="relative h-[240vh]">
-      <div className="sticky top-0 flex h-screen items-center justify-center">
-        {Stage}
+    <div className="hidden md:block">
+      {reducedMotion ? (
+        Grid
+      ) : (
+        <div ref={trackRef} className="relative h-[220vh]">
+          <div className="sticky top-0 flex h-screen w-full items-center">{Grid}</div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── Mobile: sticky folding card stack ──────────────────────────────
+function MobileFoldingCards() {
+  return (
+    <div className="relative md:hidden">
+      <p className="sticky top-4 z-20 mb-6 bg-white/95 px-1 py-2 font-mono text-xs uppercase tracking-widest text-neutral-500 backdrop-blur">
+        What that looks like
+      </p>
+      <div className="flex flex-col gap-6">
+        {SERVICES.map((service, i) => (
+          <div
+            key={service.key}
+            className="sticky top-16 overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-[0_8px_30px_rgba(0,0,0,0.08)]"
+            style={{ zIndex: i + 1 }}
+          >
+            <div className="relative aspect-[4/5] w-full overflow-hidden bg-neutral-100">
+              <Image
+                src={service.image}
+                alt={service.alt}
+                fill
+                className="object-cover"
+                sizes="100vw"
+              />
+            </div>
+            <div className="p-5">
+              <p className="font-serif text-xl text-black">{service.label}</p>
+              <p className="mt-1 font-mono text-sm leading-relaxed text-neutral-500">
+                {service.tagline}
+              </p>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );

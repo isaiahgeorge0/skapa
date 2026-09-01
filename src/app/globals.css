@@ -3,7 +3,7 @@
 :root {
   --background: #ffffff;
   --foreground: #0a0a0a;
-  /* PLACEHOLDER brand colours — confirm against deck before shipping */
+  /* PLACEHOLDER brand colours. Confirm against deck before shipping */
   --brand-pink: #d6336c;
   --brand-yellow: #f5d547;
 }
@@ -14,7 +14,7 @@
   /* PLACEHOLDER hexes pending real brand colour confirmation */
   --color-brand-pink: var(--brand-pink);
   --color-brand-yellow: var(--brand-yellow);
-  /* Public theme tokens — next/font vars set in layout.tsx */
+  /* Public theme tokens. next/font vars set in layout.tsx */
   --font-serif: var(--font-newsreader), ui-serif, Georgia, serif;
   --font-mono: var(--font-ibm-plex-mono), ui-monospace, monospace;
 }

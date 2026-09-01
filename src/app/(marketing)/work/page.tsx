@@ -24,7 +24,7 @@ export default function WorkPage() {
           <ProjectTile
             headline="Building"
             italic="forward."
-            label="Residential & small-commercial — in progress"
+            label="Residential & small-commercial, in progress"
             accent="pink"
           />
         </div>
@@ -33,7 +33,7 @@ export default function WorkPage() {
       <Reveal className="mt-16 max-w-prose md:mt-20">
         <p className="font-mono text-sm leading-relaxed text-neutral-600 md:text-base">
           More case studies landing as projects complete. Currently working in
-          residential and small-commercial building — check back soon, or get
+            residential and small-commercial building. Check back soon, or get
           in touch if you&apos;d rather start the conversation now.
         </p>
         <Link

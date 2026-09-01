@@ -32,7 +32,7 @@ export default function ContactForm() {
   if (status === 'success') {
     return (
       <p className="text-sm text-neutral-700">
-        Thanks — got your message. We'll be in touch shortly.
+        Thanks. Got your message. We'll be in touch shortly.
       </p>
     )
   }
@@ -59,7 +59,7 @@ export default function ContactForm() {
         {status === 'submitting' ? 'Sending...' : 'Send message'}
       </button>
       {status === 'error' && (
-        <p className="text-sm text-red-600">Something went wrong — try again.</p>
+        <p className="text-sm text-red-600">Something went wrong. Please try again.</p>
       )}
     </form>
   )

@@ -35,7 +35,7 @@ export default function Header() {
 
   return (
     <>
-      {/* Full header bar — visible only at the top of the page */}
+      {/* Full header bar, visible only at the top of the page */}
       <header
         className={`sticky top-0 z-50 w-full border-b border-neutral-200 bg-white transition-opacity duration-300 ease-out ${
           scrolled ? "pointer-events-none opacity-0" : "opacity-100"
@@ -63,7 +63,7 @@ export default function Header() {
         </div>
       </header>
 
-      {/* Floating logo — independent element, only visible once scrolled */}
+      {/* Floating logo, independent element, only visible once scrolled */}
       <Link
         href="/"
         onClick={() => setMenuOpen(false)}
@@ -75,7 +75,7 @@ export default function Header() {
         skapa <span className="italic text-brand-pink">Creative</span>
       </Link>
 
-      {/* Floating menu toggle — independent element, only visible once scrolled */}
+      {/* Floating menu toggle, independent element, only visible once scrolled */}
       <div
         className={`fixed right-4 top-4 z-50 md:right-6 md:top-6 transition-opacity duration-300 ease-out ${
           scrolled ? "opacity-100" : "pointer-events-none opacity-0"

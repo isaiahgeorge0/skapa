@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { IBM_Plex_Mono, Newsreader } from "next/font/google";
 import "./globals.css";
 
-// PLACEHOLDER FONTS — swap when licensed brand typefaces are available.
+// PLACEHOLDER FONTS. Swap when licensed brand typefaces are available.
 // Deck substitutes: Newsreader ≈ brand serif wordmark/display;
 // IBM Plex Mono ≈ brand mono for body, nav, and labels.
 // Exposed to CSS/Tailwind as --font-serif and --font-mono (via globals.css @theme).
@@ -22,10 +22,10 @@ const ibmPlexMono = IBM_Plex_Mono({
 export const metadata: Metadata = {
   title: {
     default: "skapa Creative",
-    template: "%s — skapa Creative",
+    template: "%s | skapa Creative",
   },
   description:
-    "A UK creative and digital agency. Brand, creative, digital and social — built to create, shape and grow brands.",
+    "A UK creative and digital agency. Brand, creative, digital and social, built to create, shape and grow brands.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

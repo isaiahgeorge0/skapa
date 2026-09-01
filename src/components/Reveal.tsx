@@ -39,7 +39,7 @@ export default function Reveal({ children, className = "" }: RevealProps) {
     const observer = new IntersectionObserver(
       ([entry]) => {
         // Toggles both ways: fades in on scroll into view,
-        // fades back out on scroll out of view — in either direction.
+        // fades back out on scroll out of view, in either direction.
         setVisible(entry.isIntersecting);
       },
       { threshold: 0.2 },

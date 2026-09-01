@@ -5,7 +5,7 @@ type ProjectTileProps = {
   headline: string;
   italic?: string;
   label: string;
-  /** Single accent per tile — pink or yellow, never both */
+  /** Single accent per tile, pink or yellow, never both */
   accent?: "pink" | "yellow";
   className?: string;
 };

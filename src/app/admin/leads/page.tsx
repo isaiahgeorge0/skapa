@@ -1,33 +1,14 @@
-import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import LeadsTable from "@/components/LeadsTable";
 
 export default async function AdminLeadsPage() {
   const supabase = await createClient();
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    redirect("/login?next=/admin/leads");
-  }
-
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("role")
-    .eq("id", user!.id)
-    .single();
-
-  if (profile?.role !== "admin") {
-    // Not an admin — send back to the portal rather than showing
-    // an empty table that could look like a broken page.
-    redirect("/portal");
-  }
-
   const { data: leads, error } = await supabase
     .from("leads")
-    .select("id, name, email, message, status, created_at")
+    .select(
+      "id, name, email, message, status, created_at, converted_client_id, source, answers",
+    )
     .order("created_at", { ascending: false });
 
   if (error) {

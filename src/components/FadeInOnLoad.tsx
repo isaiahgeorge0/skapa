@@ -15,7 +15,7 @@ type FadeInOnLoadProps = {
   className?: string;
 };
 
-// Plays once on mount — not tied to scroll position at all.
+// Plays once on mount. It is not tied to scroll position.
 // Intended for above-the-fold content (like the hero) that should
 // announce itself on page load and then simply stay visible,
 // rather than fading out again if the user scrolls past it.

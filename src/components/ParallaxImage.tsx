@@ -6,11 +6,18 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 type ParallaxImageProps = {
   children: ReactNode;
   className?: string;
+  // Optional override for the scroll-tracking range. Defaults to the
+  // original ["start end", "end start"] behavior — untouched, so any
+  // existing usage (e.g. the desktop hero) is completely unaffected
+  // unless it explicitly opts into a different range.
+  // Motion accepts extended offset strings (e.g. "end -30%"); keep prop ergonomic.
+  offset?: readonly [string, string];
 };
 
 export default function ParallaxImage({
   children,
   className = "",
+  offset = ["start end", "end start"],
 }: ParallaxImageProps) {
   const ref = useRef<HTMLDivElement>(null);
   const [reducedMotion, setReducedMotion] = useState(false);
@@ -25,10 +32,9 @@ export default function ParallaxImage({
 
   const { scrollYProgress } = useScroll({
     target: ref,
-    offset: ["start end", "end start"],
+    offset: offset as never,
   });
 
-  // Soft ~100px vertical drift while the container is in view.
   const y = useTransform(scrollYProgress, [0, 1], [-100, 100]);
 
   if (reducedMotion) {
