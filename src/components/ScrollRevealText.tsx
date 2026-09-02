@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { motion, useScroll, useTransform, type MotionValue } from "motion/react";
+import { BRAND } from "@/lib/brand";
 
 function Word({
   children,
@@ -25,7 +26,7 @@ export default function ScrollRevealText({
   text,
   accentText,
   className = "",
-  accentColor = "#D6336C",
+  accentColor = BRAND.pink,
 }: {
   text: string;
   accentText?: string;

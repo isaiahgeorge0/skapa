@@ -1,6 +1,7 @@
 "use server";
 import { headers } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
+import { generateAndStoreCertificate } from "@/lib/certificate-of-completion";
 
 type SignDocumentResult = { success: true } | { success: false; error: string };
 
@@ -83,8 +84,6 @@ export async function signDocument(
     return { success: false, error: "Something went wrong recording the signature. Try again." };
   }
 
-  // Log this as an audit event too, not just a field on the document —
-  // this is what lets the audit trail show a real history over time.
   await supabase.from("document_events").insert({
     document_id: documentId,
     event_type: "signed",
@@ -92,6 +91,11 @@ export async function signDocument(
     actor_role: "client",
     detail: `Signed by ${signatureName.trim()}`,
   });
+
+  const certificate = await generateAndStoreCertificate(documentId);
+  if (!certificate.success) {
+    console.error("Certificate generation failed:", certificate.error);
+  }
 
   return { success: true };
 }

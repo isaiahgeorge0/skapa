@@ -10,6 +10,7 @@ type Client = {
   name: string;
   email: string | null;
   company: string | null;
+  accent_color?: string | null;
   created_at: string;
 };
 
@@ -132,6 +133,7 @@ export default function ClientsTable({ initialClients }: { initialClients: Clien
                   <th className="py-3 pl-5 pr-4 font-mono text-[11px] uppercase tracking-widest text-neutral-500">Name</th>
                   <th className="py-3 pr-4 font-mono text-[11px] uppercase tracking-widest text-neutral-500">Email</th>
                   <th className="py-3 pr-4 font-mono text-[11px] uppercase tracking-widest text-neutral-500">Company</th>
+                  <th className="py-3 pr-4 font-mono text-[11px] uppercase tracking-widest text-neutral-500">Accent</th>
                   <th className="py-3 pr-5 font-mono text-[11px] uppercase tracking-widest text-neutral-500">Client since</th>
                 </tr>
               </thead>
@@ -151,6 +153,24 @@ export default function ClientsTable({ initialClients }: { initialClients: Clien
                     </td>
                     <td className="py-4 pr-4 font-sans text-sm text-neutral-600">
                       {client.company || <span className="text-neutral-300">—</span>}
+                    </td>
+                    <td className="py-4 pr-4">
+                      <Link
+                        href={`/admin/clients/${client.id}`}
+                        className="inline-flex items-center gap-2"
+                        title={client.accent_color || "Default accent"}
+                      >
+                        <span
+                          aria-hidden="true"
+                          className="inline-block h-4 w-4 rounded-full border border-neutral-200"
+                          style={{
+                            backgroundColor: client.accent_color || "#FF2791",
+                          }}
+                        />
+                        <span className="font-mono text-[11px] text-neutral-400">
+                          {client.accent_color || "Default"}
+                        </span>
+                      </Link>
                     </td>
                     <td className="whitespace-nowrap py-4 pr-5 font-mono text-xs text-neutral-500">
                       {new Date(client.created_at).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}

@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import EditableClientDetails from "@/components/EditableClientDetails";
+import ClientAccentColorEditor from "@/components/ClientAccentColorEditor";
 
 export default async function AdminClientDetailPage({
   params,
@@ -13,7 +14,7 @@ export default async function AdminClientDetailPage({
 
   const { data: client } = await supabase
     .from("clients")
-    .select("id, name, email, company, created_at")
+    .select("id, name, email, company, accent_color, created_at")
     .eq("id", id)
     .single();
 
@@ -39,6 +40,13 @@ export default async function AdminClientDetailPage({
           initialEmail={client.email}
           initialCompany={client.company}
         />
+
+        <div className="mt-6">
+          <ClientAccentColorEditor
+            clientId={client.id}
+            initialAccentColor={client.accent_color}
+          />
+        </div>
 
         <dl className="mt-6 grid grid-cols-[120px_1fr] gap-y-3 border-t border-neutral-200 pt-6 font-mono text-sm">
           <dt className="text-neutral-500">Client since</dt>

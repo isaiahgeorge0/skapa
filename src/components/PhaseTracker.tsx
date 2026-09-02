@@ -21,16 +21,21 @@ export default function PhaseTracker({
   projectId,
   initialPhase,
   readOnly = false,
+  usePortalAccent = false,
 }: {
   projectId: string;
   initialPhase: Phase;
   readOnly?: boolean;
+  /** Portal-only: use --portal-accent instead of brand pink. */
+  usePortalAccent?: boolean;
 }) {
   const [phase, setPhase] = useState<Phase>(initialPhase);
   const [saving, setSaving] = useState(false);
   const supabase = createClient();
 
   const currentIndex = PHASES.findIndex((p) => p.key === phase);
+  const accentFill = usePortalAccent ? "bg-portal-accent" : "bg-brand-pink";
+  const accentBorder = usePortalAccent ? "border-portal-accent" : "border-brand-pink";
 
   async function setProjectPhase(newPhase: Phase) {
     if (readOnly) return;
@@ -55,7 +60,7 @@ export default function PhaseTracker({
       <div className="relative flex justify-between">
         <div className="absolute left-0 right-0 top-[7px] h-px bg-neutral-200" />
         <div
-          className="absolute left-0 top-[7px] h-px bg-brand-pink transition-all duration-500 ease-out"
+          className={`absolute left-0 top-[7px] h-px transition-all duration-500 ease-out ${accentFill}`}
           style={{
             width:
               currentIndex <= 0
@@ -80,9 +85,9 @@ export default function PhaseTracker({
               <span
                 className={`h-3.5 w-3.5 rounded-full border-2 transition-colors ${
                   isComplete
-                    ? "border-brand-pink bg-brand-pink"
+                    ? `${accentBorder} ${accentFill}`
                     : isCurrent
-                      ? "border-brand-pink bg-white"
+                      ? `${accentBorder} bg-white`
                       : `border-neutral-300 bg-white ${readOnly ? "" : "group-hover:border-neutral-400"}`
                 }`}
               />
@@ -103,7 +108,7 @@ export default function PhaseTracker({
       </div>
       {!readOnly && (
         <p className="mt-6 font-mono text-[11px] text-neutral-400">
-          Click any stage to set the project's current phase.
+          Click any stage to set the project&apos;s current phase.
         </p>
       )}
     </div>

@@ -25,10 +25,14 @@ export default function MessagesPanel({
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [body, setBody] = useState("");
   const [sending, setSending] = useState(false);
-  const bottomRef = useRef<HTMLDivElement>(null);
+  const listRef = useRef<HTMLDivElement>(null);
 
+  // Scroll only within the messages list — never the page (scrollIntoView was
+  // jumping portal project pages partway down on load).
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    const list = listRef.current;
+    if (!list) return;
+    list.scrollTop = list.scrollHeight;
   }, [messages.length]);
 
   useEffect(() => {
@@ -76,7 +80,10 @@ export default function MessagesPanel({
 
   return (
     <div>
-      <div className="mb-4 max-h-96 space-y-3 overflow-y-auto rounded-xl bg-neutral-50 p-4">
+      <div
+        ref={listRef}
+        className="mb-4 max-h-96 space-y-3 overflow-y-auto rounded-xl bg-neutral-50 p-4"
+      >
         {messages.length === 0 ? (
           <p className="py-8 text-center font-mono text-xs text-neutral-400">
             No messages yet. Say hello.
@@ -86,17 +93,35 @@ export default function MessagesPanel({
             const isOwn = m.sender_role === viewerRole;
             return (
               <div key={m.id} className={`flex ${isOwn ? "justify-end" : "justify-start"}`}>
-                <div className={`max-w-[75%] rounded-2xl px-4 py-2 text-sm ${isOwn ? "bg-black text-white" : "bg-white text-black shadow-sm"}`}>
+                <div
+                  className={`max-w-[75%] rounded-2xl px-4 py-2 text-sm ${
+                    isOwn ? "bg-black text-white" : "bg-white text-black shadow-sm"
+                  }`}
+                >
                   <p className="whitespace-pre-wrap">{m.body}</p>
-                  <p className={`mt-1 font-mono text-[10px] uppercase tracking-wide ${isOwn ? "text-neutral-300" : "text-neutral-400"}`}>
-                    {m.sender_role} · {new Date(m.created_at).toLocaleString("en-GB", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}
+                  <p
+                    className={`mt-1 font-mono text-[10px] uppercase tracking-wide ${
+                      isOwn ? "text-neutral-300" : "text-neutral-400"
+                    }`}
+                  >
+                    {m.sender_role === "admin"
+                      ? "skapa"
+                      : viewerRole === "client" && isOwn
+                        ? "You"
+                        : m.sender_role}{" "}
+                    ·{" "}
+                    {new Date(m.created_at).toLocaleString("en-GB", {
+                      day: "numeric",
+                      month: "short",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
                   </p>
                 </div>
               </div>
             );
           })
         )}
-        <div ref={bottomRef} />
       </div>
 
       <form onSubmit={sendMessage} className="flex gap-2">

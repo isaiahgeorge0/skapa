@@ -5,8 +5,8 @@ type ProjectTileProps = {
   headline: string;
   italic?: string;
   label: string;
-  /** Single accent per tile, pink or yellow, never both */
-  accent?: "pink" | "yellow";
+  /** Primary fill for the tile — pink, yellow, or blue */
+  accent?: "pink" | "yellow" | "blue";
   className?: string;
 };
 
@@ -18,10 +18,15 @@ export default function ProjectTile({
   accent = "pink",
   className = "",
 }: ProjectTileProps) {
-  const bg = accent === "pink" ? "bg-brand-pink" : "bg-brand-yellow";
-  const text = accent === "pink" ? "text-white" : "text-black";
+  const bg =
+    accent === "yellow"
+      ? "bg-brand-yellow"
+      : accent === "blue"
+        ? "bg-brand-blue"
+        : "bg-brand-pink";
+  const text = accent === "yellow" ? "text-black" : "text-white";
   const labelColor =
-    accent === "pink" ? "text-white/80" : "text-black/70";
+    accent === "yellow" ? "text-black/70" : "text-white/80";
 
   const inner = (
     <div

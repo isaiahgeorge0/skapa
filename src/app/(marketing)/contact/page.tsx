@@ -27,12 +27,12 @@ export default function ContactPage() {
       </div>
 
       <div className="md:col-span-7">
-        <p className="mb-8 font-mono text-sm uppercase tracking-widest text-neutral-500">
+        <p className="mb-8 font-mono text-sm uppercase tracking-widest text-brand-blue">
           Contact
         </p>
         <h1 className="font-serif text-5xl leading-[1.05] tracking-tight md:text-6xl">
           Let&apos;s talk{" "}
-          <span className="italic text-brand-yellow">costs.</span>
+          <span className="italic text-brand-pink">costs.</span>
         </h1>
         <p className="mt-8 max-w-prose font-mono text-sm leading-relaxed text-neutral-600 md:text-base">
           Every skapa project is different, so we build packages around what you

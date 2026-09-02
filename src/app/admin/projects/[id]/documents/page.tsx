@@ -12,7 +12,7 @@ export default async function ProjectDocumentsPage({
   const { data: documents } = await supabase
     .from("documents")
     .select(
-      "id, type, file_url, status, created_at, signature_name, signed_at, signature_hash, signature_image_url, signature_method, signer_ip, signer_user_agent",
+      "id, type, file_url, file_mime_type, status, created_at, signature_name, signed_at, signature_hash, signature_image_url, signature_method, signer_ip, signer_user_agent",
     )
     .eq("project_id", id)
     .order("created_at", { ascending: false });

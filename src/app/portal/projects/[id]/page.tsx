@@ -5,7 +5,12 @@ import PhaseTracker, { type Phase } from "@/components/PhaseTracker";
 import DocumentsPanel from "@/components/DocumentsPanel";
 import MessagesPanel from "@/components/MessagesPanel";
 import TasksChecklist from "@/components/TasksChecklist";
-import Card from "@/components/Card";
+import PortalSection, { PortalSectionStack } from "@/components/PortalSection";
+import { clientProjectStatusLabel } from "@/lib/client-document-status";
+import { getClientAccentColor, portalAccentStyle } from "@/lib/portal-accent";
+import PortalAccentVars from "@/components/PortalAccentVars";
+
+export const dynamic = "force-dynamic";
 
 const PHASE_LABELS: Record<string, string> = {
   onboarding: "Onboarding",
@@ -29,13 +34,15 @@ export default async function PortalProjectDetailPage({
 
   const { data: project } = await supabase
     .from("projects")
-    .select("id, name, phase, status, service_type, target_completion_date")
+    .select(
+      "id, name, phase, status, service_type, target_completion_date, client_id",
+    )
     .eq("id", id)
     .single();
 
   if (!project) notFound();
 
-  const [{ data: documents }, { data: messages }, { data: tasks }] =
+  const [{ data: documents }, { data: messages }, { data: tasks }, projectAccent] =
     await Promise.all([
       supabase
         .from("documents")
@@ -52,96 +59,115 @@ export default async function PortalProjectDetailPage({
         .select("id, title, is_complete, phase")
         .eq("project_id", id)
         .order("created_at", { ascending: true }),
+      getClientAccentColor(project.client_id),
     ]);
 
+  const targetDate = project.target_completion_date
+    ? new Date(project.target_completion_date).toLocaleDateString("en-GB", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      })
+    : null;
+
   return (
-    <div className="mx-auto max-w-6xl px-6 py-12 md:px-10">
+    <div
+      className="mx-auto max-w-5xl px-5 py-10 sm:px-8 md:px-10 md:py-14"
+      style={portalAccentStyle(projectAccent)}
+    >
+      <PortalAccentVars accent={projectAccent} />
       <Link
         href="/portal"
-        className="mb-6 inline-block font-mono text-xs uppercase tracking-widest text-neutral-500 hover:text-black"
+        className="mb-8 inline-block font-mono text-xs text-neutral-500 transition-colors hover:text-black"
       >
         ← Overview
       </Link>
 
-      <div className="mb-8 flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <p className="mb-2 font-mono text-xs uppercase tracking-widest text-neutral-500">
-            Project
-          </p>
-          <h1 className="font-serif text-4xl text-black">{project.name}</h1>
-        </div>
-        <span className="rounded-full bg-neutral-100 px-4 py-1.5 font-mono text-[11px] uppercase tracking-[0.08em] text-neutral-600">
-          {project.status}
-        </span>
-      </div>
+      <header className="mb-16 border-b border-neutral-200 pb-8 md:mb-20 md:pb-10">
+        <h1 className="font-serif text-4xl leading-[1.05] tracking-tight text-black md:text-5xl">
+          {project.name}
+        </h1>
+        <p className="mt-3 font-serif text-xl italic text-neutral-500 md:text-2xl">
+          {PHASE_LABELS[project.phase] ?? project.phase}
+        </p>
+        <p className="mt-3 font-mono text-xs text-neutral-400">
+          {clientProjectStatusLabel(project.status)}
+          {targetDate ? (
+            <>
+              <span className="text-neutral-300"> · </span>
+              Target {targetDate}
+            </>
+          ) : null}
+        </p>
+      </header>
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_300px]">
-        <div className="space-y-6">
-          <Card title="Progress">
-            <PhaseTracker
-              projectId={project.id}
-              initialPhase={project.phase as Phase}
-              readOnly
-            />
-          </Card>
+      <PortalSectionStack>
+        <DocumentsPanel
+          projectId={project.id}
+          initialDocuments={documents ?? []}
+          canManage={false}
+        />
 
+        <PortalSection title="Where things stand">
+          <PhaseTracker
+            projectId={project.id}
+            initialPhase={project.phase as Phase}
+            readOnly
+            usePortalAccent
+          />
+        </PortalSection>
+
+        <PortalSection
+          title="This phase"
+          intro={
+            <p className="text-sm text-neutral-500">Checklist for right now.</p>
+          }
+        >
           <TasksChecklist
             projectId={project.id}
             currentPhase={project.phase}
             initialTasks={tasks ?? []}
             canManage={false}
           />
+        </PortalSection>
 
-          <DocumentsPanel
-            projectId={project.id}
-            initialDocuments={documents ?? []}
-            canManage={false}
-          />
-
-          <Card title="Messages">
+        <div className="grid gap-16 sm:gap-[4.5rem] lg:grid-cols-[1.35fr_0.65fr] lg:gap-14">
+          <PortalSection
+            title="Messages"
+            intro={
+              <p className="text-sm text-neutral-500">
+                Notes between you and skapa.
+              </p>
+            }
+          >
             <MessagesPanel
               projectId={project.id}
               currentUserId={user!.id}
               viewerRole="client"
               initialMessages={messages ?? []}
             />
-          </Card>
-        </div>
+          </PortalSection>
 
-        <div className="space-y-6">
-          <Card title="Details">
-            <dl className="space-y-4 font-mono text-sm">
+          <PortalSection title="Details" titleSize="sm">
+            <dl className="space-y-5">
               <div>
-                <dt className="text-[11px] uppercase tracking-widest text-neutral-400">
-                  Service type
-                </dt>
+                <dt className="font-mono text-[11px] text-neutral-400">Service</dt>
                 <dd className="mt-1 capitalize text-black">{project.service_type}</dd>
               </div>
               <div>
-                <dt className="text-[11px] uppercase tracking-widest text-neutral-400">
-                  Current phase
-                </dt>
+                <dt className="font-mono text-[11px] text-neutral-400">Phase</dt>
                 <dd className="mt-1 text-black">
                   {PHASE_LABELS[project.phase] ?? project.phase}
                 </dd>
               </div>
               <div>
-                <dt className="text-[11px] uppercase tracking-widest text-neutral-400">
-                  Target date
-                </dt>
-                <dd className="mt-1 text-black">
-                  {project.target_completion_date
-                    ? new Date(project.target_completion_date).toLocaleDateString(
-                        "en-GB",
-                        { day: "numeric", month: "long", year: "numeric" },
-                      )
-                    : "Not set"}
-                </dd>
+                <dt className="font-mono text-[11px] text-neutral-400">Target</dt>
+                <dd className="mt-1 text-black">{targetDate ?? "Not set"}</dd>
               </div>
             </dl>
-          </Card>
+          </PortalSection>
         </div>
-      </div>
+      </PortalSectionStack>
     </div>
   );
 }

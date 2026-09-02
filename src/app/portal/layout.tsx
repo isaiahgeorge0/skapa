@@ -2,9 +2,15 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import PortalSidebar from "@/components/PortalSidebar";
+import PortalScrollToTop from "@/components/PortalScrollToTop";
+import PortalAccentVars from "@/components/PortalAccentVars";
 import { noindexNofollow } from "@/lib/seo";
+import { getClientAccentColor, portalAccentStyle } from "@/lib/portal-accent";
 
 export const metadata: Metadata = noindexNofollow;
+
+/** Always read a fresh accent_color — never serve a stale portal shell. */
+export const dynamic = "force-dynamic";
 
 export default async function PortalLayout({
   children,
@@ -43,10 +49,17 @@ export default async function PortalLayout({
           .or(orFilter)
           .order("created_at", { ascending: false });
       })()
-    : { data: [] };
+    : { data: [] as { id: string; name: string }[] };
+
+  const accent = await getClientAccentColor(profile?.client_id);
 
   return (
-    <div className="flex min-h-screen bg-white">
+    <div
+      className="flex min-h-screen flex-col bg-white md:flex-row"
+      style={portalAccentStyle(accent)}
+    >
+      <PortalAccentVars accent={accent} />
+      <PortalScrollToTop />
       <PortalSidebar
         clientName={profile?.full_name || user!.email || "Account"}
         projects={projects ?? []}

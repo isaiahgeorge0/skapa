@@ -15,7 +15,7 @@ export default function WorkPage() {
   return (
     <div className="mx-auto max-w-6xl px-6 py-24 md:px-10 md:py-32">
       <Reveal>
-        <p className="mb-8 font-mono text-sm uppercase tracking-widest text-neutral-500">
+        <p className="mb-8 font-mono text-sm uppercase tracking-widest text-brand-blue">
           Work
         </p>
         <h1 className="max-w-3xl font-serif text-6xl leading-[0.95] tracking-tight md:text-8xl">

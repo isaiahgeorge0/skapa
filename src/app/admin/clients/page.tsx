@@ -6,7 +6,7 @@ export default async function AdminClientsPage() {
 
   const { data: clients, error } = await supabase
     .from("clients")
-    .select("id, name, email, company, created_at")
+    .select("id, name, email, company, accent_color, created_at")
     .order("created_at", { ascending: false });
 
   if (error) throw new Error(`Failed to load clients: ${error.message}`);
