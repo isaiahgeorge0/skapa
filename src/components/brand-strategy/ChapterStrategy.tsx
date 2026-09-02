@@ -263,7 +263,7 @@ function StrategyTab({
           className={`shrink-0 font-mono tracking-[0.14em] transition-[color,font-size,opacity] duration-300 ease-out ${
             selected
               ? "text-[9px] opacity-100"
-              : "text-[8px] text-neutral-300 opacity-70 group-hover:opacity-90"
+              : "text-[8px] text-neutral-500 opacity-90 group-hover:text-neutral-700"
           }`}
           style={selected ? { color: area.accent } : undefined}
         >
@@ -278,7 +278,7 @@ function StrategyTab({
                 `text-[1.15rem] leading-none ${
                   selected
                     ? "translate-x-0.5 scale-100 opacity-100"
-                    : "scale-[0.72] opacity-60 group-hover:opacity-80"
+                    : "scale-[0.78] text-neutral-600 opacity-85 group-hover:text-neutral-800 group-hover:opacity-100"
                 }`
               : "text-3xl"
           } ${!compact && selected ? "translate-x-0.5" : ""} ${
@@ -377,7 +377,7 @@ export default function ChapterStrategy() {
 
         {/* ——— Mobile: one layered composition ——— */}
         <div className="mt-12 md:hidden">
-          <p className="mb-4 font-mono text-[10px] uppercase tracking-[0.18em] text-neutral-400">
+          <p className="mb-4 font-mono text-[11px] font-medium uppercase tracking-[0.16em] text-black">
             Tap a focus to explore
           </p>
 

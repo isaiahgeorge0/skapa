@@ -117,6 +117,20 @@ export default function DocumentsPanel({
       await Promise.all(
         docs.map(async (doc) => {
           if (!["sent", "viewed", "partially_signed"].includes(doc.status)) return;
+
+          const { count: fieldCount } = await supabase
+            .from("document_fields")
+            .select("id", { count: "exact", head: true })
+            .eq("document_id", doc.id);
+
+          // Whole-document flow (no fields): single client signer, no queue.
+          if ((fieldCount ?? 0) === 0) {
+            if (profile?.role !== "admin") {
+              myTurn[doc.id] = doc.status === "sent" || doc.status === "viewed";
+            }
+            return;
+          }
+
           const result = await listDocumentSigners(doc.id);
           if (!result.success || cancelled) return;
           const active = result.data.find((signer) => signer.status === "sent");
@@ -232,16 +246,13 @@ export default function DocumentsPanel({
       .eq("id", projectId)
       .single();
 
-    const [{ data: fields }, { data: fieldRows }, signersResult] = await Promise.all([
+    const [{ data: fields }, signersResult] = await Promise.all([
       supabase.from("document_fields").select("*").eq("document_id", doc.id),
-      supabase
-        .from("document_fields")
-        .select("id")
-        .eq("document_id", doc.id),
       listDocumentSigners(doc.id),
     ]);
 
-    const fieldIds = (fieldRows ?? []).map((row) => row.id as string);
+    const fieldList = (fields ?? []) as DocumentField[];
+    const fieldIds = fieldList.map((row) => row.id);
     const { data: values } =
       fieldIds.length > 0
         ? await supabase
@@ -258,15 +269,11 @@ export default function DocumentsPanel({
       );
     }
 
-    // Field-based PDF signing experience.
-    if (
-      doc.file_mime_type === "application/pdf" &&
-      (fields?.length ?? 0) > 0 &&
-      signersResult.success
-    ) {
+    // Field-based signing when placement fields exist; otherwise whole-document flow.
+    if (fieldList.length > 0 && signersResult.success) {
       setSignSession({
         doc,
-        fields: (fields ?? []) as DocumentField[],
+        fields: fieldList,
         values: (values ?? []) as DocumentFieldValue[],
         signers: signersResult.data,
         primaryClientId: (project?.client_id as string | null) ?? null,

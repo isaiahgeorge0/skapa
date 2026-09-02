@@ -458,6 +458,45 @@ async function notifySigner(
   });
 }
 
+async function notifyProjectClientForWholeDocument(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  db: any,
+  documentId: string,
+): Promise<void> {
+  const { data: document } = await db
+    .from("documents")
+    .select("id, type, project_id, projects(name, client_id)")
+    .eq("id", documentId)
+    .single();
+
+  if (!document) return;
+
+  const projectData = document.projects as
+    | { name: string; client_id: string | null }
+    | { name: string; client_id: string | null }[]
+    | null;
+  const project = Array.isArray(projectData) ? projectData[0] : projectData;
+  if (!project?.client_id) return;
+
+  const { data: client } = await db
+    .from("clients")
+    .select("id, name, email")
+    .eq("id", project.client_id)
+    .single();
+
+  if (!client?.email) return;
+
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://skapa.uk";
+  const signUrl = `${siteUrl}/portal/projects/${document.project_id}?document=${documentId}`;
+
+  await sendDocumentReadyToSignEmail({
+    to: client.email,
+    documentName: String(document.type),
+    projectName: project.name ?? "your project",
+    signUrl,
+  });
+}
+
 export async function sendDocumentForSigning(
   documentId: string,
 ): Promise<ActionResult<{ status: string }>> {
@@ -473,7 +512,48 @@ export async function sendDocumentForSigning(
     return { success: false, error: "Failed to load document fields." };
   }
 
-  const unassignedRequired = (fields ?? []).filter(
+  const fieldList = fields ?? [];
+
+  // Whole-document signing: DOCX, or PDF sent without field placement.
+  // No document_signers queue — client signs via DocumentPreview / signDocument.
+  if (fieldList.length === 0) {
+    const { data: document, error: docError } = await supabase
+      .from("documents")
+      .select("id, status")
+      .eq("id", documentId)
+      .single();
+
+    if (docError || !document) {
+      return { success: false, error: "Document not found." };
+    }
+
+    if (document.status === "signed") {
+      return { success: false, error: "This document has already been signed." };
+    }
+
+    const { error: updateError } = await supabase
+      .from("documents")
+      .update({ status: "sent" })
+      .eq("id", documentId);
+
+    if (updateError) {
+      return { success: false, error: "Failed to update document status." };
+    }
+
+    await notifyProjectClientForWholeDocument(supabase, documentId);
+
+    await supabase.from("document_events").insert({
+      document_id: documentId,
+      event_type: "sent",
+      actor_id: user.id,
+      actor_role: "admin",
+      detail: "Sent for whole-document signing",
+    });
+
+    return { success: true, data: { status: "sent" } };
+  }
+
+  const unassignedRequired = fieldList.filter(
     (field) => field.required && !field.assigned_to_role,
   );
 

@@ -46,7 +46,7 @@ export default async function PortalProjectDetailPage({
     await Promise.all([
       supabase
         .from("documents")
-        .select("id, type, file_url, status, created_at")
+        .select("id, type, file_url, file_mime_type, status, created_at")
         .eq("project_id", id)
         .order("created_at", { ascending: false }),
       supabase
