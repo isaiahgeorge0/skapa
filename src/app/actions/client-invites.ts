@@ -3,6 +3,7 @@ import { randomBytes } from "crypto";
 import { Resend } from "resend";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { EMAIL_FROM } from "@/lib/email";
 
 type ActionResult = { success: true } | { success: false; error: string };
 
@@ -50,7 +51,7 @@ export async function sendClientInvite(
   try {
     const resend = getResend();
     await resend.emails.send({
-      from: "skapa Creative <onboarding@resend.dev>",
+      from: EMAIL_FROM,
       to: email.trim(),
       subject: `You've been invited to your skapa client portal`,
       html: `
