@@ -8,6 +8,8 @@ export async function signDocument(
   documentId: string,
   signatureName: string,
   fileHash: string,
+  signatureImagePath: string,
+  signatureMethod: "typed" | "drawn",
 ): Promise<SignDocumentResult> {
   const supabase = await createClient();
 
@@ -23,6 +25,14 @@ export async function signDocument(
     return { success: false, error: "Type your full name to sign." };
   }
 
+  if (signatureMethod !== "typed" && signatureMethod !== "drawn") {
+    return { success: false, error: "Invalid signature method." };
+  }
+
+  if (!signatureImagePath.trim()) {
+    return { success: false, error: "Signature image is required." };
+  }
+
   const headersList = await headers();
   const ip =
     headersList.get("x-forwarded-for")?.split(",")[0]?.trim() ||
@@ -32,7 +42,7 @@ export async function signDocument(
 
   const { data: doc, error: fetchError } = await supabase
     .from("documents")
-    .select("id, status")
+    .select("id, status, project_id")
     .eq("id", documentId)
     .single();
 
@@ -44,6 +54,15 @@ export async function signDocument(
     return { success: false, error: "This document has already been signed." };
   }
 
+  const signaturesPrefix = `${doc.project_id}/signatures/`;
+  if (
+    !signatureImagePath.startsWith(signaturesPrefix) ||
+    !signatureImagePath.includes(documentId) ||
+    !signatureImagePath.endsWith(".png")
+  ) {
+    return { success: false, error: "Invalid signature image path." };
+  }
+
   const { error: updateError } = await supabase
     .from("documents")
     .update({
@@ -52,6 +71,8 @@ export async function signDocument(
       signed_by: user.id,
       signed_at: new Date().toISOString(),
       signature_hash: fileHash,
+      signature_image_url: signatureImagePath,
+      signature_method: signatureMethod,
       signer_ip: ip,
       signer_user_agent: userAgent,
     })

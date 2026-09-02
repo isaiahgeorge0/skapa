@@ -1,7 +1,7 @@
 "use client";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
-import SignDocumentPanel from "@/components/SignDocumentPanel";
+import DocumentPreview from "@/components/DocumentPreview";
 import DocumentAuditTrail from "@/components/DocumentAuditTrail";
 import Card from "@/components/Card";
 import Modal from "@/components/Modal";
@@ -18,6 +18,8 @@ type Doc = {
   signature_name?: string | null;
   signed_at?: string | null;
   signature_hash?: string | null;
+  signature_image_url?: string | null;
+  signature_method?: string | null;
   signer_ip?: string | null;
   signer_user_agent?: string | null;
 };
@@ -48,6 +50,8 @@ export default function DocumentsPanel({
   const [updatingId, setUpdatingId] = useState<string | null>(null);
   const [expandedAuditId, setExpandedAuditId] = useState<string | null>(null);
   const [expandedActivityId, setExpandedActivityId] = useState<string | null>(null);
+  const [previewDoc, setPreviewDoc] = useState<Doc | null>(null);
+  const [signatureImageUrls, setSignatureImageUrls] = useState<Record<string, string>>({});
   const [error, setError] = useState<string | null>(null);
 
   async function logEvent(
@@ -113,6 +117,10 @@ export default function DocumentsPanel({
       return;
     }
 
+    window.open(data.signedUrl, "_blank");
+  }
+
+  async function openPreview(doc: Doc) {
     if (!canManage && doc.status === "sent") {
       await supabase.from("documents").update({ status: "viewed" }).eq("id", doc.id);
       await logEvent(doc.id, "viewed");
@@ -120,9 +128,23 @@ export default function DocumentsPanel({
         curr.map((d) => (d.id === doc.id ? { ...d, status: "viewed" as DocStatus } : d)),
       );
     }
-
-    window.open(data.signedUrl, "_blank");
+    setPreviewDoc(doc);
   }
+
+  useEffect(() => {
+    if (!expandedAuditId) return;
+    const doc = docs.find((d) => d.id === expandedAuditId);
+    if (!doc?.signature_image_url || signatureImageUrls[doc.id]) return;
+
+    supabase.storage
+      .from("documents")
+      .createSignedUrl(doc.signature_image_url, 3600)
+      .then(({ data }) => {
+        if (data?.signedUrl) {
+          setSignatureImageUrls((prev) => ({ ...prev, [doc.id]: data.signedUrl }));
+        }
+      });
+  }, [expandedAuditId, docs, signatureImageUrls, supabase]);
 
   async function updateStatus(id: string, status: DocStatus) {
     const previous = docs;
@@ -190,25 +212,23 @@ export default function DocumentsPanel({
                       {doc.status}
                     </span>
                   )}
-                  <button
-                    onClick={() => downloadDoc(doc)}
-                    className="font-mono text-[11px] uppercase tracking-[0.08em] text-neutral-600 underline decoration-dotted hover:text-black"
-                  >
-                    Download
-                  </button>
+                  {canManage || doc.status === "signed" ? (
+                    <button
+                      onClick={() => downloadDoc(doc)}
+                      className="font-mono text-[11px] uppercase tracking-[0.08em] text-neutral-600 underline decoration-dotted hover:text-black"
+                    >
+                      Download
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => openPreview(doc)}
+                      className="bg-black px-4 py-2 font-mono text-[11px] uppercase tracking-[0.14em] text-white transition-opacity hover:opacity-80"
+                    >
+                      Review &amp; sign
+                    </button>
+                  )}
                 </div>
               </div>
-
-              {!canManage && (doc.status === "sent" || doc.status === "viewed") && (
-                <SignDocumentPanel
-                  doc={doc}
-                  onSigned={() =>
-                    setDocs((curr) =>
-                      curr.map((d) => (d.id === doc.id ? { ...d, status: "signed" as DocStatus } : d)),
-                    )
-                  }
-                />
-              )}
 
               <div className="mt-2 flex gap-4">
                 {canManage && doc.status === "signed" && (
@@ -231,6 +251,25 @@ export default function DocumentsPanel({
                 <dl className="mt-3 grid grid-cols-[100px_1fr] gap-y-2 rounded-lg bg-neutral-50 p-4 font-mono text-xs">
                   <dt className="text-neutral-400">Signed by</dt>
                   <dd className="text-black">{doc.signature_name}</dd>
+                  {doc.signature_method && (
+                    <>
+                      <dt className="text-neutral-400">Method</dt>
+                      <dd className="capitalize text-black">{doc.signature_method}</dd>
+                    </>
+                  )}
+                  {doc.signature_image_url && signatureImageUrls[doc.id] && (
+                    <>
+                      <dt className="text-neutral-400">Signature</dt>
+                      <dd>
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={signatureImageUrls[doc.id]}
+                          alt={`Signature of ${doc.signature_name ?? "signer"}`}
+                          className="max-h-20 border border-neutral-200 bg-white p-2"
+                        />
+                      </dd>
+                    </>
+                  )}
                   <dt className="text-neutral-400">Signed at</dt>
                   <dd className="text-black">
                     {doc.signed_at && new Date(doc.signed_at).toLocaleString("en-GB", { dateStyle: "medium", timeStyle: "short" })}
@@ -283,6 +322,21 @@ export default function DocumentsPanel({
             {error && <p className="font-mono text-xs text-red-600">{error}</p>}
           </div>
         </Modal>
+      )}
+
+      {previewDoc && (
+        <DocumentPreview
+          doc={previewDoc}
+          projectId={projectId}
+          onClose={() => setPreviewDoc(null)}
+          onSigned={() =>
+            setDocs((curr) =>
+              curr.map((d) =>
+                d.id === previewDoc.id ? { ...d, status: "signed" as DocStatus } : d,
+              ),
+            )
+          }
+        />
       )}
     </Card>
   );
