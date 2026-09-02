@@ -33,7 +33,7 @@ export default function ChapterStart() {
       ref={ref}
       onPointerMove={onPointerMove}
       onPointerLeave={onPointerLeave}
-      className="scroll-mt-16 lg:scroll-mt-0"
+      className="scroll-mt-chapter lg:scroll-mt-0"
       style={
         {
           "--mx": "0px",

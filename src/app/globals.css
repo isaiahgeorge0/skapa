@@ -9,6 +9,13 @@
   --brand-blue: #4b4ae4;
   --brand-cream: #efeeea;
   /*
+   * Persistent marketing chrome band (sticky header + floating logo/menu).
+   * Chapter indicators and scroll-margin must clear this, not share it.
+   */
+  --skapa-site-chrome-height: 5rem;
+  /* Compact mobile chapter pill clearance under the chrome band */
+  --skapa-chapter-pill-clearance: 3.25rem;
+  /*
    * Default portal accent. Overridden on <html> at runtime for each client.
    * Keep as a literal (not var(--brand-pink)) so --color-portal-accent does not
    * get eagerly resolved and inherited as a baked-in pink.
@@ -44,6 +51,13 @@
 }
 @utility border-portal-accent {
   border-color: var(--portal-accent);
+}
+
+/* Brand strategy: land below site chrome + mobile chapter pill */
+@utility scroll-mt-chapter {
+  scroll-margin-top: calc(
+    var(--skapa-site-chrome-height) + var(--skapa-chapter-pill-clearance)
+  );
 }
 
 body {

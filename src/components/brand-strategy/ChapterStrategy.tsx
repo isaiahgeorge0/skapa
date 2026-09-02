@@ -356,7 +356,7 @@ export default function ChapterStrategy() {
   return (
     <section
       id="build-the-strategy"
-      className="relative scroll-mt-16 border-t border-black/5 bg-bs-offwhite lg:scroll-mt-0"
+      className="relative scroll-mt-chapter lg:scroll-mt-0 border-t border-black/5 bg-bs-offwhite"
     >
       <div
         aria-hidden="true"

@@ -309,7 +309,7 @@ export default function ChapterUseful() {
   return (
     <section
       id="make-it-useful"
-      className="scroll-mt-16 border-t border-black/5 bg-bs-offwhite lg:scroll-mt-0"
+      className="scroll-mt-chapter lg:scroll-mt-0 border-t border-black/5 bg-bs-offwhite"
     >
       <div className="mx-auto max-w-6xl px-6 py-20 md:px-10 md:py-28 lg:pr-24">
         <p className="mb-5 font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-500">
@@ -362,7 +362,11 @@ export default function ChapterUseful() {
           </div>
         ) : (
           <div ref={deckRef} className="mt-20 md:mt-24">
-            <div className="relative h-[200vh] md:h-[190vh]">
+            {/*
+              Mobile track is longer so each card gets more physical scroll
+              presence; desktop pacing stays as-is.
+            */}
+            <div className="relative h-[265vh] md:h-[190vh]">
               <div className="sticky top-[10vh] md:top-[12vh]">
                 <FlipDeck progress={scrollYProgress} />
               </div>
@@ -370,12 +374,16 @@ export default function ChapterUseful() {
           </div>
         )}
 
-        <p className="mt-10 max-w-xl font-mono text-sm leading-relaxed text-neutral-500">
+        {/*
+          Layout spacing after the sticky interaction releases — not an
+          extension of the scroll track (avoids empty sticky dead space).
+        */}
+        <p className="mt-24 max-w-xl font-mono text-sm leading-relaxed text-neutral-500 md:mt-10">
           Deliverables vary depending on the scope and needs of each project.
         </p>
 
         {/* Intentional hard mask into off-white, not soft asset fade */}
-        <div className="relative mt-16 h-44 overflow-hidden md:mt-20 md:h-56">
+        <div className="relative mt-20 h-44 overflow-hidden md:mt-20 md:h-56">
           <Image
             src="/images/brand-strategy-architectural-light.avif"
             alt=""

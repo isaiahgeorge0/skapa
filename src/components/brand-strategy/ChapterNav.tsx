@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CHAPTERS, type ChapterId } from "./chapters";
 import { useReducedMotion } from "./useReducedMotion";
 
@@ -9,6 +9,7 @@ export default function ChapterNav() {
   const [activeId, setActiveId] = useState<ChapterId>(CHAPTERS[0].id);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [hovered, setHovered] = useState(false);
+  const mobileRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const elements = CHAPTERS.map((chapter) =>
@@ -41,8 +42,21 @@ export default function ChapterNav() {
     const onKey = (event: KeyboardEvent) => {
       if (event.key === "Escape") setDrawerOpen(false);
     };
+    const onPointer = (event: MouseEvent | TouchEvent) => {
+      const root = mobileRef.current;
+      if (!root) return;
+      if (event.target instanceof Node && !root.contains(event.target)) {
+        setDrawerOpen(false);
+      }
+    };
     window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
+    window.addEventListener("mousedown", onPointer);
+    window.addEventListener("touchstart", onPointer);
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      window.removeEventListener("mousedown", onPointer);
+      window.removeEventListener("touchstart", onPointer);
+    };
   }, [drawerOpen]);
 
   const activeIndex = CHAPTERS.findIndex((chapter) => chapter.id === activeId);
@@ -123,9 +137,7 @@ export default function ChapterNav() {
                       style={
                         isActive || hovered
                           ? {
-                              color: isActive
-                                ? chapter.accent
-                                : undefined,
+                              color: isActive ? chapter.accent : undefined,
                             }
                           : undefined
                       }
@@ -156,68 +168,86 @@ export default function ChapterNav() {
         </div>
       </nav>
 
-      <div className="sticky top-0 z-40 border-b border-black/10 bg-bs-offwhite/95 backdrop-blur lg:hidden">
-        <button
-          type="button"
-          aria-expanded={drawerOpen}
-          aria-controls="chapter-drawer"
-          onClick={() => setDrawerOpen((open) => !open)}
-          className="flex w-full items-center justify-between gap-3 px-6 py-3 text-left outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-black"
-        >
-          <span
-            className="font-mono text-[10px] tracking-[0.16em]"
-            style={{ color: active.accent }}
+      {/*
+        Mobile/tablet — compact centred pill under site chrome.
+        Fixed (not full-width sticky) so it stays secondary to nav + hero.
+      */}
+      <div
+        ref={mobileRef}
+        className="pointer-events-none fixed inset-x-0 z-40 flex justify-center px-4 lg:hidden"
+        style={{
+          top: "calc(var(--skapa-site-chrome-height) + 0.5rem)",
+        }}
+      >
+        <div className="pointer-events-auto relative">
+          <button
+            type="button"
+            aria-expanded={drawerOpen}
+            aria-controls="chapter-drawer"
+            aria-label={`Chapter ${active.number} of ${CHAPTERS.length}: ${active.label}`}
+            onClick={() => setDrawerOpen((open) => !open)}
+            className="inline-flex max-w-[min(18.5rem,calc(100vw-5.5rem))] items-center gap-2 rounded-full border border-black/10 bg-bs-offwhite/95 py-2 pr-3 pl-3.5 shadow-sm backdrop-blur outline-none focus-visible:ring-2 focus-visible:ring-black"
           >
-            {active.number} / 06
-          </span>
-          <span className="min-w-0 flex-1 truncate font-mono text-[10px] uppercase tracking-[0.14em] text-black">
-            {active.label}
-          </span>
-          <span
-            aria-hidden="true"
-            className={`font-mono text-xs text-neutral-500 transition-transform duration-300 ${
-              drawerOpen ? "rotate-180" : ""
-            }`}
-          >
-            ↓
-          </span>
-        </button>
+            <span
+              className="font-mono text-[10px] tracking-[0.16em]"
+              style={{ color: active.accent }}
+            >
+              {active.number}
+            </span>
+            <span aria-hidden="true" className="font-mono text-[10px] text-black/25">
+              /
+            </span>
+            <span className="min-w-0 truncate font-mono text-[10px] uppercase tracking-[0.14em] text-black">
+              {active.short}
+            </span>
+            <span
+              aria-hidden="true"
+              className={`ml-0.5 font-mono text-[10px] text-neutral-500 transition-transform duration-300 ${
+                drawerOpen ? "rotate-180" : ""
+              }`}
+            >
+              ↓
+            </span>
+          </button>
 
-        <div
-          id="chapter-drawer"
-          hidden={!drawerOpen}
-          className="border-t border-black/10 bg-bs-offwhite"
-        >
-          <ol className="px-2 py-2">
-            {CHAPTERS.map((chapter) => {
-              const isActive = chapter.id === activeId;
-              return (
-                <li key={chapter.id}>
-                  <a
-                    href={`#${chapter.id}`}
-                    onClick={(event) => {
-                      event.preventDefault();
-                      goTo(chapter.id);
-                    }}
-                    className={`flex items-center gap-4 px-4 py-3 outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-black ${
-                      isActive ? "bg-white" : ""
-                    }`}
-                    aria-current={isActive ? "true" : undefined}
-                  >
-                    <span
-                      className="font-mono text-[10px] tracking-[0.16em]"
-                      style={{ color: isActive ? chapter.accent : "#737373" }}
+          <div
+            id="chapter-drawer"
+            hidden={!drawerOpen}
+            className="absolute top-full left-1/2 z-50 mt-2 w-[min(16.5rem,calc(100vw-2rem))] -translate-x-1/2 overflow-hidden rounded-xl border border-black/10 bg-bs-offwhite shadow-lg"
+          >
+            <ol className="py-1.5">
+              {CHAPTERS.map((chapter) => {
+                const isActive = chapter.id === activeId;
+                return (
+                  <li key={chapter.id}>
+                    <a
+                      href={`#${chapter.id}`}
+                      onClick={(event) => {
+                        event.preventDefault();
+                        goTo(chapter.id);
+                      }}
+                      className={`flex items-center gap-3 px-3.5 py-2.5 outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-black ${
+                        isActive ? "bg-white" : ""
+                      }`}
+                      aria-current={isActive ? "true" : undefined}
                     >
-                      {chapter.number}
-                    </span>
-                    <span className="font-mono text-xs uppercase tracking-[0.12em] text-black">
-                      {chapter.label}
-                    </span>
-                  </a>
-                </li>
-              );
-            })}
-          </ol>
+                      <span
+                        className="w-5 font-mono text-[10px] tracking-[0.16em]"
+                        style={{
+                          color: isActive ? chapter.accent : "#737373",
+                        }}
+                      >
+                        {chapter.number}
+                      </span>
+                      <span className="font-mono text-[11px] uppercase tracking-[0.12em] text-black">
+                        {chapter.label}
+                      </span>
+                    </a>
+                  </li>
+                );
+              })}
+            </ol>
+          </div>
         </div>
       </div>
     </>

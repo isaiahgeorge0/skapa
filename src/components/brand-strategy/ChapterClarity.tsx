@@ -66,7 +66,7 @@ function StageCopy({
     <motion.div
       style={y ? { opacity, y } : { opacity }}
       aria-hidden={hidden}
-      className={`absolute inset-0 flex flex-col justify-center ${
+      className={`absolute inset-0 flex flex-col ${
         interactive ? "" : "pointer-events-none"
       } ${hidden ? "invisible" : ""} ${className}`}
     >
@@ -77,19 +77,37 @@ function StageCopy({
 
 function HeroCopy() {
   return (
-    <div className="max-w-3xl">
-      <p className="mb-5 font-mono text-[11px] uppercase tracking-[0.2em] text-bs-pink">
+    <div className="w-full max-w-3xl">
+      <p className="mb-4 font-mono text-[11px] uppercase tracking-[0.2em] text-bs-pink md:mb-5">
         Brand Strategy · 01
       </p>
-      <h1 className="font-serif text-4xl leading-[1.05] tracking-tight text-bs-offwhite sm:text-5xl md:text-6xl lg:text-[4.1rem]">
-        Before your brand looks different,
-        <br className="hidden sm:block" /> it needs a reason to be different.
+
+      {/*
+        Mobile: composed line breaks, no max-width wrap fighting the breaks.
+        Desktop: existing two-line editorial set.
+      */}
+      <h1 className="font-serif tracking-tight text-bs-offwhite">
+        <span className="block text-[2.4rem] leading-[1.08] sm:text-[2.75rem] md:hidden">
+          Before your brand
+          <br />
+          looks different,
+          <br />
+          it needs a reason
+          <br />
+          to be different.
+        </span>
+        <span className="hidden text-4xl leading-[1.05] md:block md:text-6xl lg:text-[4.1rem]">
+          Before your brand looks different,
+          <br /> it needs a reason to be different.
+        </span>
       </h1>
-      <p className="mt-6 max-w-xl font-mono text-sm leading-relaxed text-bs-offwhite/80 md:text-base">
+
+      <p className="mt-7 max-w-[36ch] font-mono text-sm leading-relaxed text-bs-offwhite/80 md:mt-6 md:max-w-xl md:text-base">
         We uncover what makes your business worth choosing, then turn it into a
         clear position, personality and message your brand can build from.
       </p>
-      <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-6">
+
+      <div className="mt-8 flex flex-col items-start gap-5 sm:flex-row sm:items-center sm:gap-6">
         <BrandStrategyButton href="/start" variant="on-colour">
           Start a project
         </BrandStrategyButton>
@@ -107,6 +125,27 @@ function HeroCopy() {
         </a>
       </div>
     </div>
+  );
+}
+
+function HeroColourFields() {
+  return (
+    <>
+      <div className="absolute inset-0 bg-bs-purple" />
+      {/*
+        Mobile: short top-edge blade — colour as a frame above the type,
+        not a column the headline has to dodge.
+        Desktop: original asymmetric field.
+      */}
+      <div
+        className="absolute top-0 right-0 h-[min(5.5rem,12%)] w-[42%] bg-bs-pink md:hidden"
+        aria-hidden="true"
+      />
+      <div
+        className="absolute top-0 right-0 hidden h-[48%] w-[30%] bg-bs-pink md:block md:h-[52%]"
+        aria-hidden="true"
+      />
+    </>
   );
 }
 
@@ -281,17 +320,19 @@ export default function ChapterClarity() {
     return (
       <section
         id="find-the-clarity"
-        className="relative scroll-mt-16 lg:scroll-mt-0"
+        className="relative scroll-mt-chapter lg:scroll-mt-0"
       >
         <div className="relative overflow-hidden bg-bs-purple">
           <div
-            className="absolute top-0 right-0 h-[48%] w-[30%] bg-bs-pink"
+            className="absolute top-0 right-0 h-[min(5.5rem,12%)] w-[42%] bg-bs-pink md:hidden"
             aria-hidden="true"
           />
-          <div className="relative z-10 mx-auto max-w-6xl px-6 py-10 md:px-10 md:py-12 lg:pr-24">
-            <div className="pt-2 md:pt-4">
-              <HeroCopy />
-            </div>
+          <div
+            className="absolute top-0 right-0 hidden h-[48%] w-[30%] bg-bs-pink md:block"
+            aria-hidden="true"
+          />
+          <div className="relative z-10 mx-auto max-w-6xl px-8 pt-10 pb-14 sm:px-10 md:px-12 md:py-12 md:pt-12 lg:px-14 lg:pr-24">
+            <HeroCopy />
           </div>
         </div>
 
@@ -310,7 +351,7 @@ export default function ChapterClarity() {
   return (
     <section
       id="find-the-clarity"
-      className="relative scroll-mt-16 lg:scroll-mt-0"
+      className="relative scroll-mt-chapter lg:scroll-mt-0"
     >
       <div ref={trackRef} className="relative h-[240vh] md:h-[250vh]">
         <div className="sticky top-0 h-[100svh] overflow-hidden bg-bs-offwhite">
@@ -318,23 +359,23 @@ export default function ChapterClarity() {
             Question sequence lives UNDER the hero curtain.
             As the purple/pink field slides away, it uncovers this stage.
           */}
-          <div className="relative z-10 mx-auto h-full max-w-6xl px-6 md:px-10 lg:pr-24">
-            <StageCopy opacity={q1Opacity} y={q1Y} className="py-10 md:py-12">
+          <div className="relative z-10 mx-auto h-full max-w-6xl">
+            <StageCopy opacity={q1Opacity} y={q1Y} className="justify-center px-6 py-10 md:px-10 md:py-12 lg:pr-24">
               <QuestionOne ruleScale={q1RuleScale} />
             </StageCopy>
 
-            <StageCopy opacity={q2Opacity} y={q2Y} className="py-10 md:py-12">
+            <StageCopy opacity={q2Opacity} y={q2Y} className="justify-center px-6 py-10 md:px-10 md:py-12 lg:pr-24">
               <QuestionTwo />
             </StageCopy>
 
-            <StageCopy opacity={q3Opacity} y={q3Y} className="py-10 md:py-12">
+            <StageCopy opacity={q3Opacity} y={q3Y} className="justify-center px-6 py-10 md:px-10 md:py-12 lg:pr-24">
               <QuestionThree />
             </StageCopy>
 
             <StageCopy
               opacity={resolveOpacity}
               y={resolveY}
-              className="py-10 md:py-12"
+              className="justify-center px-6 py-10 md:px-10 md:py-12 lg:pr-24"
             >
               <ResolveCopy />
             </StageCopy>
@@ -346,20 +387,20 @@ export default function ChapterClarity() {
             className="absolute inset-0 z-20 will-change-transform"
             aria-hidden="true"
           >
-            <div className="absolute inset-0 bg-bs-purple" />
-            <div className="absolute top-0 right-0 h-[48%] w-[30%] bg-bs-pink md:h-[52%]" />
+            <HeroColourFields />
           </motion.div>
 
           {/*
             Hero foreground — held fully visible at load, then leaves faster
             than the curtain so the parallax handoff can begin.
+            Mobile: copy sits in the lower field so pink can own the top edge.
           */}
           <div className="pointer-events-none absolute inset-0 z-30">
-            <div className="pointer-events-auto mx-auto h-full max-w-6xl px-6 md:px-10 lg:pr-24">
+            <div className="pointer-events-auto mx-auto h-full max-w-6xl">
               <StageCopy
                 opacity={heroCopyOpacity}
                 y={heroCopyY}
-                className="py-10 md:py-12"
+                className="justify-start px-8 pt-[max(7.75rem,calc(var(--skapa-site-chrome-height)+var(--skapa-chapter-pill-clearance)+0.75rem))] pb-12 sm:px-10 md:justify-center md:px-12 md:py-12 md:pt-12 lg:px-14 lg:pr-24"
               >
                 <HeroCopy />
               </StageCopy>
