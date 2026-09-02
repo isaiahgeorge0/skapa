@@ -8,6 +8,7 @@ const TABS = [
   { key: "documents", label: "Documents" },
   { key: "messages", label: "Messages" },
   { key: "notes", label: "Notes" },
+  { key: "access", label: "Access" },
 ];
 
 export default function ProjectTabs({ projectId }: { projectId: string }) {

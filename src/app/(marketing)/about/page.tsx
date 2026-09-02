@@ -1,9 +1,13 @@
 import type { Metadata } from "next";
 import Image from "next/image";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "About",
-};
+  description:
+    "Skapa is an Ipswich creative and digital agency helping businesses across Suffolk and the UK build brands, websites and marketing that work.",
+  path: "/about",
+});
 
 export default function AboutPage() {
   return (

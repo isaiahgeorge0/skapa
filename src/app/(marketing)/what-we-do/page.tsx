@@ -1,8 +1,12 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "What We Do",
-};
+  description:
+    "Brand strategy, creative, bespoke web design and development, and social media for businesses in Ipswich, Suffolk and across the UK.",
+  path: "/what-we-do",
+});
 
 const pillars = [
   {

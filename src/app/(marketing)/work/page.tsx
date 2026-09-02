@@ -2,10 +2,14 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import ProjectTile from "@/components/ProjectTile";
 import Reveal from "@/components/Reveal";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Work",
-};
+  description:
+    "Selected work and projects from skapa Creative, an Ipswich-based brand and digital agency serving clients across Suffolk and the UK.",
+  path: "/work",
+});
 
 export default function WorkPage() {
   return (

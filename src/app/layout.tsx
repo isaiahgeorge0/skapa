@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { IBM_Plex_Mono, Newsreader } from "next/font/google";
+import JsonLd from "@/components/JsonLd";
+import { SITE_NAME, SITE_URL, defaultDescription } from "@/lib/seo";
 import "./globals.css";
 
 // PLACEHOLDER FONTS. Swap when licensed brand typefaces are available.
@@ -20,12 +22,20 @@ const ibmPlexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: {
-    default: "skapa Creative",
-    template: "%s | skapa Creative",
+    default: SITE_NAME,
+    template: `%s | ${SITE_NAME}`,
   },
-  description:
-    "A UK creative and digital agency. Brand, creative, digital and social, built to create, shape and grow brands.",
+  description: defaultDescription,
+  openGraph: {
+    siteName: SITE_NAME,
+    locale: "en_GB",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
@@ -35,6 +45,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${newsreader.variable} ${ibmPlexMono.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col bg-white text-black font-mono">
+        <JsonLd />
         {children}
       </body>
     </html>

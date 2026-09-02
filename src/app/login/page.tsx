@@ -1,4 +1,11 @@
-import { login } from './actions'
+import type { Metadata } from "next";
+import { login } from "./actions";
+import { noindexNofollow } from "@/lib/seo";
+
+export const metadata: Metadata = {
+  title: "Sign in",
+  ...noindexNofollow,
+};
 
 export default async function LoginPage({
   searchParams,

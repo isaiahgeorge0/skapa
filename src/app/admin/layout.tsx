@@ -1,6 +1,10 @@
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import AdminSidebar from "@/components/AdminSidebar";
+import { noindexNofollow } from "@/lib/seo";
+
+export const metadata: Metadata = noindexNofollow;
 
 export default async function AdminLayout({
   children,

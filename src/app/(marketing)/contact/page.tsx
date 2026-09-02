@@ -1,10 +1,14 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import ContactForm from "@/components/ContactForm";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Contact",
-};
+  description:
+    "Get in touch with skapa Creative in Ipswich for branding, web design and digital projects across Suffolk and the UK.",
+  path: "/contact",
+});
 
 export default function ContactPage() {
   return (

@@ -1,6 +1,10 @@
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import PortalSidebar from "@/components/PortalSidebar";
+import { noindexNofollow } from "@/lib/seo";
+
+export const metadata: Metadata = noindexNofollow;
 
 export default async function PortalLayout({
   children,
