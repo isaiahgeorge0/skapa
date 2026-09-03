@@ -3,8 +3,8 @@ import type { Metadata } from "next";
 export const SITE_URL = "https://skapa.uk";
 export const SITE_NAME = "skapa Creative";
 
-/** Set to a public path (e.g. "/og.jpg") when a branded OG image is available. Recommended: 1200×630px. */
-export const OG_IMAGE_PATH: string | null = null;
+/** Public path for branded OG / Twitter share image. 1200×630px. */
+export const OG_IMAGE_PATH: string | null = "/og.jpg";
 
 export const defaultDescription =
   "Ipswich-based creative and digital agency working with businesses across Suffolk and the UK. Branding, bespoke web design, creative and social, all under one roof.";

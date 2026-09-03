@@ -155,10 +155,14 @@ export default function ChapterIdea() {
             <SketchField progress={scrollYProgress} />
           </motion.div>
 
-          <div className="relative z-10 mx-auto h-full max-w-6xl px-6 md:px-10 lg:pr-24">
+          {/*
+            Sketch stays full-bleed. Editorial stages carry their own horizontal
+            inset: absolute layers ignore parent padding (same as Strategy hero).
+          */}
+          <div className="relative z-10 mx-auto h-full max-w-6xl md:px-10 lg:pr-24">
             <Stage
               opacity={titleOpacity}
-              className={`justify-start pb-20 ${MOBILE_STAGE_TOP} md:justify-center md:pt-0 md:py-12`}
+              className={`justify-start px-8 pb-20 ${MOBILE_STAGE_TOP} sm:px-10 md:justify-center md:px-0 md:pt-0 md:py-12`}
             >
               <motion.div style={{ y: titleY }} className="max-w-3xl">
                 <p className="mb-4 font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-500 md:mb-5">
@@ -179,7 +183,7 @@ export default function ChapterIdea() {
 
             <Stage
               opacity={revealOpacity}
-              className={`justify-start pb-20 ${MOBILE_STAGE_TOP} md:justify-center md:pt-0 md:py-12`}
+              className={`justify-start px-8 pb-20 ${MOBILE_STAGE_TOP} sm:px-10 md:justify-center md:px-0 md:pt-0 md:py-12`}
             >
               <motion.div style={{ y: revealY }} className="max-w-2xl">
                 <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-500">
