@@ -1,108 +1,66 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { pageMetadata } from "@/lib/seo";
+import WhatWeDoExperience from "@/components/what-we-do/WhatWeDoExperience";
+import { SERVICE_GROUPS } from "@/lib/service-groups";
+import { pageMetadata, SITE_URL } from "@/lib/seo";
+
+const PATH = "/what-we-do";
 
 export const metadata: Metadata = pageMetadata({
   title: "What We Do",
   description:
-    "Brand strategy, creative, bespoke web design and development, and social media for businesses in Ipswich, Suffolk and across the UK.",
-  path: "/what-we-do",
+    "Brand, creative, digital and social from one Ipswich studio. Strategy, identity, campaigns, websites and content for businesses across Suffolk and the UK.",
+  path: PATH,
 });
 
-type ServiceItem = {
-  label: string;
-  href?: string;
+const structuredData = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      "@id": `${SITE_URL}${PATH}#breadcrumb`,
+      itemListElement: [
+        {
+          "@type": "ListItem",
+          position: 1,
+          name: "Home",
+          item: SITE_URL,
+        },
+        {
+          "@type": "ListItem",
+          position: 2,
+          name: "What We Do",
+          item: `${SITE_URL}${PATH}`,
+        },
+      ],
+    },
+    {
+      "@type": "ItemList",
+      "@id": `${SITE_URL}${PATH}#services`,
+      name: "skapa Creative services",
+      itemListElement: SERVICE_GROUPS.map((group, index) => ({
+        "@type": "ListItem",
+        position: index + 1,
+        name: group.name,
+        description: group.proposition,
+        ...(group.href
+          ? { url: `${SITE_URL}${group.href}` }
+          : { url: `${SITE_URL}${PATH}` }),
+      })),
+    },
+  ],
 };
-
-const pillars: {
-  name: string;
-  services: ServiceItem[];
-}[] = [
-  {
-    name: "Brand",
-    services: [
-      { label: "Brand strategy", href: "/what-we-do/brand/brand-strategy" },
-      { label: "Brand identity", href: "/what-we-do/brand/brand-identity" },
-      { label: "Rebranding", href: "/what-we-do/brand/rebranding" },
-      { label: "Brand development" },
-      { label: "Logo design", href: "/what-we-do/brand/logo-design" },
-      { label: "Brand guidelines", href: "/what-we-do/brand/brand-guidelines" },
-      { label: "Brand decks" },
-    ],
-  },
-  {
-    name: "Creative",
-    services: [
-      { label: "Graphic design" },
-      { label: "3D design" },
-      { label: "Artworking" },
-      { label: "Campaign creative" },
-      { label: "Print & digital design" },
-      { label: "Marketing materials" },
-    ],
-  },
-  {
-    name: "Digital",
-    services: [
-      { label: "Website design" },
-      { label: "Website development" },
-      { label: "UI/UX" },
-      { label: "Landing pages" },
-      { label: "Digital experiences" },
-    ],
-  },
-  {
-    name: "Social",
-    services: [
-      { label: "Social media management" },
-      { label: "Content creation" },
-      { label: "Social strategy" },
-      { label: "Campaigns" },
-      { label: "Creative direction" },
-      { label: "Ongoing brand content" },
-    ],
-  },
-];
 
 export default function WhatWeDoPage() {
   return (
-    <div className="mx-auto max-w-6xl px-6 py-24 md:px-10 md:py-32">
-      <p className="mb-8 font-mono text-sm uppercase tracking-widest text-brand-blue">
-        What we do
-      </p>
-      <h1 className="max-w-3xl font-serif text-5xl leading-[1.05] tracking-tight md:text-7xl">
-        Good design gets attention.{" "}
-        <span className="italic text-brand-pink">Great design has a reason.</span>
+    <div className="bg-bs-offwhite text-black">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
+      <h1 className="sr-only">
+        What we do: Brand, Creative, Digital and Social
       </h1>
-
-      <div className="mt-24 grid gap-16 md:grid-cols-2 md:gap-x-12 md:gap-y-20">
-        {pillars.map((pillar) => (
-          <section key={pillar.name}>
-            <h2 className="font-serif text-3xl text-black md:text-4xl">
-              {pillar.name}
-            </h2>
-            <ul className="mt-6 space-y-3 border-t border-neutral-200 pt-6">
-              {pillar.services.map((service) => (
-                <li
-                  key={service.label}
-                  className="font-mono text-sm leading-relaxed text-neutral-700"
-                >
-                  {service.href ? (
-                    <Link
-                      href={service.href}
-                      className="underline-offset-4 transition-colors hover:text-black hover:underline"
-                    >
-                      {service.label}
-                    </Link>
-                  ) : (
-                    service.label
-                  )}
-                </li>
-              ))}
-            </ul>
-          </section>
-        ))}
-      </div>
+      <WhatWeDoExperience />
     </div>
   );
 }

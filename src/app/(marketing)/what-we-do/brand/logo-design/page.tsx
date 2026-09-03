@@ -43,6 +43,12 @@ const structuredData = {
         {
           "@type": "ListItem",
           position: 3,
+          name: "Brand",
+          item: `${SITE_URL}/what-we-do/brand`,
+        },
+        {
+          "@type": "ListItem",
+          position: 4,
           name: "Logo Design",
           item: `${SITE_URL}${PATH}`,
         },
