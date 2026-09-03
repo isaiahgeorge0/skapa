@@ -8,6 +8,8 @@ const INDEXABLE_PATHS = [
   "/what-we-do/brand/brand-strategy",
   "/what-we-do/brand/brand-identity",
   "/what-we-do/brand/rebranding",
+  "/what-we-do/brand/logo-design",
+  "/what-we-do/brand/brand-guidelines",
   "/work",
   "/contact",
 ] as const;

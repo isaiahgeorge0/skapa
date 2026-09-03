@@ -39,6 +39,11 @@ type MsgRow = {
   project_id: string;
 };
 
+function firstNameFrom(name: string | null | undefined): string | null {
+  const first = name?.trim().split(/\s+/)[0];
+  return first || null;
+}
+
 export default async function PortalPage() {
   const supabase = await createClient();
   const {
@@ -65,10 +70,22 @@ export default async function PortalPage() {
     );
   }
 
-  const { data: projects } = await supabase
-    .from("projects")
-    .select("id, name, phase, status")
-    .order("created_at", { ascending: false });
+  const [{ data: projects }, { data: linkedClient }] = await Promise.all([
+    supabase
+      .from("projects")
+      .select("id, name, phase, status")
+      .order("created_at", { ascending: false }),
+    supabase
+      .from("clients")
+      .select("name")
+      .eq("id", profile.client_id)
+      .maybeSingle(),
+  ]);
+
+  const greetingName =
+    firstNameFrom(profile.full_name) ??
+    firstNameFrom(linkedClient?.name) ??
+    "there";
 
   const projectIds = (projects ?? []).map((p) => p.id);
 
@@ -155,7 +172,7 @@ export default async function PortalPage() {
     <div className="mx-auto max-w-5xl px-5 py-10 sm:px-8 md:px-10 md:py-14">
       <header className="mb-16 md:mb-20">
         <h1 className="font-serif text-4xl leading-[1.05] tracking-tight text-black md:text-5xl">
-          Welcome, {profile.full_name || "there"}.
+          Welcome, {greetingName}.
         </h1>
         <p className="mt-3 max-w-xl font-serif text-xl italic text-neutral-500">
           Your projects, in one place.

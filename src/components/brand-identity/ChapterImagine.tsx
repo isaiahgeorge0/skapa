@@ -56,17 +56,17 @@ const RELATED = [
   {
     title: "Logo Design",
     body: "Go deeper into marks, wordmarks, lockups and versatility.",
-    href: null as string | null,
+    href: "/what-we-do/brand/logo-design" as string | null,
   },
   {
     title: "Brand Guidelines",
     body: "Document the system so teams and suppliers can use it consistently.",
-    href: null as string | null,
+    href: "/what-we-do/brand/brand-guidelines" as string | null,
   },
   {
     title: "Rebranding",
     body: "When the business has moved on and the identity needs to catch up.",
-    href: null as string | null,
+    href: "/what-we-do/brand/rebranding" as string | null,
   },
 ] as const;
 

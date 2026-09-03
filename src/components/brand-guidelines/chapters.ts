@@ -1,0 +1,81 @@
+export const CHAPTERS = [
+  {
+    id: "the-system",
+    number: "01",
+    label: "The system",
+    short: "System",
+    accent: "#111111",
+  },
+  {
+    id: "why-guidelines",
+    number: "02",
+    label: "Why guidelines",
+    short: "Why",
+    accent: "#4b4ae4",
+  },
+  {
+    id: "what-they-cover",
+    number: "03",
+    label: "What they cover",
+    short: "Cover",
+    accent: "#ff2791",
+  },
+  {
+    id: "the-rules",
+    number: "04",
+    label: "The rules",
+    short: "Rules",
+    accent: "#111111",
+  },
+  {
+    id: "built-to-flex",
+    number: "05",
+    label: "Built to flex",
+    short: "Flex",
+    accent: "#4b4ae4",
+  },
+  {
+    id: "who-uses-them",
+    number: "06",
+    label: "Who uses them",
+    short: "Users",
+    accent: "#737373",
+  },
+  {
+    id: "what-you-get",
+    number: "07",
+    label: "What you get",
+    short: "Files",
+    accent: "#fff1a7",
+  },
+  {
+    id: "existing-brand",
+    number: "08",
+    label: "Existing brand",
+    short: "Existing",
+    accent: "#111111",
+  },
+  {
+    id: "the-result",
+    number: "09",
+    label: "The result",
+    short: "Result",
+    accent: "#4b4ae4",
+  },
+  {
+    id: "questions",
+    number: "10",
+    label: "Questions",
+    short: "FAQ",
+    accent: "#ff2791",
+  },
+  {
+    id: "ready-to-start",
+    number: "11",
+    label: "Ready to start",
+    short: "Start",
+    accent: "#ff2791",
+  },
+] as const;
+
+export type ChapterId = (typeof CHAPTERS)[number]["id"];
