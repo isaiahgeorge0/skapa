@@ -52,9 +52,9 @@ export default function EditableClientDetails({
       <div>
         <dl className="grid grid-cols-[120px_1fr] gap-y-3 font-mono text-sm">
           <dt className="text-neutral-500">Email</dt>
-          <dd className="text-black">{email || "—"}</dd>
+          <dd className="text-black">{email || "–"}</dd>
           <dt className="text-neutral-500">Company</dt>
-          <dd className="text-black">{company || "—"}</dd>
+          <dd className="text-black">{company || "–"}</dd>
         </dl>
         <button
           onClick={() => setEditing(true)}

@@ -1,19 +1,20 @@
 import type { Metadata } from "next";
-import ChapterClarity from "@/components/brand-strategy/ChapterClarity";
-import ChapterFamiliar from "@/components/brand-strategy/ChapterFamiliar";
-import ChapterForYou from "@/components/brand-strategy/ChapterForYou";
-import ChapterNav from "@/components/brand-strategy/ChapterNav";
-import ChapterStart from "@/components/brand-strategy/ChapterStart";
-import ChapterStrategy from "@/components/brand-strategy/ChapterStrategy";
-import ChapterUseful from "@/components/brand-strategy/ChapterUseful";
+import ChapterForm from "@/components/brand-identity/ChapterForm";
+import ChapterIdea from "@/components/brand-identity/ChapterIdea";
+import ChapterImagine from "@/components/brand-identity/ChapterImagine";
+import ChapterPersonality from "@/components/brand-identity/ChapterPersonality";
+import ChapterRecognisable from "@/components/brand-identity/ChapterRecognisable";
+import ChapterSystem from "@/components/brand-identity/ChapterSystem";
+import ChapterVoice from "@/components/brand-identity/ChapterVoice";
+import IdentityChapterNav from "@/components/brand-identity/IdentityChapterNav";
 import { pageMetadata, SITE_URL } from "@/lib/seo";
 
-const PATH = "/what-we-do/brand/brand-strategy";
+const PATH = "/what-we-do/brand/brand-identity";
 
 export const metadata: Metadata = pageMetadata({
-  title: "Brand Strategy",
+  title: "Brand Identity",
   description:
-    "Build a clearer, more distinctive brand with strategy grounded in your business, audience and ambitions. Brand strategy from skapa Creative in Ipswich.",
+    "Brand identity design that turns strategy into a recognisable visual system: logo, typography, colour, graphic language and applications. From skapa Creative in Ipswich.",
   path: PATH,
 });
 
@@ -39,7 +40,7 @@ const structuredData = {
         {
           "@type": "ListItem",
           position: 3,
-          name: "Brand Strategy",
+          name: "Brand Identity",
           item: `${SITE_URL}${PATH}`,
         },
       ],
@@ -47,14 +48,14 @@ const structuredData = {
     {
       "@type": "Service",
       "@id": `${SITE_URL}${PATH}#service`,
-      name: "Brand Strategy",
+      name: "Brand Identity",
       description:
-        "Brand strategy to clarify positioning, audience, difference, personality and messaging, so creative work has a clear reason to exist.",
+        "Brand identity design: a complete visual system covering logo, typography, colour, imagery, graphic language and application, so the brand is recognisable wherever it appears.",
       url: `${SITE_URL}${PATH}`,
       provider: {
         "@id": `${SITE_URL}/#organization`,
       },
-      serviceType: "Brand Strategy",
+      serviceType: "Brand Identity Design",
       areaServed: [
         {
           "@type": "AdministrativeArea",
@@ -69,21 +70,21 @@ const structuredData = {
   ],
 };
 
-export default function BrandStrategyPage() {
+export default function BrandIdentityPage() {
   return (
     <div className="bg-bs-offwhite text-black">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
-      <ChapterNav />
-      <ChapterClarity />
-      <ChapterFamiliar />
-      <ChapterStrategy />
-      <ChapterUseful />
-      <ChapterForYou />
-      {/* Strategy in practice — insert approved case study / proof here later */}
-      <ChapterStart />
+      <IdentityChapterNav />
+      <ChapterIdea />
+      <ChapterForm />
+      <ChapterVoice />
+      <ChapterPersonality />
+      <ChapterSystem />
+      <ChapterRecognisable />
+      <ChapterImagine />
     </div>
   );
 }

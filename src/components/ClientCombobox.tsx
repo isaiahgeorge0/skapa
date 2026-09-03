@@ -69,7 +69,7 @@ export default function ClientCombobox({
         <div className="absolute z-10 mt-1 max-h-56 w-full overflow-y-auto rounded-lg border border-neutral-200 bg-white shadow-lg">
           {filtered.length === 0 && !query.trim() && (
             <p className="px-3 py-2 font-mono text-xs text-neutral-400">
-              No clients yet — type a name to create one.
+              No clients yet. Type a name to create one.
             </p>
           )}
           {filtered.map((c) => (

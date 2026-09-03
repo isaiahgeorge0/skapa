@@ -455,7 +455,7 @@ export default function DocumentSignView({
                           content = <span>Fill {fieldTypeLabel(field.field_type)}</span>;
                         } else if (mine) {
                           stateClass = "border-neutral-300 bg-neutral-200/70 text-neutral-500";
-                          content = <span>Locked — not your turn</span>;
+                          content = <span>Locked (not your turn)</span>;
                         }
 
                         return (

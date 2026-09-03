@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { CHAPTERS, type ChapterId } from "./chapters";
 import { useReducedMotion } from "./useReducedMotion";
 
-export default function ChapterNav() {
+export default function IdentityChapterNav() {
   const { reducedMotion } = useReducedMotion();
   const [activeId, setActiveId] = useState<ChapterId>(CHAPTERS[0].id);
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -83,10 +83,9 @@ export default function ChapterNav() {
       >
         <div
           className={`pointer-events-auto relative transition-[width,padding] duration-300 ease-out ${
-            hovered ? "w-[220px] py-2" : "w-10 py-1"
+            hovered ? "w-[240px] py-2" : "w-10 py-1"
           }`}
         >
-          {/* Progress as typographic rule, not boxed UI chrome */}
           <div
             className="absolute top-3 bottom-3 left-[11px] w-px bg-black/10"
             aria-hidden="true"
@@ -121,12 +120,6 @@ export default function ChapterNav() {
                     }}
                     className="group/item flex items-baseline gap-3 outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
                     aria-current={isActive ? "true" : undefined}
-                    onMouseEnter={(e) => {
-                      (e.currentTarget as HTMLElement).style.setProperty(
-                        "--row-accent",
-                        chapter.accent,
-                      );
-                    }}
                   >
                     <span
                       className={`w-6 font-mono text-[10px] tracking-[0.18em] transition-all duration-300 ${
@@ -134,22 +127,14 @@ export default function ChapterNav() {
                           ? "translate-x-0.5"
                           : "text-neutral-400 group-hover/item:text-neutral-700"
                       }`}
-                      style={
-                        isActive || hovered
-                          ? {
-                              color: isActive ? chapter.accent : undefined,
-                            }
-                          : undefined
-                      }
+                      style={isActive ? { color: chapter.accent } : undefined}
                     >
-                      <span className="group-hover/item:text-[color:var(--row-accent,#111)]">
-                        {chapter.number}
-                      </span>
+                      {chapter.number}
                     </span>
                     <span
                       className={`overflow-hidden whitespace-nowrap font-mono text-[10px] uppercase tracking-[0.14em] transition-all duration-300 ${
                         hovered
-                          ? "max-w-[160px] translate-x-0 opacity-100"
+                          ? "max-w-[180px] translate-x-0 opacity-100"
                           : "max-w-0 -translate-x-3 opacity-0"
                       } ${isActive ? "text-black" : "text-neutral-500"}`}
                     >
@@ -168,25 +153,21 @@ export default function ChapterNav() {
         </div>
       </nav>
 
-      {/*
-        Mobile/tablet — compact centred pill under site chrome.
-        Fixed (not full-width sticky) so it stays secondary to nav + hero.
-      */}
       <div
         ref={mobileRef}
         className="pointer-events-none fixed inset-x-0 z-40 flex justify-center px-4 lg:hidden"
         style={{
-          top: "calc(var(--skapa-site-chrome-height) + 0.5rem)",
+          top: "calc(var(--skapa-site-chrome-height) + 0.35rem)",
         }}
       >
         <div className="pointer-events-auto relative">
           <button
             type="button"
             aria-expanded={drawerOpen}
-            aria-controls="chapter-drawer"
+            aria-controls="identity-chapter-drawer"
             aria-label={`Chapter ${active.number} of ${CHAPTERS.length}: ${active.label}`}
             onClick={() => setDrawerOpen((open) => !open)}
-            className="inline-flex max-w-[min(18.5rem,calc(100vw-5.5rem))] items-center gap-2 rounded-full border border-black/10 bg-bs-offwhite/95 py-2 pr-3 pl-3.5 shadow-sm backdrop-blur outline-none focus-visible:ring-2 focus-visible:ring-black"
+            className="inline-flex max-w-[min(16.5rem,calc(100vw-5.5rem))] items-center gap-1.5 rounded-full border border-black/10 bg-bs-offwhite/95 py-1.5 pr-2.5 pl-3 shadow-sm backdrop-blur outline-none focus-visible:ring-2 focus-visible:ring-black"
           >
             <span
               className="font-mono text-[10px] tracking-[0.16em]"
@@ -211,9 +192,9 @@ export default function ChapterNav() {
           </button>
 
           <div
-            id="chapter-drawer"
+            id="identity-chapter-drawer"
             hidden={!drawerOpen}
-            className="absolute top-full left-1/2 z-50 mt-2 w-[min(16.5rem,calc(100vw-2rem))] -translate-x-1/2 overflow-hidden rounded-xl border border-black/10 bg-bs-offwhite shadow-lg"
+            className="absolute top-full left-1/2 z-50 mt-2 w-[min(17rem,calc(100vw-2rem))] -translate-x-1/2 overflow-hidden rounded-xl border border-black/10 bg-bs-offwhite shadow-lg"
           >
             <ol className="py-1.5">
               {CHAPTERS.map((chapter) => {

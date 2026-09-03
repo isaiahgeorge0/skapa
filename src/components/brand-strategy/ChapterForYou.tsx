@@ -13,7 +13,7 @@ const SITUATIONS = [
   },
   {
     title: "We’re preparing to rebrand.",
-    body: "Work out what actually needs to change — and what doesn’t.",
+    body: "Work out what actually needs to change, and what doesn’t.",
   },
   {
     title: "We don’t know what makes us different.",
@@ -30,7 +30,7 @@ const FAQS = [
   {
     question: "Do I need brand strategy before a rebrand?",
     answer:
-      "Not always, but it usually helps. Strategy clarifies what should change, what should stay, and why — so a rebrand is purposeful rather than cosmetic.",
+      "Not always, but it usually helps. Strategy clarifies what should change, what should stay, and why, so a rebrand is purposeful rather than cosmetic.",
   },
   {
     question: "What will I receive at the end?",

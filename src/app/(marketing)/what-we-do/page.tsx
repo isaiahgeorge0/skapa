@@ -22,7 +22,7 @@ const pillars: {
     name: "Brand",
     services: [
       { label: "Brand strategy", href: "/what-we-do/brand/brand-strategy" },
-      { label: "Brand identity" },
+      { label: "Brand identity", href: "/what-we-do/brand/brand-identity" },
       { label: "Brand development" },
       { label: "Logos & visual identities" },
       { label: "Brand guidelines" },

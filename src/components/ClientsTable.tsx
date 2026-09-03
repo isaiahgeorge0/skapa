@@ -119,7 +119,7 @@ export default function ClientsTable({ initialClients }: { initialClients: Clien
       <div className="overflow-hidden rounded-xl border border-neutral-200">
         {clients.length === 0 ? (
           <p className="py-16 text-center font-mono text-sm text-neutral-400">
-            No clients yet — convert a lead from the{" "}
+            No clients yet. Convert a lead from the{" "}
             <Link href="/admin/leads" className="text-brand-pink hover:underline">
               Leads
             </Link>{" "}
@@ -149,10 +149,10 @@ export default function ClientsTable({ initialClients }: { initialClients: Clien
                       </Link>
                     </td>
                     <td className="py-4 pr-4 font-mono text-sm text-neutral-700">
-                      {client.email || <span className="text-neutral-300">—</span>}
+                      {client.email || <span className="text-neutral-300">–</span>}
                     </td>
                     <td className="py-4 pr-4 font-sans text-sm text-neutral-600">
-                      {client.company || <span className="text-neutral-300">—</span>}
+                      {client.company || <span className="text-neutral-300">–</span>}
                     </td>
                     <td className="py-4 pr-4">
                       <Link

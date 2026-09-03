@@ -12,7 +12,7 @@ export function sha256Hex(bytes: Uint8Array): string {
 }
 
 function formatTs(value: string | null | undefined): string {
-  if (!value) return "—";
+  if (!value) return "–";
   return new Date(value).toLocaleString("en-GB", {
     dateStyle: "medium",
     timeStyle: "medium",
@@ -118,7 +118,7 @@ export async function buildCertificatePdf(input: CertificateInput): Promise<Uint
   };
 
   drawLine("CERTIFICATE OF COMPLETION", 16, true);
-  drawLine("skapa Creative — electronic signature record", 9, false, rgb(0.35, 0.35, 0.35));
+  drawLine("skapa Creative: electronic signature record", 9, false, rgb(0.35, 0.35, 0.35));
   y -= 6;
   drawLine(`Document: ${input.documentName}`);
   drawLine(`Project: ${input.projectName}`);
@@ -178,7 +178,7 @@ export async function buildCertificatePdf(input: CertificateInput): Promise<Uint
         drawLine("   [Signature image could not be embedded]");
       }
     } else {
-      drawLine(`   Value: ${field.valueText || "—"}`);
+      drawLine(`   Value: ${field.valueText || "–"}`);
     }
     y -= 2;
   }
@@ -186,7 +186,7 @@ export async function buildCertificatePdf(input: CertificateInput): Promise<Uint
   section("Event log");
   for (const event of input.events) {
     const role = event.actorRole ? ` [${event.actorRole}]` : "";
-    drawLine(`${formatTs(event.createdAt)} — ${event.eventType}${role}`, 9, true);
+    drawLine(`${formatTs(event.createdAt)} · ${event.eventType}${role}`, 9, true);
     if (event.detail) {
       for (const line of wrapText(event.detail, 90)) {
         drawLine(`   ${line}`, 8, false, rgb(0.3, 0.3, 0.3));
@@ -294,8 +294,8 @@ export async function generateAndStoreCertificate(
           roleLabel: "Supplier",
           email: "hello@skapa.uk",
           // Always from this signer's own row — never documents.signer_ip.
-          ip: signerIp || "—",
-          userAgent: signerUa || "—",
+          ip: signerIp || "–",
+          userAgent: signerUa || "–",
           signedAt: signer.signed_at as string | null,
         };
       }
@@ -303,9 +303,9 @@ export async function generateAndStoreCertificate(
       return {
         name: client?.name ?? "Client",
         roleLabel: "Client",
-        email: client?.email ?? "—",
-        ip: signerIp || "—",
-        userAgent: signerUa || "—",
+        email: client?.email ?? "–",
+        ip: signerIp || "–",
+        userAgent: signerUa || "–",
         signedAt: signer.signed_at as string | null,
       };
     });

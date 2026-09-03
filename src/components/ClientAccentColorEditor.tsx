@@ -122,7 +122,7 @@ export default function ClientAccentColorEditor({
       )}
       {poorContrast && (
         <p className="mt-3 font-mono text-xs text-amber-700">
-          Low contrast against white — this may be hard to read on portal CTAs and
+          Low contrast against white. This may be hard to read on portal CTAs and
           markers. You can still save it.
         </p>
       )}

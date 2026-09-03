@@ -372,7 +372,7 @@ export default function ChapterStrategy() {
         </h2>
         <p className="mt-5 max-w-2xl font-mono text-sm leading-relaxed text-neutral-600 md:text-base">
           Deciding what the brand stands for, who it is for, and how it should
-          show up — before design begins.
+          show up, before design begins.
         </p>
 
         {/* ——— Mobile: one layered composition ——— */}

@@ -13,8 +13,11 @@
    * Chapter indicators and scroll-margin must clear this, not share it.
    */
   --skapa-site-chrome-height: 5rem;
-  /* Compact mobile chapter pill clearance under the chrome band */
-  --skapa-chapter-pill-clearance: 3.25rem;
+  /*
+   * Reserved band under site chrome for the floating chapter pill.
+   * Sticky chapter content and scroll-margin must clear this on mobile.
+   */
+  --skapa-chapter-pill-clearance: 4rem;
   /*
    * Default portal accent. Overridden on <html> at runtime for each client.
    * Keep as a literal (not var(--brand-pink)) so --color-portal-accent does not
@@ -53,9 +56,16 @@
   border-color: var(--portal-accent);
 }
 
-/* Brand strategy: land below site chrome + mobile chapter pill */
+/* Brand capability pages: land below site chrome + mobile chapter pill */
 @utility scroll-mt-chapter {
   scroll-margin-top: calc(
+    var(--skapa-site-chrome-height) + var(--skapa-chapter-pill-clearance)
+  );
+}
+
+/* Mobile sticky / intro content: keep headings below chrome + pill */
+@utility pt-chapter-safe {
+  padding-top: calc(
     var(--skapa-site-chrome-height) + var(--skapa-chapter-pill-clearance)
   );
 }

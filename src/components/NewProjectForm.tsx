@@ -97,7 +97,7 @@ export default function NewProjectForm({
         />
         {clientSelection?.mode === "new" && (
           <p className="mt-2 font-mono text-xs text-neutral-500">
-            This creates a new client named &quot;{clientSelection.name}&quot; — add
+            This creates a new client named &quot;{clientSelection.name}&quot;. Add
             their email and other details afterward from the Clients page.
           </p>
         )}
@@ -110,7 +110,7 @@ export default function NewProjectForm({
         <input
           name="name"
           required
-          placeholder="e.g. Blue Peak — Brand & Digital Launch"
+          placeholder="e.g. Blue Peak: Brand & Digital Launch"
           className="w-full border border-neutral-300 px-3 py-2 text-sm"
         />
       </div>

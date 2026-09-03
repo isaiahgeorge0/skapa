@@ -738,7 +738,7 @@ export async function advanceSigningQueue(
     event_type: "status_changed",
     actor_id: user.id,
     actor_role: actorRole,
-    detail: `Partially signed — waiting on ${nextName}`,
+    detail: `Partially signed, waiting on ${nextName}`,
   });
 
   return {

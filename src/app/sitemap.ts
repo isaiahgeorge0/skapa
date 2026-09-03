@@ -6,6 +6,7 @@ const INDEXABLE_PATHS = [
   "/about",
   "/what-we-do",
   "/what-we-do/brand/brand-strategy",
+  "/what-we-do/brand/brand-identity",
   "/work",
   "/contact",
 ] as const;

@@ -58,7 +58,7 @@ export default function NotesLog({
       }
     >
       <p className="mb-4 font-mono text-[11px] text-neutral-400">
-        Private — never visible to the client.
+        Private. Never visible to the client.
       </p>
 
       {notes.length === 0 ? (

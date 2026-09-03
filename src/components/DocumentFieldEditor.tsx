@@ -767,7 +767,7 @@ export default function DocumentFieldEditor({
             {activeTool && (
               <p className="mt-3 font-mono text-[11px] leading-relaxed text-neutral-500">
                 Click a page to place a {fieldTypeLabel(activeTool).toLowerCase()} field.
-                New fields start unassigned — pick a supplier or client before sending.
+                New fields start unassigned. Pick a supplier or client before sending.
               </p>
             )}
           </div>
@@ -882,7 +882,7 @@ export default function DocumentFieldEditor({
           <div className="border-t border-neutral-100 pt-4">
             <h2 className="mb-2 font-serif text-xl text-black">Signing order</h2>
             <p className="mb-3 font-mono text-[11px] leading-relaxed text-neutral-500">
-              Derived from field assignees. Supplier first by default — reorder before sending.
+              Derived from field assignees. Supplier first by default; reorder before sending.
             </p>
             {signers.length === 0 ? (
               <p className="font-mono text-xs text-neutral-400">
@@ -996,7 +996,7 @@ export default function DocumentFieldEditor({
                   disabled={finishing}
                   className="w-full border border-black bg-white px-4 py-2.5 font-mono text-[11px] uppercase tracking-[0.14em] text-black transition-colors hover:bg-black hover:text-white disabled:opacity-40"
                 >
-                  {finishing ? "Checking…" : "Done — finish editing fields"}
+                  {finishing ? "Checking…" : "Done: finish editing fields"}
                 </button>
               </>
             )}
