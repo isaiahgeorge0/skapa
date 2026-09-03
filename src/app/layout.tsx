@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { IBM_Plex_Mono, Newsreader } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import JsonLd from "@/components/JsonLd";
 import { SITE_NAME, SITE_URL, defaultDescription } from "@/lib/seo";
 import "./globals.css";
@@ -47,6 +48,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="flex min-h-full flex-col bg-white text-black font-mono">
         <JsonLd />
         {children}
+        {/* Vercel Web Analytics: cookieless, anonymous hashes. Not Speed Insights. */}
+        <Analytics />
       </body>
     </html>
   );

@@ -65,19 +65,9 @@ export default async function PortalPage() {
     );
   }
 
-  const { data: additionalLinks } = await supabase
-    .from("project_clients")
-    .select("project_id")
-    .eq("client_id", profile.client_id);
-  const additionalIds = (additionalLinks ?? []).map((l) => l.project_id);
-  const orFilter = additionalIds.length
-    ? `client_id.eq.${profile.client_id},id.in.(${additionalIds.join(",")})`
-    : `client_id.eq.${profile.client_id}`;
-
   const { data: projects } = await supabase
     .from("projects")
     .select("id, name, phase, status")
-    .or(orFilter)
     .order("created_at", { ascending: false });
 
   const projectIds = (projects ?? []).map((p) => p.id);

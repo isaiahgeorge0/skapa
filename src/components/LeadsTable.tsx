@@ -5,7 +5,7 @@ import { createClient } from "@/lib/supabase/client";
 import Avatar from "@/components/Avatar";
 import Modal from "@/components/Modal";
 
-type LeadStatus = "new" | "contacted" | "qualified" | "lost";
+type LeadStatus = "new" | "contacted" | "qualified" | "won" | "lost";
 type LeadSource = "contact_form" | "questionnaire" | "manual";
 
 type LeadAnswers = {
@@ -29,11 +29,18 @@ type Lead = {
   answers: LeadAnswers | null;
 };
 
-const STATUS_OPTIONS: LeadStatus[] = ["new", "contacted", "qualified", "lost"];
+const STATUS_OPTIONS: LeadStatus[] = [
+  "new",
+  "contacted",
+  "qualified",
+  "won",
+  "lost",
+];
 const STATUS_STYLES: Record<LeadStatus, string> = {
   new: "bg-brand-pink/10 text-brand-pink",
   contacted: "bg-blue-50 text-blue-700",
   qualified: "bg-green-50 text-green-700",
+  won: "bg-yellow-50 text-yellow-700",
   lost: "bg-neutral-100 text-neutral-500",
 };
 const SOURCE_LABELS: Record<LeadSource, string> = {
@@ -41,7 +48,14 @@ const SOURCE_LABELS: Record<LeadSource, string> = {
   questionnaire: "Questionnaire",
   manual: "Added manually",
 };
-const FILTERS: Array<"all" | LeadStatus> = ["all", "new", "contacted", "qualified", "lost"];
+const FILTERS: Array<"all" | LeadStatus> = [
+  "all",
+  "new",
+  "contacted",
+  "qualified",
+  "won",
+  "lost",
+];
 
 export default function LeadsTable({ initialLeads }: { initialLeads: Lead[] }) {
   const [leads, setLeads] = useState<Lead[]>(initialLeads);
@@ -63,6 +77,116 @@ export default function LeadsTable({ initialLeads }: { initialLeads: Lead[] }) {
     () => (filter === "all" ? leads : leads.filter((l) => l.status === filter)),
     [leads, filter],
   );
+
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const selectedSet = useMemo(() => new Set(selectedIds), [selectedIds]);
+
+  const visibleSelectedCount = useMemo(
+    () => visibleLeads.filter((l) => selectedSet.has(l.id)).length,
+    [visibleLeads, selectedSet],
+  );
+
+  const allVisibleSelected =
+    visibleLeads.length > 0 && visibleSelectedCount === visibleLeads.length;
+
+  function toggleSelected(leadId: string) {
+    setSelectedIds((curr) =>
+      curr.includes(leadId)
+        ? curr.filter((id) => id !== leadId)
+        : [...curr, leadId],
+    );
+  }
+
+  function toggleAll() {
+    if (allVisibleSelected) {
+      const visibleIds = new Set(visibleLeads.map((l) => l.id));
+      setSelectedIds((curr) => curr.filter((id) => !visibleIds.has(id)));
+      return;
+    }
+
+    const nextVisibleIds = visibleLeads.map((l) => l.id);
+    setSelectedIds((curr) => [...new Set([...curr, ...nextVisibleIds])]);
+  }
+
+  const [bulkStatus, setBulkStatus] = useState<LeadStatus>("new");
+  const [bulkUpdating, setBulkUpdating] = useState(false);
+  const [bulkStatusError, setBulkStatusError] = useState<string | null>(null);
+
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [deleteTargetIds, setDeleteTargetIds] = useState<string[]>([]);
+  const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+
+  function openDeleteModal(ids: string[]) {
+    setDeleteTargetIds(ids);
+    setDeleteError(null);
+    setDeleteModalOpen(true);
+  }
+
+  function closeDeleteModal() {
+    setDeleteModalOpen(false);
+    setDeleteTargetIds([]);
+    setDeleteError(null);
+    setDeleting(false);
+  }
+
+  async function bulkChangeStatus() {
+    const ids = selectedIds;
+    if (ids.length === 0) return;
+
+    setBulkUpdating(true);
+    setBulkStatusError(null);
+
+    const previous = leads;
+    const idsSet = new Set(ids);
+
+    setLeads((curr) =>
+      curr.map((l) => (idsSet.has(l.id) ? { ...l, status: bulkStatus } : l)),
+    );
+
+    const { error } = await supabase
+      .from("leads")
+      .update({ status: bulkStatus })
+      .in("id", ids);
+
+    setBulkUpdating(false);
+
+    if (error) {
+      console.error("Bulk status update failed:", error);
+      setLeads(previous);
+      setBulkStatusError(error.message);
+      return;
+    }
+
+    setSelectedIds([]);
+  }
+
+  async function confirmBulkDelete() {
+    const ids = deleteTargetIds;
+    if (ids.length === 0) return;
+
+    setDeleting(true);
+    setDeleteError(null);
+
+    const previousLeads = leads;
+    const idsSet = new Set(ids);
+
+    setLeads((curr) => curr.filter((l) => !idsSet.has(l.id)));
+    setSelectedIds((curr) => curr.filter((id) => !idsSet.has(id)));
+    if (expandedId && idsSet.has(expandedId)) setExpandedId(null);
+
+    const { error } = await supabase.from("leads").delete().in("id", ids);
+    setDeleting(false);
+
+    if (error) {
+      console.error("Bulk delete failed:", error);
+      setLeads(previousLeads);
+      setDeleteError(error.message);
+      return;
+    }
+
+    closeDeleteModal();
+  }
 
   async function addLead(e: React.FormEvent) {
     e.preventDefault();
@@ -217,6 +341,85 @@ export default function LeadsTable({ initialLeads }: { initialLeads: Lead[] }) {
         ))}
       </div>
 
+      {selectedIds.length > 0 && (
+        <div className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-neutral-200 bg-neutral-50 px-4 py-3">
+          <p className="font-mono text-xs uppercase tracking-widest text-neutral-600">
+            {selectedIds.length} selected
+          </p>
+          <div className="flex flex-wrap items-center gap-2">
+            <select
+              value={bulkStatus}
+              disabled={bulkUpdating}
+              onChange={(e) => setBulkStatus(e.target.value as LeadStatus)}
+              className={`rounded-full border px-3 py-2 font-mono text-[11px] uppercase tracking-[0.08em] disabled:opacity-50 ${STATUS_STYLES[bulkStatus]}`}
+            >
+              {STATUS_OPTIONS.map((s) => (
+                <option key={s} value={s}>
+                  {s}
+                </option>
+              ))}
+            </select>
+            <button
+              onClick={bulkChangeStatus}
+              disabled={bulkUpdating}
+              className="border border-neutral-300 bg-white px-3 py-2 font-mono text-[11px] uppercase tracking-[0.14em] text-neutral-800 transition-colors hover:border-black hover:text-black disabled:opacity-50"
+            >
+              {bulkUpdating ? "Updating…" : "Change status"}
+            </button>
+            <button
+              onClick={() => openDeleteModal(selectedIds)}
+              disabled={deleting}
+              className="border border-red-200 bg-red-50 px-3 py-2 font-mono text-[11px] uppercase tracking-[0.14em] text-red-700 transition-colors hover:border-red-400 disabled:opacity-50"
+            >
+              Delete
+            </button>
+          </div>
+        </div>
+      )}
+
+      {(bulkStatusError || deleteError) && (
+        <p className="mb-4 font-mono text-xs text-red-600">
+          {bulkStatusError ?? deleteError}
+        </p>
+      )}
+
+      <Modal
+        open={deleteModalOpen}
+        onClose={closeDeleteModal}
+        title="Delete leads"
+      >
+        {deleting ? (
+          <p className="text-sm text-neutral-500">Deleting…</p>
+        ) : (
+          <div className="space-y-5">
+            <p className="font-mono text-sm text-neutral-800">
+              Delete {deleteTargetIds.length} leads? This can&apos;t be undone.
+            </p>
+            {deleteError && (
+              <p className="font-mono text-xs text-red-600">{deleteError}</p>
+            )}
+            <div className="flex flex-wrap gap-2">
+              <button
+                type="button"
+                onClick={confirmBulkDelete}
+                disabled={deleting}
+                className="bg-red-600 px-5 py-2.5 font-mono text-[11px] uppercase tracking-[0.14em] text-white transition-opacity hover:opacity-85 disabled:opacity-40"
+              >
+                Delete leads
+              </button>
+              <button
+                type="button"
+                onClick={closeDeleteModal}
+                disabled={deleting}
+                className="border border-neutral-300 px-5 py-2.5 font-mono text-[11px] uppercase tracking-[0.14em] text-neutral-700 hover:border-black disabled:opacity-40"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        )}
+      </Modal>
+
       <div className="overflow-hidden rounded-xl border border-neutral-200">
         {visibleLeads.length === 0 ? (
           <p className="py-16 text-center font-mono text-sm text-neutral-400">
@@ -227,7 +430,15 @@ export default function LeadsTable({ initialLeads }: { initialLeads: Lead[] }) {
             <table className="w-full border-collapse text-left">
               <thead>
                 <tr className="border-b border-neutral-200 bg-neutral-50">
-                  <th className="py-3 pl-5 pr-4 font-mono text-[11px] uppercase tracking-widest text-neutral-500">Name</th>
+                  <th className="py-3 pl-5 pr-3">
+                    <input
+                      type="checkbox"
+                      aria-label="Select all leads"
+                      checked={allVisibleSelected}
+                      onChange={toggleAll}
+                    />
+                  </th>
+                  <th className="py-3 pl-2 pr-4 font-mono text-[11px] uppercase tracking-widest text-neutral-500">Name</th>
                   <th className="py-3 pr-4 font-mono text-[11px] uppercase tracking-widest text-neutral-500">Email</th>
                   <th className="py-3 pr-4 font-mono text-[11px] uppercase tracking-widest text-neutral-500">Source</th>
                   <th className="py-3 pr-4 font-mono text-[11px] uppercase tracking-widest text-neutral-500">Status</th>
@@ -245,7 +456,15 @@ export default function LeadsTable({ initialLeads }: { initialLeads: Lead[] }) {
                         key={lead.id}
                         className="border-b border-neutral-100 align-top transition-colors last:border-b-0 hover:bg-neutral-50"
                       >
-                        <td className="py-4 pl-5 pr-4">
+                        <td className="py-4 pl-5 pr-3">
+                          <input
+                            type="checkbox"
+                            aria-label={`Select ${lead.name}`}
+                            checked={selectedSet.has(lead.id)}
+                            onChange={() => toggleSelected(lead.id)}
+                          />
+                        </td>
+                        <td className="py-4 pl-2 pr-4">
                           <div className="flex items-center gap-3">
                             <Avatar name={lead.name} size="sm" />
                             <div>
@@ -304,7 +523,7 @@ export default function LeadsTable({ initialLeads }: { initialLeads: Lead[] }) {
                       </tr>
                       {isExpanded && lead.answers && (
                         <tr className="border-b border-neutral-100 bg-neutral-50 last:border-b-0">
-                          <td colSpan={6} className="px-5 py-5">
+                          <td colSpan={7} className="px-5 py-5">
                             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                               {lead.answers.brandName && <AnswerField label="Brand" value={lead.answers.brandName} />}
                               {lead.answers.need && <AnswerField label="Need" value={lead.answers.need} />}

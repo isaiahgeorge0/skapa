@@ -2,7 +2,22 @@
 import { useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "motion/react";
-import { createClient } from "@/lib/supabase/client";
+import type { SubmitLeadResult } from "@/lib/submit-lead-core";
+import { withTimeout } from "@/lib/with-timeout";
+
+const SUBMIT_TIMEOUT_MS = 15_000;
+
+async function postLead(body: unknown): Promise<SubmitLeadResult> {
+  const response = await fetch("/api/submit-lead", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
+  });
+
+  return (await response.json()) as SubmitLeadResult;
+}
 
 type Answers = {
   name: string;
@@ -50,7 +65,6 @@ const EMPTY: Answers = {
 };
 
 export default function StartQuestionnaire() {
-  const [supabase] = useState(() => createClient());
   const [stepIndex, setStepIndex] = useState(0);
   const [direction, setDirection] = useState(1);
   const [answers, setAnswers] = useState<Answers>(EMPTY);
@@ -101,28 +115,39 @@ export default function StartQuestionnaire() {
     setSubmitting(true);
     setError(null);
 
-    const { error: insertError } = await supabase.from("leads").insert({
-      name: answers.name,
-      email: answers.email,
-      message: answers.trigger || null,
-      source: "questionnaire",
-      answers: {
-        brandName: answers.brandName,
-        need: answers.need,
-        trigger: answers.trigger,
-        budget: answers.budget,
-        timeline: answers.timeline,
-        extra: answers.extra,
-      },
-    });
+    try {
+      const result = await withTimeout(
+        postLead({
+          source: "questionnaire",
+          name: answers.name,
+          email: answers.email,
+          message: answers.trigger || null,
+          answers: {
+            brandName: answers.brandName,
+            need: answers.need,
+            trigger: answers.trigger,
+            budget: answers.budget,
+            timeline: answers.timeline,
+            extra: answers.extra,
+          },
+        }),
+        SUBMIT_TIMEOUT_MS,
+      );
 
-    setSubmitting(false);
-    if (insertError) {
-      console.error("Failed to submit questionnaire:", insertError);
-      setError("Something went wrong. Please try again.");
-      return;
+      if (!result.success) {
+        setError(result.error);
+        return;
+      }
+      setDone(true);
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Something went wrong. Please try again.",
+      );
+    } finally {
+      setSubmitting(false);
     }
-    setDone(true);
   }
 
   const progress = (stepIndex / (STEPS.length - 1)) * 100;

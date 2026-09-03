@@ -1,0 +1,81 @@
+export const CHAPTERS = [
+  {
+    id: "change",
+    number: "01",
+    label: "Change",
+    short: "Change",
+    accent: "#737373",
+  },
+  {
+    id: "the-gap",
+    number: "02",
+    label: "The gap",
+    short: "Gap",
+    accent: "#4b4ae4",
+  },
+  {
+    id: "keep-or-change",
+    number: "03",
+    label: "Keep or change",
+    short: "Keep",
+    accent: "#111111",
+  },
+  {
+    id: "reconsider",
+    number: "04",
+    label: "Reconsider",
+    short: "Think",
+    accent: "#525252",
+  },
+  {
+    id: "transform",
+    number: "05",
+    label: "Transform",
+    short: "Transform",
+    accent: "#ff2791",
+  },
+  {
+    id: "apply",
+    number: "06",
+    label: "Apply",
+    short: "Apply",
+    accent: "#4b4ae4",
+  },
+  {
+    id: "evolve-or-transform",
+    number: "07",
+    label: "Evolve or transform",
+    short: "Path",
+    accent: "#111111",
+  },
+  {
+    id: "what-changes",
+    number: "08",
+    label: "What changes",
+    short: "Scope",
+    accent: "#737373",
+  },
+  {
+    id: "result",
+    number: "09",
+    label: "Result",
+    short: "Result",
+    accent: "#4b4ae4",
+  },
+  {
+    id: "questions",
+    number: "10",
+    label: "Questions",
+    short: "FAQ",
+    accent: "#ff2791",
+  },
+  {
+    id: "ready-for-whats-next",
+    number: "11",
+    label: "Ready for what's next",
+    short: "Ready",
+    accent: "#ff2791",
+  },
+] as const;
+
+export type ChapterId = (typeof CHAPTERS)[number]["id"];

@@ -71,6 +71,7 @@ export default async function ProjectAccessPage({
   const initialAccess = clients.map((client) => ({
     clientId: client.id,
     clientName: client.name,
+    clientEmail: client.email,
     entries: [
       ...(profiles ?? [])
         .filter((p) => p.client_id === client.id)

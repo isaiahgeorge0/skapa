@@ -33,22 +33,10 @@ export default async function PortalLayout({
   if (profile?.role === "admin") redirect("/admin");
 
   const { data: projects } = profile?.client_id
-    ? await (async () => {
-        const { data: additionalLinks } = await supabase
-          .from("project_clients")
-          .select("project_id")
-          .eq("client_id", profile.client_id);
-        const additionalIds = (additionalLinks ?? []).map((l) => l.project_id);
-        const orFilter = additionalIds.length
-          ? `client_id.eq.${profile.client_id},id.in.(${additionalIds.join(",")})`
-          : `client_id.eq.${profile.client_id}`;
-
-        return supabase
-          .from("projects")
-          .select("id, name")
-          .or(orFilter)
-          .order("created_at", { ascending: false });
-      })()
+    ? await supabase
+        .from("projects")
+        .select("id, name")
+        .order("created_at", { ascending: false })
     : { data: [] as { id: string; name: string }[] };
 
   const accent = await getClientAccentColor(profile?.client_id);

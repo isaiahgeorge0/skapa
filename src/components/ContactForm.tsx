@@ -1,38 +1,67 @@
 'use client'
 
 import { useState } from 'react'
-import { createClient } from '@/lib/supabase/client'
+import type { SubmitLeadResult } from '@/lib/submit-lead-core'
+import { withTimeout } from '@/lib/with-timeout'
+
+const SUBMIT_TIMEOUT_MS = 15_000
+
+async function postLead(body: unknown): Promise<SubmitLeadResult> {
+  const response = await fetch('/api/submit-lead', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(body),
+  })
+
+  const result = (await response.json()) as SubmitLeadResult
+  return result
+}
 
 export default function ContactForm() {
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle')
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setStatus('submitting')
+    setErrorMessage(null)
 
     const form = e.currentTarget
-    const supabase = createClient()
+    try {
+      const result = await withTimeout(
+        postLead({
+          source: 'contact_form',
+          name: (form.elements.namedItem('name') as HTMLInputElement).value,
+          email: (form.elements.namedItem('email') as HTMLInputElement).value,
+          message: (form.elements.namedItem('message') as HTMLTextAreaElement).value,
+        }),
+        SUBMIT_TIMEOUT_MS,
+      )
 
-    const { error } = await supabase.from('leads').insert({
-      name: (form.elements.namedItem('name') as HTMLInputElement).value,
-      email: (form.elements.namedItem('email') as HTMLInputElement).value,
-      message: (form.elements.namedItem('message') as HTMLTextAreaElement).value,
-    })
+      if (!result.success) {
+        setErrorMessage(result.error)
+        setStatus('error')
+        return
+      }
 
-    if (error) {
-      console.error(error)
+      setStatus('success')
+      form.reset()
+    } catch (error) {
+      setErrorMessage(
+        error instanceof Error
+          ? error.message
+          : 'Something went wrong. Please try again.',
+      )
       setStatus('error')
-      return
     }
-
-    setStatus('success')
-    form.reset()
   }
 
   if (status === 'success') {
     return (
       <p className="text-sm text-neutral-700">
-        Thanks. Got your message. We'll be in touch shortly.
+        Thanks. Got your message. We&apos;ll be in touch shortly.
       </p>
     )
   }
@@ -59,7 +88,9 @@ export default function ContactForm() {
         {status === 'submitting' ? 'Sending...' : 'Send message'}
       </button>
       {status === 'error' && (
-        <p className="text-sm text-red-600">Something went wrong. Please try again.</p>
+        <p className="text-sm text-red-600">
+          {errorMessage ?? 'Something went wrong. Please try again.'}
+        </p>
       )}
     </form>
   )

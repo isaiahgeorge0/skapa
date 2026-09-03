@@ -11,6 +11,7 @@ type Entry = ActiveEntry | PendingEntry;
 type ClientAccess = {
   clientId: string;
   clientName: string;
+  clientEmail: string | null;
   entries: Entry[];
 };
 
@@ -101,7 +102,11 @@ export default function ClientAccessPanel({
           title={client.clientName}
           action={
             <button
-              onClick={() => setInviteOpenFor(client.clientId)}
+              onClick={() => {
+                setInviteOpenFor(client.clientId);
+                setInviteEmail(client.clientEmail ?? "");
+                setError(null);
+              }}
               className="bg-black px-3 py-1.5 font-mono text-[11px] uppercase tracking-[0.14em] text-white transition-opacity hover:opacity-80"
             >
               + Invite

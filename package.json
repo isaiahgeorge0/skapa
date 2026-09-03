@@ -9,8 +9,10 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@sentry/nextjs": "^10.73.0",
     "@supabase/ssr": "^0.12.5",
     "@supabase/supabase-js": "^2.112.4",
+    "@vercel/analytics": "^2.0.1",
     "file-type": "^22.0.2",
     "mammoth": "^1.12.2",
     "motion": "^13.1.1",
