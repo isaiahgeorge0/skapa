@@ -33,7 +33,11 @@ const PANEL: Record<
   },
 };
 
-export default function WhatWeDoExperience() {
+export default function WhatWeDoExperience({
+  embedded = false,
+}: {
+  embedded?: boolean;
+}) {
   const [reducedMotion, setReducedMotion] = useState(false);
 
   useEffect(() => {
@@ -46,13 +50,19 @@ export default function WhatWeDoExperience() {
 
   return (
     <>
-      <DesktopDirectory reducedMotion={reducedMotion} />
-      <MobileDirectory reducedMotion={reducedMotion} />
+      <DesktopDirectory reducedMotion={reducedMotion} embedded={embedded} />
+      <MobileDirectory reducedMotion={reducedMotion} embedded={embedded} />
     </>
   );
 }
 
-function DesktopDirectory({ reducedMotion }: { reducedMotion: boolean }) {
+function DesktopDirectory({
+  reducedMotion,
+  embedded,
+}: {
+  reducedMotion: boolean;
+  embedded: boolean;
+}) {
   const [active, setActive] = useState<string | null>(null);
 
   function handleBlur(event: FocusEvent<HTMLDivElement>) {
@@ -63,7 +73,11 @@ function DesktopDirectory({ reducedMotion }: { reducedMotion: boolean }) {
 
   return (
     <div
-      className="hidden h-[calc(100svh-var(--skapa-site-chrome-height))] md:flex"
+      className={`hidden md:flex ${
+        embedded
+          ? "h-[min(78svh,46rem)]"
+          : "h-[calc(100svh-var(--skapa-site-chrome-height))]"
+      }`}
       onMouseLeave={() => setActive(null)}
       onBlur={handleBlur}
     >
@@ -156,23 +170,32 @@ function DesktopDirectory({ reducedMotion }: { reducedMotion: boolean }) {
   );
 }
 
-function MobileDirectory({ reducedMotion }: { reducedMotion: boolean }) {
+function MobileDirectory({
+  reducedMotion,
+  embedded,
+}: {
+  reducedMotion: boolean;
+  embedded: boolean;
+}) {
   const [openId, setOpenId] = useState<string | null>(null);
+  const idPrefix = embedded ? "home" : "page";
 
   return (
     <div className="md:hidden">
-      <div className="bg-bs-offwhite px-8 pb-10 pt-4">
-        <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-500">
-          What we do
-        </p>
-        <p className="mt-4 max-w-[14ch] font-serif text-[2.15rem] leading-[1.08] tracking-tight text-black">
-          Four disciplines. One studio.
-        </p>
-      </div>
+      {embedded ? null : (
+        <div className="bg-bs-offwhite px-8 pb-10 pt-4">
+          <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-500">
+            What we do
+          </p>
+          <p className="mt-4 max-w-[14ch] font-serif text-[2.15rem] leading-[1.08] tracking-tight text-black">
+            Four disciplines. One studio.
+          </p>
+        </div>
+      )}
       {SERVICE_GROUPS.map((group) => {
         const open = openId === group.id;
         const tone = PANEL[group.id];
-        const panelId = `service-${group.id}`;
+        const panelId = `${idPrefix}-service-${group.id}`;
         return (
           <section key={group.id} className={`border-t border-black/10 ${tone.field} ${tone.ink}`}>
             <h2>

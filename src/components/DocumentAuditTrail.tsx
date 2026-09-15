@@ -5,7 +5,7 @@ import { createClient } from "@/lib/supabase/client";
 type Event = {
   id: string;
   document_id: string;
-  event_type: "created" | "sent" | "viewed" | "signed" | "status_changed";
+  event_type: "created" | "sent" | "viewed" | "signed" | "status_changed" | "voided";
   actor_role: "admin" | "client" | null;
   detail: string | null;
   created_at: string;
@@ -17,6 +17,7 @@ const EVENT_LABELS: Record<Event["event_type"], string> = {
   viewed: "Viewed by client",
   signed: "Signed",
   status_changed: "Status changed",
+  voided: "Voided",
 };
 
 const EVENT_DOTS: Record<Event["event_type"], string> = {
@@ -25,6 +26,7 @@ const EVENT_DOTS: Record<Event["event_type"], string> = {
   viewed: "bg-amber-400",
   signed: "bg-green-500",
   status_changed: "bg-neutral-300",
+  voided: "bg-neutral-500",
 };
 
 // Reusable timeline for ANY document — pass a document_id and it fetches
@@ -56,10 +58,10 @@ export default function DocumentAuditTrail({ documentId }: { documentId: string 
     <ul className="space-y-3">
       {events.map((e) => (
         <li key={e.id} className="flex items-start gap-3">
-          <span className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${EVENT_DOTS[e.event_type]}`} />
+          <span className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${EVENT_DOTS[e.event_type] ?? "bg-neutral-300"}`} />
           <div>
             <p className="font-sans text-sm text-black">
-              {EVENT_LABELS[e.event_type]}
+              {EVENT_LABELS[e.event_type] ?? e.event_type}
               {e.actor_role && (
                 <span className="ml-2 font-mono text-[10px] uppercase tracking-widest text-neutral-400">
                   {e.actor_role}

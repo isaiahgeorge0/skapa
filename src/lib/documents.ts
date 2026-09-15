@@ -31,11 +31,18 @@ export type DocumentSigner = {
 
 export type DocumentFieldValue = {
   id: string;
-  document_field_id: string;
-  value: string;
-  filled_by: string;
-  created_at?: string;
+  field_id: string;
+  document_id: string;
+  value_text: string | null;
+  value_image_url: string | null;
+  filled_by: string | null;
+  filled_at?: string;
 };
+
+/** Normalized display/storage string for a saved field value. */
+export function fieldValueContent(value: DocumentFieldValue): string {
+  return value.value_image_url || value.value_text || "";
+}
 
 export type FieldAssigneeOption = {
   value: string;

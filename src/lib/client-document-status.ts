@@ -6,6 +6,7 @@ export type ClientFacingDocStatus =
   | "viewed"
   | "partially_signed"
   | "signed"
+  | "voided"
   | string;
 
 export function clientDocumentStatusLabel({
@@ -18,6 +19,7 @@ export function clientDocumentStatusLabel({
   waitingOnName?: string | null;
 }): string {
   if (status === "signed") return "Signed";
+  if (status === "voided") return "Voided";
 
   if (status === "sent" || status === "viewed" || status === "partially_signed") {
     if (isMyTurn) return "Needs your signature";

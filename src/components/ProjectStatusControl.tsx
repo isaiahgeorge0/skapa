@@ -43,7 +43,7 @@ export default function ProjectStatusControl({
       value={status}
       disabled={saving}
       onChange={(e) => updateStatus(e.target.value)}
-      className={`rounded-full border-0 px-4 py-1.5 font-mono text-[11px] uppercase tracking-[0.08em] disabled:opacity-50 ${STYLES[status as (typeof STATUSES)[number]] ?? ""}`}
+      className={`surface-control border-0 px-4 py-1.5 font-mono text-[11px] uppercase tracking-[0.08em] disabled:opacity-50 ${STYLES[status as (typeof STATUSES)[number]] ?? ""}`}
     >
       {STATUSES.map((s) => (
         <option key={s} value={s}>

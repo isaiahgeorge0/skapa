@@ -2,6 +2,8 @@
 import { headers } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
 import { generateAndStoreCertificate } from "@/lib/certificate-of-completion";
+import { notifyDocumentSignedConfirmations } from "@/lib/notify-document-signed";
+import { revalidateDocumentPaths } from "@/lib/revalidate-documents";
 
 type SignDocumentResult = { success: true } | { success: false; error: string };
 
@@ -55,6 +57,14 @@ export async function signDocument(
     return { success: false, error: "This document has already been signed." };
   }
 
+  if (doc.status === "voided") {
+    return { success: false, error: "This document has been voided." };
+  }
+
+  if (!["sent", "viewed", "partially_signed"].includes(doc.status)) {
+    return { success: false, error: "This document is not open for signing." };
+  }
+
   const signaturesPrefix = `${doc.project_id}/signatures/`;
   if (
     !signatureImagePath.startsWith(signaturesPrefix) ||
@@ -64,13 +74,15 @@ export async function signDocument(
     return { success: false, error: "Invalid signature image path." };
   }
 
+  const signedAt = new Date().toISOString();
+
   const { error: updateError } = await supabase
     .from("documents")
     .update({
       status: "signed",
       signature_name: signatureName.trim(),
       signed_by: user.id,
-      signed_at: new Date().toISOString(),
+      signed_at: signedAt,
       signature_hash: fileHash,
       signature_image_url: signatureImagePath,
       signature_method: signatureMethod,
@@ -96,6 +108,9 @@ export async function signDocument(
   if (!certificate.success) {
     console.error("Certificate generation failed:", certificate.error);
   }
+
+  await notifyDocumentSignedConfirmations(documentId, signedAt);
+  revalidateDocumentPaths(doc.project_id);
 
   return { success: true };
 }

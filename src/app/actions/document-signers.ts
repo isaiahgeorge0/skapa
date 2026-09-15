@@ -3,11 +3,13 @@
 import { headers } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { sendDocumentReadyToSignEmail } from "@/lib/document-emails";
+import { sendDocumentReadyToSignEmail } from "@/lib/email";
 import {
   generateAndStoreCertificate,
   sha256Hex,
 } from "@/lib/certificate-of-completion";
+import { notifyDocumentSignedConfirmations } from "@/lib/notify-document-signed";
+import { revalidateDocumentPaths } from "@/lib/revalidate-documents";
 import type { DocumentSigner, DocumentSignerRole } from "@/lib/documents";
 import { signerKey } from "@/lib/documents";
 
@@ -419,10 +421,15 @@ async function notifySigner(
   },
 ): Promise<void> {
   const now = new Date().toISOString();
-  await db
+  const { error } = await db
     .from("document_signers")
     .update({ status: "sent", notified_at: now })
     .eq("id", signer.id);
+
+  if (error) {
+    console.error("Failed to activate signer:", error);
+    throw new Error("Failed to activate the next signer.");
+  }
 
   if (signer.role !== "client" || !signer.client_id) return;
 
@@ -448,10 +455,11 @@ async function notifySigner(
     : projectData?.name;
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://skapa.uk";
-  const signUrl = `${siteUrl}/portal/projects/${document.project_id}?document=${documentId}`;
+  const signUrl = `${siteUrl}/portal/projects/${document.project_id}/documents?sign=${documentId}`;
 
   await sendDocumentReadyToSignEmail({
     to: client.email,
+    clientName: client.name ?? "there",
     documentName: String(document.type),
     projectName: projectName ?? "your project",
     signUrl,
@@ -487,10 +495,11 @@ async function notifyProjectClientForWholeDocument(
   if (!client?.email) return;
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://skapa.uk";
-  const signUrl = `${siteUrl}/portal/projects/${document.project_id}?document=${documentId}`;
+  const signUrl = `${siteUrl}/portal/projects/${document.project_id}/documents?sign=${documentId}`;
 
   await sendDocumentReadyToSignEmail({
     to: client.email,
+    clientName: client.name ?? "there",
     documentName: String(document.type),
     projectName: project.name ?? "your project",
     signUrl,
@@ -500,10 +509,13 @@ async function notifyProjectClientForWholeDocument(
 export async function sendDocumentForSigning(
   documentId: string,
 ): Promise<ActionResult<{ status: string }>> {
-  const { supabase, user, error: authError } = await requireAdmin();
+  const { user, error: authError } = await requireAdmin();
   if (authError || !user) return { success: false, error: authError ?? "Unauthorized" };
 
-  const { data: fields, error: fieldsError } = await supabase
+  // Service-role writes after admin auth — signer queue updates must not be blocked by RLS.
+  const db = createAdminClient();
+
+  const { data: fields, error: fieldsError } = await db
     .from("document_fields")
     .select("id, field_type, page_number, required, assigned_to_role")
     .eq("document_id", documentId);
@@ -514,24 +526,34 @@ export async function sendDocumentForSigning(
 
   const fieldList = fields ?? [];
 
+  const { data: document, error: docError } = await db
+    .from("documents")
+    .select("id, status, project_id")
+    .eq("id", documentId)
+    .single();
+
+  if (docError || !document) {
+    return { success: false, error: "Document not found." };
+  }
+
+  if (document.status === "voided") {
+    return {
+      success: false,
+      error: "Voided documents can't be sent again. Upload a fresh document instead.",
+    };
+  }
+
+  if (document.status !== "draft") {
+    return {
+      success: false,
+      error: "Only draft documents can be sent for signing.",
+    };
+  }
+
   // Whole-document signing: DOCX, or PDF sent without field placement.
   // No document_signers queue — client signs via DocumentPreview / signDocument.
   if (fieldList.length === 0) {
-    const { data: document, error: docError } = await supabase
-      .from("documents")
-      .select("id, status")
-      .eq("id", documentId)
-      .single();
-
-    if (docError || !document) {
-      return { success: false, error: "Document not found." };
-    }
-
-    if (document.status === "signed") {
-      return { success: false, error: "This document has already been signed." };
-    }
-
-    const { error: updateError } = await supabase
+    const { error: updateError } = await db
       .from("documents")
       .update({ status: "sent" })
       .eq("id", documentId);
@@ -540,9 +562,9 @@ export async function sendDocumentForSigning(
       return { success: false, error: "Failed to update document status." };
     }
 
-    await notifyProjectClientForWholeDocument(supabase, documentId);
+    await notifyProjectClientForWholeDocument(db, documentId);
 
-    await supabase.from("document_events").insert({
+    await db.from("document_events").insert({
       document_id: documentId,
       event_type: "sent",
       actor_id: user.id,
@@ -550,6 +572,7 @@ export async function sendDocumentForSigning(
       detail: "Sent for whole-document signing",
     });
 
+    revalidateDocumentPaths(document.project_id);
     return { success: true, data: { status: "sent" } };
   }
 
@@ -587,15 +610,42 @@ export async function sendDocumentForSigning(
   }
 
   // Reset queue to pending, then activate first signer.
-  await supabase
+  const { error: resetError } = await db
     .from("document_signers")
     .update({ status: "pending", signed_at: null, notified_at: null })
     .eq("document_id", documentId);
 
-  const first = [...signers].sort((a, b) => a.order_index - b.order_index)[0];
-  await notifySigner(supabase, documentId, first);
+  if (resetError) {
+    console.error("Failed to reset signer queue:", resetError);
+    return { success: false, error: "Failed to prepare the signing queue." };
+  }
 
-  const { error: updateError } = await supabase
+  const first = [...signers].sort((a, b) => a.order_index - b.order_index)[0];
+  try {
+    await notifySigner(db, documentId, first);
+  } catch (err) {
+    console.error(err);
+    return {
+      success: false,
+      error: err instanceof Error ? err.message : "Failed to activate the first signer.",
+    };
+  }
+
+  // Confirm first signer actually activated.
+  const { data: activated } = await db
+    .from("document_signers")
+    .select("id, status, notified_at")
+    .eq("id", first.id)
+    .single();
+
+  if (!activated || activated.status !== "sent") {
+    return {
+      success: false,
+      error: "Failed to activate the first signer. Try again.",
+    };
+  }
+
+  const { error: updateError } = await db
     .from("documents")
     .update({ status: "sent" })
     .eq("id", documentId);
@@ -604,7 +654,7 @@ export async function sendDocumentForSigning(
     return { success: false, error: "Failed to update document status." };
   }
 
-  await supabase.from("document_events").insert({
+  await db.from("document_events").insert({
     document_id: documentId,
     event_type: "sent",
     actor_id: user.id,
@@ -612,7 +662,153 @@ export async function sendDocumentForSigning(
     detail: `Sent for signing. First signer: ${first.display_name ?? first.role}`,
   });
 
+  revalidateDocumentPaths(document.project_id);
   return { success: true, data: { status: "sent" } };
+}
+
+/** Admin-only correction: pull a document back to draft and reset the queue. */
+export async function revertDocumentToDraft(
+  documentId: string,
+): Promise<ActionResult<{ status: string }>> {
+  const { user, error: authError } = await requireAdmin();
+  if (authError || !user) return { success: false, error: authError ?? "Unauthorized" };
+
+  const db = createAdminClient();
+
+  const { data: document, error: docError } = await db
+    .from("documents")
+    .select("id, status, project_id")
+    .eq("id", documentId)
+    .single();
+
+  if (docError || !document) {
+    return { success: false, error: "Document not found." };
+  }
+
+  if (document.status === "signed") {
+    return { success: false, error: "Signed documents can't be reverted." };
+  }
+
+  if (document.status === "voided") {
+    return {
+      success: false,
+      error: "Voided documents can't be reactivated. Upload a fresh document instead.",
+    };
+  }
+
+  if (document.status === "draft") {
+    return { success: true, data: { status: "draft" } };
+  }
+
+  const { error: updateError } = await db
+    .from("documents")
+    .update({
+      status: "draft",
+      signed_at: null,
+      signed_by: null,
+    })
+    .eq("id", documentId);
+
+  if (updateError) {
+    return { success: false, error: "Failed to revert document status." };
+  }
+
+  await db
+    .from("document_signers")
+    .update({
+      status: "pending",
+      signed_at: null,
+      notified_at: null,
+      signer_ip: null,
+      signer_user_agent: null,
+    })
+    .eq("document_id", documentId);
+
+  await db.from("document_events").insert({
+    document_id: documentId,
+    event_type: "status_changed",
+    actor_id: user.id,
+    actor_role: "admin",
+    detail: "Reverted to draft",
+  });
+
+  revalidateDocumentPaths(document.project_id);
+  return { success: true, data: { status: "draft" } };
+}
+
+/**
+ * Permanently cancel an in-flight signing package.
+ * Does not touch completed signer rows or existing field values.
+ */
+export async function voidDocument(
+  documentId: string,
+): Promise<ActionResult<{ status: string }>> {
+  const { user, error: authError } = await requireAdmin();
+  if (authError || !user) return { success: false, error: authError ?? "Unauthorized" };
+
+  const db = createAdminClient();
+
+  const { data: document, error: docError } = await db
+    .from("documents")
+    .select("id, status, project_id")
+    .eq("id", documentId)
+    .single();
+
+  if (docError || !document) {
+    return { success: false, error: "Document not found." };
+  }
+
+  if (document.status === "voided") {
+    return { success: true, data: { status: "voided" } };
+  }
+
+  if (document.status === "signed") {
+    return { success: false, error: "Fully signed documents can't be voided." };
+  }
+
+  if (document.status === "draft") {
+    return {
+      success: false,
+      error: "Draft documents don't need voiding — delete or leave them unused.",
+    };
+  }
+
+  if (!["sent", "viewed", "partially_signed"].includes(document.status)) {
+    return { success: false, error: "This document can't be voided in its current state." };
+  }
+
+  const { error: updateError } = await db
+    .from("documents")
+    .update({ status: "voided" })
+    .eq("id", documentId);
+
+  if (updateError) {
+    console.error("Failed to void document:", updateError);
+    return { success: false, error: "Failed to void document." };
+  }
+
+  const { data: voidEvent, error: eventError } = await db
+    .from("document_events")
+    .insert({
+      document_id: documentId,
+      event_type: "voided",
+      actor_id: user.id,
+      actor_role: "admin",
+      detail: "Document voided — signing cancelled. Completed signatures retained.",
+    })
+    .select("id")
+    .single();
+
+  if (eventError || !voidEvent) {
+    console.error("Failed to log void event:", eventError);
+    return {
+      success: false,
+      error: "Document was voided, but the audit event failed to record.",
+    };
+  }
+
+  revalidateDocumentPaths(document.project_id);
+  return { success: true, data: { status: "voided" } };
 }
 
 export async function advanceSigningQueue(
@@ -644,7 +840,19 @@ export async function advanceSigningQueue(
 
   const now = new Date().toISOString();
 
-  const { error: completeError } = await supabase
+  const { data: documentRow } = await supabase
+    .from("documents")
+    .select("id, project_id, status")
+    .eq("id", documentId)
+    .single();
+
+  if (!documentRow) return { success: false, error: "Document not found." };
+
+  if (documentRow.status === "voided") {
+    return { success: false, error: "This document has been voided." };
+  }
+
+  const { data: completedRow, error: completeError } = await admin
     .from("document_signers")
     .update({
       status: "signed",
@@ -653,14 +861,19 @@ export async function advanceSigningQueue(
       signer_user_agent: userAgent,
     })
     .eq("id", completedSignerId)
-    .eq("document_id", documentId);
+    .eq("document_id", documentId)
+    .eq("status", "sent")
+    .select("id, status, signed_at")
+    .maybeSingle();
 
-  if (completeError) {
+  // Service-role write — user-scoped updates silently no-op under client RLS,
+  // which left the signer as 'sent' and re-notified the same person as "next".
+  if (completeError || !completedRow) {
     console.error("Failed to mark signer complete with IP/UA:", completeError);
     return { success: false, error: "Failed to mark signer as complete." };
   }
 
-  const { data: signers } = await supabase
+  const { data: signers } = await admin
     .from("document_signers")
     .select("*")
     .eq("document_id", documentId)
@@ -669,7 +882,7 @@ export async function advanceSigningQueue(
   const next = (signers ?? []).find((signer) => signer.status !== "signed");
 
   if (!next) {
-    const { data: document } = await supabase
+    const { data: document } = await admin
       .from("documents")
       .select("id, file_url, project_id, signature_hash")
       .eq("id", documentId)
@@ -688,7 +901,7 @@ export async function advanceSigningQueue(
 
     // Do not write signer_ip / signer_user_agent onto documents —
     // each signer's IP/UA lives on their document_signers row.
-    await supabase
+    await admin
       .from("documents")
       .update({
         status: "signed",
@@ -698,7 +911,7 @@ export async function advanceSigningQueue(
       })
       .eq("id", documentId);
 
-    await supabase.from("document_events").insert({
+    await admin.from("document_events").insert({
       document_id: documentId,
       event_type: "signed",
       actor_id: user.id,
@@ -712,6 +925,9 @@ export async function advanceSigningQueue(
       console.error("Certificate generation failed:", certificate.error);
     }
 
+    await notifyDocumentSignedConfirmations(documentId, now);
+
+    revalidateDocumentPaths(documentRow.project_id);
     return { success: true, data: { documentStatus: "signed", nextSignerName: null } };
   }
 
@@ -722,7 +938,7 @@ export async function advanceSigningQueue(
     client_id: next.client_id,
   });
 
-  await supabase
+  await admin
     .from("documents")
     .update({ status: "partially_signed" })
     .eq("id", documentId);
@@ -733,7 +949,7 @@ export async function advanceSigningQueue(
       ? (list.data.find((signer) => signer.id === next.id)?.display_name ?? next.role)
       : next.role;
 
-  await supabase.from("document_events").insert({
+  await admin.from("document_events").insert({
     document_id: documentId,
     event_type: "status_changed",
     actor_id: user.id,
@@ -741,6 +957,7 @@ export async function advanceSigningQueue(
     detail: `Partially signed, waiting on ${nextName}`,
   });
 
+  revalidateDocumentPaths(documentRow.project_id);
   return {
     success: true,
     data: { documentStatus: "partially_signed", nextSignerName: nextName },

@@ -191,7 +191,7 @@ export default async function PortalPage() {
                   <li key={p.id}>
                     <Link
                       href={`/portal/projects/${p.id}`}
-                      className="group block border border-neutral-200 p-5 transition-colors hover:border-black sm:p-6"
+                      className="surface-raised group block p-6 transition-shadow hover:shadow-[0_2px_4px_rgba(10,10,10,0.04),0_12px_28px_rgba(10,10,10,0.08)] sm:p-7"
                     >
                       <div className="mb-4 flex items-start justify-between gap-3">
                         <h2 className="font-serif text-2xl tracking-tight text-black transition-colors group-hover:text-black">
@@ -235,7 +235,7 @@ export default async function PortalPage() {
                 {docsNeedingYou.map((d) => (
                   <li
                     key={d.id}
-                    className="flex flex-col gap-3 border border-black bg-white px-5 py-4 sm:flex-row sm:items-center sm:justify-between"
+                    className="surface-raised flex flex-col gap-3 px-6 py-5 sm:flex-row sm:items-center sm:justify-between"
                   >
                     <div>
                       <p className="font-serif text-xl capitalize text-black">
@@ -246,7 +246,7 @@ export default async function PortalPage() {
                       </p>
                     </div>
                     <Link
-                      href={`/portal/projects/${d.project_id}`}
+                      href={`/portal/projects/${d.project_id}/documents?sign=${d.id}`}
                       className="shrink-0 bg-portal-accent px-5 py-2.5 text-center font-mono text-[11px] uppercase tracking-[0.14em] text-white transition-opacity hover:opacity-90"
                     >
                       Review &amp; sign

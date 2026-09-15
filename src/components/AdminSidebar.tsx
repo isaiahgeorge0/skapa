@@ -19,7 +19,7 @@ export default function AdminSidebar({
   const pathname = usePathname();
 
   return (
-    <aside className="sticky top-0 flex h-screen w-60 shrink-0 flex-col justify-between border-r border-neutral-200 px-5 py-8">
+    <aside className="sticky top-0 flex h-screen w-60 shrink-0 flex-col justify-between border-r border-black/[0.04] bg-white px-5 py-8">
       <div>
         <Link
           href="/admin"

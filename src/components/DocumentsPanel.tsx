@@ -1,10 +1,19 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { uploadDocument } from "@/app/actions/upload-document";
-import { sendDocumentForSigning } from "@/app/actions/document-signers";
-import { listDocumentSigners } from "@/app/actions/document-signers";
+import {
+  sendDocumentForSigning,
+  revertDocumentToDraft,
+  voidDocument,
+  listDocumentSigners,
+} from "@/app/actions/document-signers";
+import {
+  deleteDocuments,
+  DOCUMENT_SIGNED_DATA_DELETE_MESSAGE,
+} from "@/app/actions/admin-deletes";
 import { getCertificateDownloadUrl } from "@/app/actions/certificate";
 import DocumentPreview from "@/components/DocumentPreview";
 import DocumentSignView from "@/components/DocumentSignView";
@@ -20,7 +29,13 @@ import { clientDocumentStatusLabel } from "@/lib/client-document-status";
 import PortalSectionHeading from "@/components/PortalSectionHeading";
 
 type DocType = "proposal" | "agreement" | "welcome" | "invoice" | "other";
-type DocStatus = "draft" | "sent" | "viewed" | "partially_signed" | "signed";
+type DocStatus =
+  | "draft"
+  | "sent"
+  | "viewed"
+  | "partially_signed"
+  | "signed"
+  | "voided";
 
 type Doc = {
   id: string;
@@ -39,14 +54,16 @@ type Doc = {
 };
 
 const TYPES: DocType[] = ["proposal", "agreement", "welcome", "invoice", "other"];
-const STATUSES: DocStatus[] = ["draft", "sent", "viewed", "partially_signed", "signed"];
 const STATUS_STYLES: Record<DocStatus, string> = {
   draft: "bg-neutral-100 text-neutral-500",
   sent: "bg-blue-50 text-blue-700",
   viewed: "bg-amber-50 text-amber-700",
   partially_signed: "bg-purple-50 text-purple-700",
   signed: "bg-green-50 text-green-700",
+  voided: "bg-neutral-200 text-neutral-600",
 };
+
+const ACTIVE_SIGNING_STATUSES: DocStatus[] = ["sent", "viewed", "partially_signed"];
 
 type SignSession = {
   doc: Doc;
@@ -63,6 +80,7 @@ type SignSession = {
 };
 
 function statusLabel(doc: Doc, waitingOn: string | null): string {
+  if (doc.status === "voided") return "Voided";
   if (doc.status === "partially_signed") {
     return waitingOn ? `Partially signed (waiting on ${waitingOn})` : "Partially signed";
   }
@@ -76,17 +94,26 @@ export default function DocumentsPanel({
   projectId,
   initialDocuments,
   canManage = true,
+  autoOpenDocumentId = null,
 }: {
   projectId: string;
   initialDocuments: Doc[];
   canManage?: boolean;
+  /** When set (e.g. ?sign= from Overview), open this document's signing view on mount. */
+  autoOpenDocumentId?: string | null;
 }) {
+  const router = useRouter();
   const supabase = useMemo(() => createClient(), []);
   const [docs, setDocs] = useState<Doc[]>(initialDocuments);
   const [pendingType, setPendingType] = useState<DocType>("proposal");
   const [uploadOpen, setUploadOpen] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
+  const [voidConfirmId, setVoidConfirmId] = useState<string | null>(null);
+  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
+  const [docsWithSignedData, setDocsWithSignedData] = useState<Record<string, boolean>>(
+    {},
+  );
   const [expandedAuditId, setExpandedAuditId] = useState<string | null>(null);
   const [expandedActivityId, setExpandedActivityId] = useState<string | null>(null);
   const [previewDoc, setPreviewDoc] = useState<Doc | null>(null);
@@ -95,6 +122,54 @@ export default function DocumentsPanel({
   const [myTurnByDoc, setMyTurnByDoc] = useState<Record<string, boolean>>({});
   const [signatureImageUrls, setSignatureImageUrls] = useState<Record<string, string>>({});
   const [error, setError] = useState<string | null>(null);
+
+  // Keep local list in sync when the server revalidates after mutations.
+  useEffect(() => {
+    setDocs(initialDocuments);
+  }, [initialDocuments]);
+
+  // Track which documents have signed field values (blocks Delete; Void only).
+  useEffect(() => {
+    if (!canManage || docs.length === 0) {
+      setDocsWithSignedData({});
+      return;
+    }
+
+    let cancelled = false;
+
+    async function loadSignedDataFlags() {
+      const ids = docs.map((d) => d.id);
+      const { data: valueRows } = await supabase
+        .from("document_field_values")
+        .select("document_id")
+        .in("document_id", ids);
+
+      if (cancelled) return;
+
+      const withValues = new Set((valueRows ?? []).map((row) => row.document_id));
+      const next: Record<string, boolean> = {};
+      for (const doc of docs) {
+        next[doc.id] = withValues.has(doc.id) || Boolean(doc.signed_at);
+      }
+      setDocsWithSignedData(next);
+    }
+
+    void loadSignedDataFlags();
+    return () => {
+      cancelled = true;
+    };
+  }, [canManage, docs, supabase]);
+
+  // Deep-link from Overview "Review & sign" (?sign=documentId).
+  useEffect(() => {
+    if (!autoOpenDocumentId) return;
+    const target = initialDocuments.find((d) => d.id === autoOpenDocumentId);
+    if (!target) return;
+    if (!["sent", "viewed", "partially_signed"].includes(target.status)) return;
+    void openSignExperience(target);
+    // Only on first mount for this deep-link target.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoOpenDocumentId]);
 
   useEffect(() => {
     let cancelled = false;
@@ -116,7 +191,7 @@ export default function DocumentsPanel({
 
       await Promise.all(
         docs.map(async (doc) => {
-          if (!["sent", "viewed", "partially_signed"].includes(doc.status)) return;
+          if (!ACTIVE_SIGNING_STATUSES.includes(doc.status)) return;
 
           const { count: fieldCount } = await supabase
             .from("document_fields")
@@ -155,6 +230,25 @@ export default function DocumentsPanel({
       cancelled = true;
     };
   }, [docs, supabase]);
+
+  function applyDocStatusLocally(docId: string, status: DocStatus) {
+    setDocs((curr) =>
+      curr.map((d) => (d.id === docId ? { ...d, status } : d)),
+    );
+    setMyTurnByDoc((curr) => {
+      const next = { ...curr };
+      delete next[docId];
+      return next;
+    });
+    if (status === "signed" || status === "voided" || status === "draft") {
+      setWaitingOnByDoc((curr) => {
+        const next = { ...curr };
+        delete next[docId];
+        return next;
+      });
+    }
+    router.refresh();
+  }
 
   async function logEvent(
     documentId: string,
@@ -258,7 +352,7 @@ export default function DocumentsPanel({
         ? await supabase
             .from("document_field_values")
             .select("*")
-            .in("document_field_id", fieldIds)
+            .in("field_id", fieldIds)
         : { data: [] as DocumentFieldValue[] };
 
     if (!canManage && doc.status === "sent") {
@@ -306,50 +400,94 @@ export default function DocumentsPanel({
       });
   }, [expandedAuditId, docs, signatureImageUrls, supabase]);
 
-  async function updateStatus(id: string, status: DocStatus) {
+  async function sendForSigning(id: string) {
     const previous = docs;
     setUpdatingId(id);
+    setError(null);
 
-    if (status === "sent") {
-      const result = await sendDocumentForSigning(id);
-      setUpdatingId(null);
-      if (!result.success) {
-        setError(result.error);
-        setDocs(previous);
-        return;
-      }
-      setDocs((curr) => curr.map((d) => (d.id === id ? { ...d, status: "sent" } : d)));
-      return;
-    }
-
-    if (status === "partially_signed") {
-      setUpdatingId(null);
-      setError("Partially signed is set automatically as signers complete.");
-      return;
-    }
-
-    setDocs((curr) => curr.map((d) => (d.id === id ? { ...d, status } : d)));
-    const { error: updateError } = await supabase
-      .from("documents")
-      .update({ status })
-      .eq("id", id);
-
+    const result = await sendDocumentForSigning(id);
     setUpdatingId(null);
-    if (updateError) {
-      console.error("Failed to update document status:", updateError);
+
+    if (!result.success) {
+      setError(result.error);
       setDocs(previous);
       return;
     }
 
-    await logEvent(id, "status_changed", `Status set to ${status}`);
+    applyDocStatusLocally(id, "sent");
+  }
+
+  async function revertToDraft(id: string) {
+    const previous = docs;
+    setUpdatingId(id);
+    setError(null);
+
+    const result = await revertDocumentToDraft(id);
+    setUpdatingId(null);
+
+    if (!result.success) {
+      setError(result.error);
+      setDocs(previous);
+      return;
+    }
+
+    applyDocStatusLocally(id, "draft");
+  }
+
+  async function confirmVoidDocument(id: string) {
+    const previous = docs;
+    setUpdatingId(id);
+    setError(null);
+    setVoidConfirmId(null);
+
+    const result = await voidDocument(id);
+    setUpdatingId(null);
+
+    if (!result.success) {
+      setError(result.error);
+      setDocs(previous);
+      return;
+    }
+
+    applyDocStatusLocally(id, "voided");
+  }
+
+  async function confirmDeleteDocument(id: string) {
+    if (docsWithSignedData[id]) {
+      setError(DOCUMENT_SIGNED_DATA_DELETE_MESSAGE);
+      setDeleteConfirmId(null);
+      return;
+    }
+
+    const previous = docs;
+    setUpdatingId(id);
+    setError(null);
+    setDeleteConfirmId(null);
+
+    const result = await deleteDocuments([id]);
+    setUpdatingId(null);
+
+    if (!result.success) {
+      setError(result.error);
+      setDocs(previous);
+      return;
+    }
+
+    setDocs((curr) => curr.filter((d) => d.id !== id));
+    setDocsWithSignedData((curr) => {
+      const next = { ...curr };
+      delete next[id];
+      return next;
+    });
+  }
+
+  function canDeleteDocument(doc: Doc): boolean {
+    return !docsWithSignedData[doc.id];
   }
 
   function canOpenForSigning(doc: Doc): boolean {
-    if (doc.status === "signed") return false;
-    return (
-      ["sent", "viewed", "partially_signed"].includes(doc.status) &&
-      Boolean(myTurnByDoc[doc.id])
-    );
+    if (doc.status === "signed" || doc.status === "voided") return false;
+    return ACTIVE_SIGNING_STATUSES.includes(doc.status) && Boolean(myTurnByDoc[doc.id]);
   }
 
   function formatDocDate(iso: string) {
@@ -367,13 +505,7 @@ export default function DocumentsPanel({
           doc={previewDoc}
           projectId={projectId}
           onClose={() => setPreviewDoc(null)}
-          onSigned={() =>
-            setDocs((curr) =>
-              curr.map((d) =>
-                d.id === previewDoc.id ? { ...d, status: "signed" as DocStatus } : d,
-              ),
-            )
-          }
+          onSigned={() => applyDocStatusLocally(previewDoc.id, "signed")}
         />
       )}
 
@@ -390,15 +522,71 @@ export default function DocumentsPanel({
           viewer={signSession.viewer}
           onClose={() => setSignSession(null)}
           onStatusChange={(status) =>
-            setDocs((curr) =>
-              curr.map((d) =>
-                d.id === signSession.doc.id
-                  ? { ...d, status: status as DocStatus }
-                  : d,
-              ),
-            )
+            applyDocStatusLocally(signSession.doc.id, status as DocStatus)
           }
         />
+      )}
+
+      {voidConfirmId && (
+        <Modal
+          open
+          onClose={() => setVoidConfirmId(null)}
+          title="Void this document?"
+        >
+          <p className="font-mono text-sm text-neutral-600">
+            Signing will be cancelled for anyone who hasn&apos;t finished yet.
+            Completed signatures stay on record and can&apos;t be undone. To try
+            again, upload a fresh document.
+          </p>
+          <div className="mt-6 flex flex-wrap gap-3">
+            <button
+              type="button"
+              disabled={updatingId === voidConfirmId}
+              onClick={() => confirmVoidDocument(voidConfirmId)}
+              className="bg-black px-4 py-2 font-mono text-[11px] uppercase tracking-[0.14em] text-white transition-opacity hover:opacity-80 disabled:opacity-50"
+            >
+              {updatingId === voidConfirmId ? "Voiding…" : "Void document"}
+            </button>
+            <button
+              type="button"
+              onClick={() => setVoidConfirmId(null)}
+              className="font-mono text-[11px] uppercase tracking-[0.08em] text-neutral-500 underline decoration-dotted hover:text-black"
+            >
+              Cancel
+            </button>
+          </div>
+        </Modal>
+      )}
+
+      {deleteConfirmId && (
+        <Modal
+          open
+          onClose={() => setDeleteConfirmId(null)}
+          title="Delete this document?"
+        >
+          <p className="font-mono text-sm text-neutral-600">
+            This permanently removes the document and its file. Only use this for
+            drafts or unsent uploads with no signed field values. Documents with
+            signed data can&apos;t be deleted — use Void instead.
+          </p>
+          <div className="mt-6 flex flex-wrap gap-3">
+            <button
+              type="button"
+              disabled={updatingId === deleteConfirmId}
+              onClick={() => confirmDeleteDocument(deleteConfirmId)}
+              className="border border-red-200 bg-red-50 px-4 py-2 font-mono text-[11px] uppercase tracking-[0.14em] text-red-700 transition-colors hover:border-red-400 disabled:opacity-50"
+            >
+              {updatingId === deleteConfirmId ? "Deleting…" : "Delete document"}
+            </button>
+            <button
+              type="button"
+              onClick={() => setDeleteConfirmId(null)}
+              className="font-mono text-[11px] uppercase tracking-[0.08em] text-neutral-500 underline decoration-dotted hover:text-black"
+            >
+              Cancel
+            </button>
+          </div>
+        </Modal>
       )}
     </>
   );
@@ -408,10 +596,11 @@ export default function DocumentsPanel({
     const actionable = docs.filter((doc) => canOpenForSigning(doc));
     const waiting = docs.filter(
       (doc) =>
-        ["sent", "viewed", "partially_signed"].includes(doc.status) &&
-        !canOpenForSigning(doc),
+        ACTIVE_SIGNING_STATUSES.includes(doc.status) && !canOpenForSigning(doc),
     );
-    const settled = docs.filter((doc) => doc.status === "signed");
+    const settled = docs.filter(
+      (doc) => doc.status === "signed" || doc.status === "voided",
+    );
     const other = docs.filter(
       (doc) =>
         !actionable.includes(doc) &&
@@ -447,7 +636,13 @@ export default function DocumentsPanel({
         {error && <p className="mb-4 font-mono text-xs text-red-600">{error}</p>}
 
         {docs.length === 0 ? (
-          <p className="text-sm text-neutral-400">Nothing shared with you yet.</p>
+          <div className="surface-raised-soft px-6 py-7 md:px-7 md:py-8">
+            <p className="font-serif text-lg text-black">Documents are on the way.</p>
+            <p className="mt-2 max-w-prose text-sm leading-relaxed text-neutral-500">
+              When proposals, contracts or proofs are ready, they appear here for you
+              to review and sign. Nothing needs doing until then.
+            </p>
+          </div>
         ) : (
           <div className="space-y-8">
             {actionable.length > 0 && (
@@ -455,7 +650,7 @@ export default function DocumentsPanel({
                 {actionable.map((doc) => (
                   <li
                     key={doc.id}
-                    className="border border-black bg-white px-5 py-5 md:px-6 md:py-6"
+                    className="surface-raised px-6 py-6 md:px-7 md:py-7"
                   >
                     <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
                       <div className="min-w-0">
@@ -471,7 +666,7 @@ export default function DocumentsPanel({
                       <button
                         type="button"
                         onClick={() => openSignExperience(doc)}
-                        className="shrink-0 bg-portal-accent px-5 py-2.5 font-mono text-[11px] uppercase tracking-[0.14em] text-white transition-opacity hover:opacity-90"
+                        className="surface-control shrink-0 bg-portal-accent px-5 py-2.5 font-mono text-[11px] uppercase tracking-[0.14em] text-white transition-opacity hover:opacity-90"
                       >
                         Review &amp; sign
                       </button>
@@ -590,26 +785,70 @@ export default function DocumentsPanel({
                   <p className="font-mono text-xs text-neutral-400">
                     {formatDocDate(doc.created_at)}
                   </p>
-                  {["sent", "viewed", "partially_signed"].includes(doc.status) &&
+                  {ACTIVE_SIGNING_STATUSES.includes(doc.status) &&
                     waitingOnByDoc[doc.id] && (
                       <p className="mt-1 font-mono text-[11px] text-neutral-500">
                         {statusLabel(doc, waitingOnByDoc[doc.id])}
                       </p>
                     )}
                 </div>
-                <div className="flex items-center gap-3">
-                  <select
-                    value={doc.status}
-                    disabled={updatingId === doc.id || doc.status === "signed"}
-                    onChange={(e) => updateStatus(doc.id, e.target.value as DocStatus)}
-                    className={`rounded-full border-0 px-3 py-1 font-mono text-[11px] uppercase tracking-[0.08em] disabled:opacity-70 ${STATUS_STYLES[doc.status]}`}
+                <div className="flex flex-wrap items-center gap-3">
+                  <span
+                    className={`rounded-full px-3 py-1 font-mono text-[11px] uppercase tracking-[0.08em] ${STATUS_STYLES[doc.status]}`}
                   >
-                    {STATUSES.map((s) => (
-                      <option key={s} value={s}>
-                        {s.replace("_", " ")}
-                      </option>
-                    ))}
-                  </select>
+                    {doc.status.replace("_", " ")}
+                  </span>
+                  {doc.status === "draft" && (
+                    <button
+                      type="button"
+                      disabled={updatingId === doc.id}
+                      onClick={() => sendForSigning(doc.id)}
+                      className="surface-control bg-black px-4 py-2 font-mono text-[11px] uppercase tracking-[0.14em] text-white transition-opacity hover:opacity-80 disabled:opacity-50"
+                    >
+                      {updatingId === doc.id ? "Sending…" : "Send for signing"}
+                    </button>
+                  )}
+                  {ACTIVE_SIGNING_STATUSES.includes(doc.status) && (
+                    <>
+                      <button
+                        type="button"
+                        disabled={updatingId === doc.id}
+                        onClick={() => setVoidConfirmId(doc.id)}
+                        className="font-mono text-[11px] uppercase tracking-[0.08em] text-red-600 underline decoration-dotted hover:text-red-800 disabled:opacity-50"
+                      >
+                        Void document
+                      </button>
+                      {doc.status !== "partially_signed" && (
+                        <button
+                          type="button"
+                          disabled={updatingId === doc.id}
+                          onClick={() => revertToDraft(doc.id)}
+                          className="font-mono text-[11px] uppercase tracking-[0.08em] text-neutral-500 underline decoration-dotted hover:text-black disabled:opacity-50"
+                        >
+                          {updatingId === doc.id ? "Reverting…" : "Revert to draft"}
+                        </button>
+                      )}
+                    </>
+                  )}
+                  {canDeleteDocument(doc) ? (
+                    <button
+                      type="button"
+                      disabled={updatingId === doc.id}
+                      onClick={() => setDeleteConfirmId(doc.id)}
+                      className="font-mono text-[11px] uppercase tracking-[0.08em] text-red-600 underline decoration-dotted hover:text-red-800 disabled:opacity-50"
+                    >
+                      Delete
+                    </button>
+                  ) : doc.status !== "voided" ? (
+                    <button
+                      type="button"
+                      onClick={() => setError(DOCUMENT_SIGNED_DATA_DELETE_MESSAGE)}
+                      className="font-mono text-[11px] uppercase tracking-[0.08em] text-neutral-400 underline decoration-dotted hover:text-neutral-600"
+                      title={DOCUMENT_SIGNED_DATA_DELETE_MESSAGE}
+                    >
+                      Delete
+                    </button>
+                  ) : null}
                   <button
                     onClick={() => downloadDoc(doc)}
                     className="font-mono text-[11px] uppercase tracking-[0.08em] text-neutral-600 underline decoration-dotted hover:text-black"
@@ -619,7 +858,7 @@ export default function DocumentsPanel({
                   {canOpenForSigning(doc) && (
                     <button
                       onClick={() => openSignExperience(doc)}
-                      className="bg-black px-4 py-2 font-mono text-[11px] uppercase tracking-[0.14em] text-white transition-opacity hover:opacity-80"
+                      className="surface-control bg-black px-4 py-2 font-mono text-[11px] uppercase tracking-[0.14em] text-white transition-opacity hover:opacity-80"
                     >
                       Fill &amp; sign
                     </button>
@@ -628,21 +867,21 @@ export default function DocumentsPanel({
               </div>
 
               <div className="mt-2 flex flex-wrap gap-4">
-                {doc.file_mime_type === "application/pdf" ? (
+                {doc.status === "draft" && doc.file_mime_type === "application/pdf" ? (
                   <Link
                     href={`/admin/projects/${projectId}/documents/${doc.id}/fields`}
                     className="font-mono text-[11px] uppercase tracking-[0.08em] text-neutral-600 underline decoration-dotted hover:text-black"
                   >
                     Add signature fields
                   </Link>
-                ) : (
+                ) : doc.status === "draft" ? (
                   <span
                     className="font-mono text-[11px] uppercase tracking-[0.08em] text-neutral-400"
                     title="Signature fields can only be placed on PDF documents."
                   >
                     Add signature fields (PDF only)
                   </span>
-                )}
+                ) : null}
                 {doc.status === "signed" && (
                   <button
                     onClick={() =>

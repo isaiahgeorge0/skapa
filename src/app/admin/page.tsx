@@ -64,7 +64,7 @@ export default async function AdminDashboardPage() {
 
 function StatCard({ label, value, accent = false }: { label: string; value: number; accent?: boolean }) {
   return (
-    <div className={`rounded-xl border border-neutral-200 border-l-4 bg-white p-5 ${accent ? "border-l-brand-pink" : "border-l-neutral-200"}`}>
+    <div className={`surface-raised border-l-4 p-5 md:p-6 ${accent ? "border-l-brand-pink" : "border-l-transparent"}`}>
       <p className={`font-serif text-4xl ${accent ? "text-brand-pink" : "text-black"}`}>{value}</p>
       <p className="mt-1 font-mono text-[11px] uppercase tracking-widest text-neutral-500">{label}</p>
     </div>
@@ -74,7 +74,7 @@ function StatCard({ label, value, accent = false }: { label: string; value: numb
 function AdminLink({ href, title, description }: { href: string; title: string; description: string }) {
   return (
     <Link href={href} className="block h-full">
-      <div className="flex h-full flex-col rounded-xl border border-neutral-200 p-6 transition-all hover:-translate-y-0.5 hover:border-black hover:shadow-sm">
+      <div className="surface-raised flex h-full flex-col p-6 transition-all hover:-translate-y-0.5 hover:shadow-[0_2px_4px_rgba(10,10,10,0.04),0_12px_28px_rgba(10,10,10,0.08)]">
         <h2 className="mb-1 font-serif text-xl text-black">{title}</h2>
         <p className="font-mono text-xs leading-relaxed text-neutral-500">{description}</p>
       </div>

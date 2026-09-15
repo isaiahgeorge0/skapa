@@ -43,7 +43,7 @@ export default async function PortalLayout({
 
   return (
     <div
-      className="flex min-h-screen flex-col bg-white md:flex-row"
+      className="flex min-h-screen flex-col surface-page md:flex-row"
       style={portalAccentStyle(accent)}
     >
       <PortalAccentVars accent={accent} />

@@ -321,12 +321,12 @@ export async function generateAndStoreCertificate(
     fieldIds.length > 0
       ? await admin
           .from("document_field_values")
-          .select("document_field_id, value, filled_by")
-          .in("document_field_id", fieldIds)
-      : { data: [] as { document_field_id: string; value: string; filled_by: string }[] };
+          .select("field_id, value_text, value_image_url, filled_by")
+          .in("field_id", fieldIds)
+      : { data: [] as { field_id: string; value_text: string | null; value_image_url: string | null; filled_by: string | null }[] };
 
   const valueByField = new Map(
-    (values ?? []).map((value) => [value.document_field_id, value]),
+    (values ?? []).map((value) => [value.field_id, value]),
   );
 
   const certificateFields: CertificateInput["fields"] = [];
@@ -344,12 +344,15 @@ export async function generateAndStoreCertificate(
     }
 
     let signatureBytes: Uint8Array | null = null;
-    let valueText: string | null = value.value;
+    let valueText: string | null = value.value_text;
     if (field.field_type === "signature") {
       valueText = null;
-      const { data: sigBlob } = await admin.storage.from("documents").download(value.value);
-      if (sigBlob) {
-        signatureBytes = new Uint8Array(await sigBlob.arrayBuffer());
+      const imagePath = value.value_image_url;
+      if (imagePath) {
+        const { data: sigBlob } = await admin.storage.from("documents").download(imagePath);
+        if (sigBlob) {
+          signatureBytes = new Uint8Array(await sigBlob.arrayBuffer());
+        }
       }
     }
 

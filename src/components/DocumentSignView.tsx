@@ -12,6 +12,7 @@ import {
   PDF_RENDER_WIDTH,
   fieldBelongsToSigner,
   fieldTypeLabel,
+  fieldValueContent,
   percentToPx,
   type DocumentField,
   type DocumentFieldValue,
@@ -124,7 +125,7 @@ export default function DocumentSignView({
 
   const valueByFieldId = useMemo(() => {
     const map = new Map<string, DocumentFieldValue>();
-    for (const value of values) map.set(value.document_field_id, value);
+    for (const value of values) map.set(value.field_id, value);
     return map;
   }, [values]);
 
@@ -249,9 +250,9 @@ export default function DocumentSignView({
   useEffect(() => {
     const signaturePaths = values
       .map((value) => {
-        const field = fields.find((item) => item.id === value.document_field_id);
+        const field = fields.find((item) => item.id === value.field_id);
         if (field?.field_type !== "signature") return null;
-        return value.value;
+        return fieldValueContent(value) || null;
       })
       .filter((path): path is string => Boolean(path));
 
@@ -314,12 +315,15 @@ export default function DocumentSignView({
       const result = await saveDocumentFieldValue(field.id, value);
       if (!result.success) throw new Error(result.error);
 
+      const isSignaturePath = field.field_type === "signature";
       setValues((current) => [
         ...current,
         {
           id: crypto.randomUUID(),
-          document_field_id: field.id,
-          value,
+          field_id: field.id,
+          document_id: documentId,
+          value_text: isSignaturePath ? null : value,
+          value_image_url: isSignaturePath ? value : null,
           filled_by: viewer.userId,
         },
       ]);
@@ -434,12 +438,13 @@ export default function DocumentSignView({
                         );
 
                         if (filled) {
+                          const contentValue = fieldValueContent(filled);
                           stateClass = "border-neutral-400 bg-white text-black";
-                          if (field.field_type === "signature" && imageUrls[filled.value]) {
+                          if (field.field_type === "signature" && imageUrls[contentValue]) {
                             content = (
                               // eslint-disable-next-line @next/next/no-img-element
                               <img
-                                src={imageUrls[filled.value]}
+                                src={imageUrls[contentValue]}
                                 alt={`Signature by ${label}`}
                                 className="max-h-full max-w-full object-contain"
                               />
@@ -447,7 +452,7 @@ export default function DocumentSignView({
                           } else if (field.field_type === "signature") {
                             content = <span className="italic">Signed by {label}</span>;
                           } else {
-                            content = <span>{filled.value}</span>;
+                            content = <span>{contentValue}</span>;
                           }
                         } else if (mine && isMyTurn) {
                           stateClass =

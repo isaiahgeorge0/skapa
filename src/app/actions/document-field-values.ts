@@ -1,6 +1,7 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { advanceSigningQueue } from "@/app/actions/document-signers";
 import {
   fieldBelongsToSigner,
@@ -133,19 +134,30 @@ export async function saveDocumentFieldValue(
     return { success: false, error: "This field is not assigned to you." };
   }
 
-  const { data: existing } = await supabase
+  // Service-role write after auth/ownership checks — avoids RLS surprises.
+  const db = createAdminClient();
+
+  const { data: existing } = await db
     .from("document_field_values")
     .select("id")
-    .eq("document_field_id", documentFieldId)
+    .eq("field_id", documentFieldId)
     .maybeSingle();
 
   if (existing) {
     return { success: false, error: "This field has already been filled." };
   }
 
-  const { error: insertError } = await supabase.from("document_field_values").insert({
-    document_field_id: documentFieldId,
-    value: value.trim(),
+  const trimmed = value.trim();
+  const isImagePath =
+    field.field_type === "signature" &&
+    !trimmed.startsWith("data:") &&
+    trimmed.includes("/");
+
+  const { error: insertError } = await db.from("document_field_values").insert({
+    field_id: documentFieldId,
+    document_id: document.id,
+    value_text: isImagePath ? null : trimmed,
+    value_image_url: isImagePath ? trimmed : null,
     filled_by: user.id,
   });
 
@@ -156,7 +168,7 @@ export async function saveDocumentFieldValue(
 
   return {
     success: true,
-    data: { fieldId: documentFieldId, value: value.trim() },
+    data: { fieldId: documentFieldId, value: trimmed },
   };
 }
 
@@ -177,6 +189,10 @@ export async function completeSignerTurn(
     .single();
 
   if (!document) return { success: false, error: "Document not found." };
+
+  if (document.status === "voided") {
+    return { success: false, error: "This document has been voided." };
+  }
 
   const { signer, error: signerError } = await getActiveSignerForViewer(
     supabase,
@@ -211,15 +227,17 @@ export async function completeSignerTurn(
     return { success: false, error: "You have no fields to complete on this document." };
   }
 
-  const { data: values } = await supabase
+  const db = createAdminClient();
+  const { data: values } = await db
     .from("document_field_values")
-    .select("document_field_id")
+    .select("field_id")
+    .eq("document_id", documentId)
     .in(
-      "document_field_id",
+      "field_id",
       myFields.map((field) => field.id),
     );
 
-  const filled = new Set((values ?? []).map((row) => row.document_field_id as string));
+  const filled = new Set((values ?? []).map((row) => row.field_id as string));
   const missing = required.filter((field) => !filled.has(field.id));
   if (missing.length > 0) {
     return {

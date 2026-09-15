@@ -26,7 +26,7 @@ export default async function AdminLayout({
   if (profile?.role !== "admin") redirect("/portal");
 
   return (
-    <div className="flex min-h-screen bg-white">
+    <div className="flex min-h-screen surface-page">
       <AdminSidebar adminName={profile.full_name} />
       <main className="min-w-0 flex-1">{children}</main>
     </div>

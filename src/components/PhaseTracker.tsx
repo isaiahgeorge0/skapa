@@ -1,39 +1,39 @@
 "use client";
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import {
+  PHASES,
+  phaseProgressPercent,
+  type Phase,
+} from "@/lib/project-phases";
 
-export type Phase =
-  | "onboarding"
-  | "website_branding"
-  | "social_rebrand"
-  | "client_proof_check"
-  | "final_sign_off";
-
-const PHASES: { key: Phase; label: string }[] = [
-  { key: "onboarding", label: "Onboarding" },
-  { key: "website_branding", label: "Website / Branding" },
-  { key: "social_rebrand", label: "Social Media Rebrand" },
-  { key: "client_proof_check", label: "Client Proof Check" },
-  { key: "final_sign_off", label: "Final Sign Off" },
-];
+export type { Phase };
 
 export default function PhaseTracker({
   projectId,
   initialPhase,
   readOnly = false,
   usePortalAccent = false,
+  /** When false, omit the inline Now callout (portal uses PortalNowHero). */
+  showNow = true,
+  showPercent = false,
 }: {
   projectId: string;
   initialPhase: Phase;
   readOnly?: boolean;
   /** Portal-only: use --portal-accent instead of brand pink. */
   usePortalAccent?: boolean;
+  showNow?: boolean;
+  /** Compact percent + bar under the phase dots. */
+  showPercent?: boolean;
 }) {
   const [phase, setPhase] = useState<Phase>(initialPhase);
   const [saving, setSaving] = useState(false);
   const supabase = createClient();
 
   const currentIndex = PHASES.findIndex((p) => p.key === phase);
+  const current = PHASES[currentIndex] ?? PHASES[0];
+  const percent = phaseProgressPercent(phase);
   const accentFill = usePortalAccent ? "bg-portal-accent" : "bg-brand-pink";
   const accentBorder = usePortalAccent ? "border-portal-accent" : "border-brand-pink";
 
@@ -80,7 +80,9 @@ export default function PhaseTracker({
               className={`group relative z-10 flex flex-col items-center gap-3 ${
                 readOnly ? "" : "disabled:cursor-wait"
               }`}
-              style={{ flex: index === 0 || index === PHASES.length - 1 ? "0 0 auto" : "1 1 0" }}
+              style={{
+                flex: index === 0 || index === PHASES.length - 1 ? "0 0 auto" : "1 1 0",
+              }}
             >
               <span
                 className={`h-3.5 w-3.5 rounded-full border-2 transition-colors ${
@@ -106,11 +108,61 @@ export default function PhaseTracker({
           );
         })}
       </div>
-      {!readOnly && (
+
+      {showPercent ? (
+        <div className="mt-8">
+          <div className="mb-2.5 flex items-baseline justify-between gap-3">
+            <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-neutral-400">
+              Phase progress
+            </p>
+            <p className="font-mono text-[11px] tabular-nums text-neutral-600">
+              <span
+                className={
+                  usePortalAccent ? "text-portal-accent" : "text-brand-pink"
+                }
+              >
+                {percent}%
+              </span>{" "}
+              complete
+            </p>
+          </div>
+          <div
+            className="progress-track"
+            role="progressbar"
+            aria-valuenow={percent}
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-label="Phase progress"
+          >
+            <div
+              className={`progress-fill transition-[width] duration-500 ease-out ${accentFill}`}
+              style={{ width: `${Math.max(percent, percent > 0 ? 2 : 0)}%` }}
+            />
+          </div>
+        </div>
+      ) : null}
+
+      {readOnly && showNow ? (
+        <div
+          className={`mt-6 border-l-2 pl-4 ${
+            usePortalAccent ? "border-portal-accent" : "border-brand-pink"
+          }`}
+        >
+          <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-neutral-400">
+            Now
+          </p>
+          <p className="mt-1 font-serif text-lg text-black">{current.label}</p>
+          <p className="mt-1 max-w-prose text-sm text-neutral-500">
+            {current.description}
+          </p>
+        </div>
+      ) : null}
+
+      {!readOnly ? (
         <p className="mt-6 font-mono text-[11px] text-neutral-400">
           Click any stage to set the project&apos;s current phase.
         </p>
-      )}
+      ) : null}
     </div>
   );
 }

@@ -1,15 +1,13 @@
 "use server";
 import { randomBytes } from "crypto";
-import { Resend } from "resend";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { EMAIL_FROM } from "@/lib/email";
+import {
+  sendAccountReadyEmail,
+  sendClientPortalInviteEmail,
+} from "@/lib/email";
 
 type ActionResult = { success: true } | { success: false; error: string };
-
-function getResend() {
-  return new Resend(process.env.RESEND_API_KEY);
-}
 
 export async function sendClientInvite(
   clientId: string,
@@ -46,39 +44,24 @@ export async function sendClientInvite(
     return { success: false, error: "Failed to create the invite." };
   }
 
+  const { data: project } = await supabase
+    .from("projects")
+    .select("name")
+    .eq("client_id", clientId)
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
   const inviteUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/invite/${token}`;
 
-  try {
-    const resend = getResend();
-    await resend.emails.send({
-      from: EMAIL_FROM,
-      to: email.trim(),
-      subject: `You've been invited to your skapa client portal`,
-      html: `
-        <div style="font-family: Georgia, serif; max-width: 480px; margin: 0 auto; padding: 32px;">
-          <p style="font-family: 'Courier New', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: #888;">
-            skapa Creative
-          </p>
-          <h1 style="font-size: 24px; font-weight: normal;">
-            You've been invited to your project portal
-          </h1>
-          <p style="color: #333; line-height: 1.6;">
-            ${clientName} has been given access to track project progress,
-            share documents, and message the team directly.
-          </p>
-          <p style="margin: 32px 0;">
-            <a href="${inviteUrl}" style="background: #000; color: #fff; padding: 14px 28px; text-decoration: none; font-family: 'Courier New', monospace; font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em;">
-              Set up your account
-            </a>
-          </p>
-          <p style="color: #999; font-size: 13px;">
-            This link expires in 7 days. If you weren't expecting this, you can ignore this email.
-          </p>
-        </div>
-      `,
-    });
-  } catch (emailError) {
-    console.error("Failed to send invite email:", emailError);
+  const emailResult = await sendClientPortalInviteEmail({
+    to: email.trim(),
+    clientName,
+    projectName: project?.name ?? "your project",
+    inviteUrl,
+  });
+
+  if (!emailResult.success) {
     // The invite record still exists even if the email failed — worth
     // surfacing this distinctly so the admin knows to resend rather than
     // assuming it went out.
@@ -169,6 +152,22 @@ export async function acceptClientInvite(
     .from("client_invites")
     .update({ status: "accepted", accepted_at: new Date().toISOString() })
     .eq("id", invite.id);
+
+  const { data: client } = await admin
+    .from("clients")
+    .select("name")
+    .eq("id", invite.client_id)
+    .maybeSingle();
+
+  const accountReady = await sendAccountReadyEmail({
+    to: invite.email,
+    clientName: client?.name ?? "there",
+  });
+
+  if (!accountReady.success) {
+    // Account is live — don't fail setup if the follow-up email misses.
+    console.error("Account ready email failed after invite accept:", accountReady.error);
+  }
 
   return { success: true };
 }

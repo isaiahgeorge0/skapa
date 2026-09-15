@@ -1,5 +1,5 @@
 "use client";
-import { useMemo, useState } from "react";
+import { Fragment, useMemo, useState } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import Avatar from "@/components/Avatar";
@@ -451,9 +451,8 @@ export default function LeadsTable({ initialLeads }: { initialLeads: Lead[] }) {
                   const hasAnswers = lead.source === "questionnaire" && lead.answers;
                   const isExpanded = expandedId === lead.id;
                   return (
-                    <>
+                    <Fragment key={lead.id}>
                       <tr
-                        key={lead.id}
                         className="border-b border-neutral-100 align-top transition-colors last:border-b-0 hover:bg-neutral-50"
                       >
                         <td className="py-4 pl-5 pr-3">
@@ -535,7 +534,7 @@ export default function LeadsTable({ initialLeads }: { initialLeads: Lead[] }) {
                           </td>
                         </tr>
                       )}
-                    </>
+                    </Fragment>
                   );
                 })}
               </tbody>

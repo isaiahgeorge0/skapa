@@ -100,7 +100,7 @@ export default function PortalSidebar({
       )}
 
       {/* Desktop sidebar */}
-      <aside className="sticky top-0 hidden h-screen w-60 shrink-0 flex-col justify-between border-r border-neutral-200 px-5 py-8 md:flex lg:w-64">
+      <aside className="sticky top-0 hidden h-screen w-60 shrink-0 flex-col justify-between border-r border-black/[0.04] bg-white px-5 py-8 md:flex lg:w-64">
         <div>
           <Link href="/portal" className="mb-1 block font-serif text-xl text-black">
             skapa <span className="italic text-brand-pink">Creative</span>

@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import ProjectArchiveControl from "@/components/ProjectArchiveControl";
 import ProjectStatusControl from "@/components/ProjectStatusControl";
 import ProjectTabs from "@/components/ProjectTabs";
 
@@ -15,14 +16,14 @@ export default async function ProjectLayout({
 
   const { data: project } = await supabase
     .from("projects")
-    .select("id, name, status")
+    .select("id, name, status, archived_at")
     .eq("id", id)
     .single();
 
   if (!project) notFound();
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="surface-page min-h-screen">
       <div className="mx-auto max-w-6xl px-6 py-12 md:px-10">
         <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
           <div>
@@ -31,7 +32,16 @@ export default async function ProjectLayout({
             </p>
             <h1 className="font-serif text-4xl text-black">{project.name}</h1>
           </div>
-          <ProjectStatusControl projectId={project.id} initialStatus={project.status} />
+          <div className="flex flex-wrap items-start gap-3">
+            <ProjectArchiveControl
+              projectId={project.id}
+              initialArchivedAt={project.archived_at ?? null}
+            />
+            <ProjectStatusControl
+              projectId={project.id}
+              initialStatus={project.status}
+            />
+          </div>
         </div>
 
         <ProjectTabs projectId={project.id} />

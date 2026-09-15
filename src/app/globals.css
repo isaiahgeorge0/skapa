@@ -8,6 +8,12 @@
   --brand-yellow: #fff1a7;
   --brand-blue: #4b4ae4;
   --brand-cream: #efeeea;
+  /* App surfaces (portal + admin project chrome) */
+  --surface-radius: 8px;
+  --surface-shadow: 0 1px 2px rgba(10, 10, 10, 0.04),
+    0 8px 24px rgba(10, 10, 10, 0.06);
+  --surface-shadow-soft: 0 1px 2px rgba(10, 10, 10, 0.03),
+    0 4px 14px rgba(10, 10, 10, 0.05);
   /*
    * Persistent marketing chrome band (sticky header + floating logo/menu).
    * Chapter indicators and scroll-margin must clear this, not share it.
@@ -54,6 +60,39 @@
 }
 @utility border-portal-accent {
   border-color: var(--portal-accent);
+}
+
+/* Cream page field + raised white cards (portal / admin projects). */
+@utility surface-page {
+  background-color: var(--brand-cream);
+}
+@utility surface-raised {
+  background-color: #ffffff;
+  border-radius: var(--surface-radius);
+  box-shadow: var(--surface-shadow);
+}
+@utility surface-raised-soft {
+  background-color: #ffffff;
+  border-radius: var(--surface-radius);
+  box-shadow: var(--surface-shadow-soft);
+}
+@utility surface-radius {
+  border-radius: var(--surface-radius);
+}
+@utility surface-control {
+  border-radius: var(--surface-radius);
+}
+@utility progress-track {
+  height: 0.625rem;
+  overflow: hidden;
+  border-radius: 9999px;
+  background-color: rgba(10, 10, 10, 0.06);
+  box-shadow: inset 0 1px 2px rgba(10, 10, 10, 0.06);
+}
+@utility progress-fill {
+  height: 100%;
+  border-radius: 9999px;
+  box-shadow: 0 1px 2px rgba(10, 10, 10, 0.12);
 }
 
 /* Brand capability pages: land below site chrome + mobile chapter pill */

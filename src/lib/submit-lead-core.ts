@@ -1,6 +1,7 @@
 "use server";
 
 import { getClientIp } from "@/lib/client-ip";
+import { sendLeadThankYouEmail } from "@/lib/email";
 import { assertLeadRateLimit } from "@/lib/rate-limit";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { withTimeout } from "@/lib/with-timeout";
@@ -37,6 +38,14 @@ const DB_TIMEOUT_MS = 8_000;
 
 function isValidEmail(email: string): boolean {
   return /\S+@\S+\.\S+/.test(email);
+}
+
+async function sendLeadThankYouAfterInsert(email: string, name: string) {
+  const result = await sendLeadThankYouEmail({ to: email, leadName: name });
+  if (!result.success) {
+    // Lead is already stored — don't fail the submission if the email misses.
+    console.error("Lead thank-you email failed:", result.error);
+  }
 }
 
 export async function processLeadSubmission(
@@ -87,6 +96,7 @@ export async function processLeadSubmission(
         };
       }
 
+      await sendLeadThankYouAfterInsert(email, name);
       return { success: true };
     }
 
@@ -112,6 +122,7 @@ export async function processLeadSubmission(
       };
     }
 
+    await sendLeadThankYouAfterInsert(email, name);
     return { success: true };
   } catch (error) {
     console.error("processLeadSubmission unexpected failure:", error);

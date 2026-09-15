@@ -1,8 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
-import ConvergingCollage from "@/components/ConvergingCollage";
 import FadeInOnLoad from "@/components/FadeInOnLoad";
+import HomeWhatWeDo from "@/components/HomeWhatWeDo";
 import ParallaxImage from "@/components/ParallaxImage";
 import Reveal from "@/components/Reveal";
 import ScrollRevealText from "@/components/ScrollRevealText";
@@ -16,25 +16,6 @@ export const metadata: Metadata = pageMetadata({
   path: "/",
   absoluteTitle: true,
 });
-
-const pillars = [
-  {
-    name: "Brand",
-    line: "Strategy, identity, and the systems that hold it together.",
-  },
-  {
-    name: "Creative",
-    line: "Campaigns, craft, and work that earns a second look.",
-  },
-  {
-    name: "Digital",
-    line: "Sites and experiences built to convert, not just impress.",
-  },
-  {
-    name: "Social",
-    line: "Content with a point of view, and a plan behind it.",
-  },
-] as const;
 
 export default function HomePage() {
   return (
@@ -146,34 +127,21 @@ export default function HomePage() {
       </section>
 
       <section className="border-t border-neutral-200">
-        <div className="mx-auto max-w-6xl px-6 py-24 md:px-10 md:py-32">
-          <Reveal>
-            <p className="mb-14 hidden font-mono text-sm uppercase tracking-widest text-brand-blue md:block">
-              What that looks like
-            </p>
-          </Reveal>
-
-          <ConvergingCollage />
-        </div>
-      </section>
-
-      <section className="bg-brand-cream">
-        <div className="mx-auto max-w-6xl px-6 py-24 md:px-10 md:py-32">
-          <Reveal>
-            <p className="mb-14 font-mono text-sm uppercase tracking-widest text-brand-blue">
-              What we do
-            </p>
-          </Reveal>
-          <Reveal className="grid gap-14 sm:grid-cols-2 lg:grid-cols-4 lg:gap-10">
-            {pillars.map((pillar) => (
-              <div key={pillar.name}>
-                <h2 className="font-serif text-3xl text-black">{pillar.name}</h2>
-                <p className="mt-4 max-w-prose font-mono text-sm leading-relaxed text-neutral-600">
-                  {pillar.line}
-                </p>
-              </div>
-            ))}
-          </Reveal>
+        <div className="mx-auto max-w-6xl px-6 pt-20 pb-16 md:px-10 md:pt-28 md:pb-8">
+          <div className="mb-10 flex items-end justify-between gap-6 md:mb-8">
+            <Reveal>
+              <p className="font-mono text-sm uppercase tracking-widest text-brand-blue">
+                What we do
+              </p>
+            </Reveal>
+            <Link
+              href="/what-we-do"
+              className="font-mono text-[11px] uppercase tracking-[0.16em] text-neutral-500 underline-offset-4 hover:text-black hover:underline"
+            >
+              All services →
+            </Link>
+          </div>
+          <HomeWhatWeDo />
         </div>
       </section>
     </div>
