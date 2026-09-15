@@ -10,10 +10,8 @@ import {
   voidDocument,
   listDocumentSigners,
 } from "@/app/actions/document-signers";
-import {
-  deleteDocuments,
-  DOCUMENT_SIGNED_DATA_DELETE_MESSAGE,
-} from "@/app/actions/admin-deletes";
+import { deleteDocuments } from "@/app/actions/admin-deletes";
+import { DOCUMENT_SIGNED_DATA_DELETE_MESSAGE } from "@/lib/admin-delete-messages";
 import { getCertificateDownloadUrl } from "@/app/actions/certificate";
 import DocumentPreview from "@/components/DocumentPreview";
 import DocumentSignView from "@/components/DocumentSignView";

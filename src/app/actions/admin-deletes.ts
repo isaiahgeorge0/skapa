@@ -3,17 +3,15 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import {
+  DOCUMENT_SIGNED_DATA_DELETE_MESSAGE,
+  PROJECT_SIGNED_DATA_DELETE_MESSAGE,
+} from "@/lib/admin-delete-messages";
 import { revalidateDocumentPaths } from "@/lib/revalidate-documents";
 
 type ActionResult<T = void> =
   | ({ success: true } & (T extends void ? object : { data: T }))
   | { success: false; error: string };
-
-export const DOCUMENT_SIGNED_DATA_DELETE_MESSAGE =
-  "This document has signed data and can't be deleted — use Void instead.";
-
-export const PROJECT_SIGNED_DATA_DELETE_MESSAGE =
-  "This project contains document(s) with signed data and can't be deleted. Void those documents first if you want to stop them being actionable.";
 
 function uniqueIds(ids: string[]): string[] {
   return [...new Set(ids.map((id) => id.trim()).filter(Boolean))];
