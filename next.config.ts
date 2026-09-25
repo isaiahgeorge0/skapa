@@ -2,7 +2,16 @@ import type { NextConfig } from "next";
 import { withSentryConfig } from "@sentry/nextjs/config";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  // Document uploads go through a Server Action (FormData). Next defaults to 1MB
+  // for actions and ~10MB for the proxy body buffer, which rejects typical PDFs.
+  // Keep these at or under Vercel's ~4.5MB platform request ceiling for production
+  // reliability; larger files should use direct-to-Supabase storage later.
+  experimental: {
+    serverActions: {
+      bodySizeLimit: "10mb",
+    },
+    proxyClientMaxBodySize: "10mb",
+  },
 };
 
 export default withSentryConfig(nextConfig, {
