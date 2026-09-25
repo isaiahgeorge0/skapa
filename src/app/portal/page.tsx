@@ -177,7 +177,7 @@ export default async function PortalPage() {
 
   return (
     <div className="mx-auto max-w-5xl px-5 py-10 sm:px-8 md:px-10 md:py-14">
-      <header className="mb-16 md:mb-20">
+      <header className="mb-10 md:mb-20">
         <h1 className="font-serif text-4xl leading-[1.05] tracking-tight text-black md:text-5xl">
           Welcome, {greetingName}.
         </h1>
@@ -264,7 +264,7 @@ export default async function PortalPage() {
             </PortalSection>
           )}
 
-          <div className="grid gap-16 sm:gap-[4.5rem] md:grid-cols-2 md:gap-14">
+          <div className="grid gap-10 sm:gap-12 md:grid-cols-2 md:gap-14">
             <PortalSection title="Recent messages" titleSize="sm">
               {!recentMessages || recentMessages.length === 0 ? (
                 <p className="text-sm text-neutral-400">No messages yet.</p>
@@ -316,7 +316,7 @@ export default async function PortalPage() {
                           </p>
                         </div>
                         <Link
-                          href={`/portal/projects/${d.project_id}`}
+                          href={`/portal/projects/${d.project_id}/documents?open=${d.id}`}
                           className="shrink-0 font-mono text-[11px] text-neutral-500 underline decoration-dotted hover:text-black"
                         >
                           Open

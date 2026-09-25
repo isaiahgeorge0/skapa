@@ -13,6 +13,7 @@ export default function OverviewPreviewCard({
   items,
   empty,
   tone = "admin",
+  itemHref,
 }: {
   title: string;
   countLabel: string;
@@ -20,6 +21,8 @@ export default function OverviewPreviewCard({
   items: OverviewPreviewItem[];
   empty: string;
   tone?: "admin" | "portal";
+  /** Optional per-item deep link (e.g. open a specific document). */
+  itemHref?: (item: OverviewPreviewItem) => string;
 }) {
   const viewClass =
     tone === "portal"
@@ -46,16 +49,34 @@ export default function OverviewPreviewCard({
           <p className="font-mono text-sm text-neutral-400">{empty}</p>
         ) : (
           <ul className="divide-y divide-black/[0.04]">
-            {items.map((item) => (
-              <li key={item.id} className="py-3.5 first:pt-0 last:pb-0">
-                <p className="font-serif text-base text-black">{item.title}</p>
-                {item.meta ? (
-                  <p className="mt-1 font-mono text-[11px] uppercase tracking-[0.08em] text-neutral-400">
-                    {item.meta}
-                  </p>
-                ) : null}
-              </li>
-            ))}
+            {items.map((item) => {
+              const deepLink = itemHref?.(item);
+              return (
+                <li key={item.id} className="py-3.5 first:pt-0 last:pb-0">
+                  {deepLink ? (
+                    <Link href={deepLink} className="group block">
+                      <p className="font-serif text-base text-black group-hover:underline group-hover:decoration-dotted">
+                        {item.title}
+                      </p>
+                      {item.meta ? (
+                        <p className="mt-1 font-mono text-[11px] uppercase tracking-[0.08em] text-neutral-400">
+                          {item.meta}
+                        </p>
+                      ) : null}
+                    </Link>
+                  ) : (
+                    <>
+                      <p className="font-serif text-base text-black">{item.title}</p>
+                      {item.meta ? (
+                        <p className="mt-1 font-mono text-[11px] uppercase tracking-[0.08em] text-neutral-400">
+                          {item.meta}
+                        </p>
+                      ) : null}
+                    </>
+                  )}
+                </li>
+              );
+            })}
           </ul>
         )}
       </div>

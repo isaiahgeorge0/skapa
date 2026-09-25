@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
@@ -108,7 +108,7 @@ export default function DocumentsPanel({
   projectId: string;
   initialDocuments: Doc[];
   canManage?: boolean;
-  /** When set (e.g. ?sign= from Overview), open this document's signing view on mount. */
+  /** When set (e.g. ?open= / ?sign= from Overview), open this document on mount. */
   autoOpenDocumentId?: string | null;
 }) {
   const router = useRouter();
@@ -134,6 +134,7 @@ export default function DocumentsPanel({
   const [myTurnByDoc, setMyTurnByDoc] = useState<Record<string, boolean>>({});
   const [signatureImageUrls, setSignatureImageUrls] = useState<Record<string, string>>({});
   const [error, setError] = useState<string | null>(null);
+  const autoOpenedRef = useRef<string | null>(null);
 
   // Keep local list in sync when the server revalidates after mutations.
   useEffect(() => {
@@ -171,18 +172,6 @@ export default function DocumentsPanel({
       cancelled = true;
     };
   }, [canManage, docs, supabase]);
-
-  // Deep-link from Overview "Review & sign" (?sign=documentId).
-  useEffect(() => {
-    if (!autoOpenDocumentId) return;
-    const target = initialDocuments.find((d) => d.id === autoOpenDocumentId);
-    if (!target) return;
-    if (!target.requires_signature) return;
-    if (!["sent", "viewed", "partially_signed"].includes(target.status)) return;
-    void openSignExperience(target);
-    // Only on first mount for this deep-link target.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [autoOpenDocumentId]);
 
   useEffect(() => {
     let cancelled = false;
@@ -322,7 +311,14 @@ export default function DocumentsPanel({
       return;
     }
 
-    window.open(data.signedUrl, "_blank");
+    // Prefer an anchor click so deep-links aren't blocked as popups.
+    const anchor = document.createElement("a");
+    anchor.href = data.signedUrl;
+    anchor.target = "_blank";
+    anchor.rel = "noopener noreferrer";
+    document.body.appendChild(anchor);
+    anchor.click();
+    anchor.remove();
   }
 
   async function downloadCertificate(doc: Doc) {
@@ -402,6 +398,27 @@ export default function DocumentsPanel({
     // Legacy whole-document signing for DOCX / documents without fields.
     setPreviewDoc(doc);
   }
+
+  // Deep-link from Overview Open / Review & sign (?open= / ?sign=).
+  useEffect(() => {
+    if (!autoOpenDocumentId) return;
+    if (autoOpenedRef.current === autoOpenDocumentId) return;
+    const target = initialDocuments.find((d) => d.id === autoOpenDocumentId);
+    if (!target) return;
+    autoOpenedRef.current = autoOpenDocumentId;
+
+    if (
+      target.requires_signature &&
+      ACTIVE_SIGNING_STATUSES.includes(target.status)
+    ) {
+      void openSignExperience(target);
+      return;
+    }
+
+    // Share-only (or settled) docs: open the file the same way Download does.
+    void downloadDoc(target);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoOpenDocumentId, initialDocuments]);
 
   useEffect(() => {
     if (!expandedAuditId) return;

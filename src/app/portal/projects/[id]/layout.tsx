@@ -48,7 +48,7 @@ export default async function PortalProjectLayout({
         ← Overview
       </Link>
 
-      <header className="mb-8 md:mb-10">
+      <header className="mb-6 md:mb-10">
         <h1 className="font-serif text-4xl leading-[1.05] tracking-tight text-black md:text-5xl">
           {project.name}
         </h1>
@@ -65,7 +65,7 @@ export default async function PortalProjectLayout({
 
       <PortalProjectTabs projectId={project.id} />
 
-      <div className="mt-8 md:mt-10">{children}</div>
+      <div className="mt-6 md:mt-10">{children}</div>
     </div>
   );
 }

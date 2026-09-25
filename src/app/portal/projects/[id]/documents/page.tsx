@@ -9,10 +9,10 @@ export default async function PortalProjectDocumentsPage({
   searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ sign?: string }>;
+  searchParams: Promise<{ open?: string; sign?: string }>;
 }) {
   const { id } = await params;
-  const { sign } = await searchParams;
+  const { open, sign } = await searchParams;
   const supabase = await createClient();
 
   const { data: project } = await supabase
@@ -35,7 +35,7 @@ export default async function PortalProjectDocumentsPage({
       projectId={project.id}
       initialDocuments={documents ?? []}
       canManage={false}
-      autoOpenDocumentId={sign ?? null}
+      autoOpenDocumentId={open ?? sign ?? null}
     />
   );
 }

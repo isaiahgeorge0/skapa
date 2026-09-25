@@ -43,7 +43,7 @@ export default async function PortalLayout({
 
   return (
     <div
-      className="flex min-h-screen flex-col surface-page md:flex-row"
+      className="flex flex-col surface-page md:min-h-screen md:flex-row"
       style={portalAccentStyle(accent)}
     >
       <PortalAccentVars accent={accent} />
@@ -52,7 +52,7 @@ export default async function PortalLayout({
         clientName={profile?.full_name || user!.email || "Account"}
         projects={projects ?? []}
       />
-      <main className="min-w-0 flex-1">{children}</main>
+      <main className="min-w-0 w-full md:flex-1">{children}</main>
     </div>
   );
 }

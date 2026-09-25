@@ -29,7 +29,7 @@ export default function PortalSection({
   );
 }
 
-/** Vertical stack: large gaps between sibling sections. */
+/** Vertical stack: large gaps between sibling sections (tighter on mobile). */
 export function PortalSectionStack({
   children,
   className = "",
@@ -39,7 +39,7 @@ export function PortalSectionStack({
 }) {
   return (
     <div
-      className={`flex flex-col gap-16 sm:gap-[4.5rem] md:gap-20 lg:gap-24 ${className}`}
+      className={`flex flex-col gap-10 sm:gap-14 md:gap-20 lg:gap-24 ${className}`}
     >
       {children}
     </div>

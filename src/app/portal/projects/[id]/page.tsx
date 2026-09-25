@@ -131,10 +131,10 @@ export default async function PortalProjectOverviewPage({
   }));
 
   return (
-    <div className="space-y-12 md:space-y-16">
+    <div className="space-y-8 md:space-y-16">
       <PortalNowHero phase={project.phase as Phase} />
 
-      <div className="grid grid-cols-1 gap-5 md:grid-cols-3 md:gap-6">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-3 md:gap-6">
         <OverviewPreviewCard
           tone="portal"
           title="Documents"
@@ -142,6 +142,7 @@ export default async function PortalProjectOverviewPage({
           href={`${base}/documents`}
           items={docItems}
           empty="Nothing shared yet."
+          itemHref={(item) => `${base}/documents?open=${item.id}`}
         />
         <OverviewPreviewCard
           tone="portal"

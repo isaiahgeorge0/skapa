@@ -493,7 +493,9 @@ export default function DocumentSignView({
                 type="button"
                 onClick={handleComplete}
                 disabled={completing || myRequiredRemaining.length > 0}
-                className="bg-black px-6 py-3 font-mono text-[11px] uppercase tracking-[0.14em] text-white transition-opacity hover:opacity-80 disabled:opacity-40"
+                className={`px-6 py-3 font-mono text-[11px] uppercase tracking-[0.14em] text-white transition-opacity hover:opacity-80 disabled:opacity-40 ${
+                  viewer.role === "client" ? "bg-portal-accent" : "bg-black"
+                }`}
               >
                 {completing ? "Completing…" : "Complete my signing"}
               </button>
@@ -600,7 +602,9 @@ export default function DocumentSignView({
                     sigMode === "drawn" &&
                     !hasDrawn)
                 }
-                className="bg-black px-5 py-2.5 font-mono text-[11px] uppercase tracking-[0.14em] text-white disabled:opacity-40"
+                className={`px-5 py-2.5 font-mono text-[11px] uppercase tracking-[0.14em] text-white disabled:opacity-40 ${
+                  viewer.role === "client" ? "bg-portal-accent" : "bg-black"
+                }`}
               >
                 {submitting ? "Saving…" : "Save"}
               </button>

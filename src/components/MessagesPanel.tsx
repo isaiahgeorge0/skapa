@@ -367,7 +367,11 @@ export default function MessagesPanel({
         <button
           type="submit"
           disabled={sending || !body.trim()}
-          className="surface-control bg-black px-5 py-2.5 font-mono text-[11px] uppercase tracking-[0.14em] text-white transition-opacity hover:opacity-80 disabled:opacity-50"
+          className={`surface-control px-5 py-2.5 font-mono text-[11px] uppercase tracking-[0.14em] text-white transition-opacity disabled:opacity-50 ${
+            usePortalAccent
+              ? "bg-portal-accent hover:opacity-90"
+              : "bg-black hover:opacity-80"
+          }`}
         >
           Send
         </button>
