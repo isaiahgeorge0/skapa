@@ -3,11 +3,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { revalidateDocumentPaths } from "@/lib/revalidate-documents";
-import {
-  defaultRequiresSignature,
-  isDocumentType,
-  type DocumentType,
-} from "@/lib/document-types";
 
 type ActionResult<T = void> =
   | ({ success: true } & (T extends void ? object : { data: T }))
@@ -142,9 +137,3 @@ export async function setDocumentRequiresSignature(
   revalidateDocumentPaths(document.project_id);
   return { success: true, data: { requires_signature: requiresSignature } };
 }
-
-export function requiresSignatureDefaultForType(type: string): boolean {
-  return isDocumentType(type) ? defaultRequiresSignature(type) : false;
-}
-
-export type { DocumentType };

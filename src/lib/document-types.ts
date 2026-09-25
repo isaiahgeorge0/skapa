@@ -37,3 +37,8 @@ export function documentTypeLabel(type: string | null | undefined): string {
 export function defaultRequiresSignature(type: DocumentType): boolean {
   return type === "agreement";
 }
+
+/** Safe default when the type string may be unknown/invalid. */
+export function requiresSignatureDefaultForType(type: string): boolean {
+  return isDocumentType(type) ? defaultRequiresSignature(type) : false;
+}
