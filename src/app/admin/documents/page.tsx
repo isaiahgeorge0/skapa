@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
+import { documentTypeLabel } from "@/lib/document-types";
 
 const STATUS_STYLES: Record<string, string> = {
   draft: "bg-neutral-100 text-neutral-500",
@@ -72,8 +73,8 @@ export default async function AdminDocumentsPage() {
                         key={d.id}
                         className="border-b border-neutral-100 transition-colors last:border-b-0 hover:bg-neutral-50"
                       >
-                        <td className="py-4 pl-5 pr-4 font-sans text-sm capitalize text-black">
-                          {d.type}
+                        <td className="py-4 pl-5 pr-4 font-sans text-sm text-black">
+                          {documentTypeLabel(d.type)}
                         </td>
                         <td className="py-4 pr-4">
                           <Link

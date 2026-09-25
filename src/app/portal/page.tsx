@@ -5,6 +5,7 @@ import {
   clientDocumentStatusLabel,
   clientProjectStatusLabel,
 } from "@/lib/client-document-status";
+import { documentTypeLabel } from "@/lib/document-types";
 
 export const dynamic = "force-dynamic";
 
@@ -30,6 +31,7 @@ type DocRow = {
   created_at: string;
   project_id: string;
   status: string;
+  requires_signature: boolean | null;
 };
 type MsgRow = {
   id: string;
@@ -93,7 +95,7 @@ export default async function PortalPage() {
     projectIds.length
       ? supabase
           .from("documents")
-          .select("id, type, created_at, project_id, status")
+          .select("id, type, created_at, project_id, status, requires_signature")
           .in("project_id", projectIds)
           .order("created_at", { ascending: false })
           .limit(5)
@@ -110,7 +112,11 @@ export default async function PortalPage() {
 
   const docs = (recentDocs ?? []) as DocRow[];
   const actionDocIds = docs
-    .filter((d) => ["sent", "viewed", "partially_signed"].includes(d.status))
+    .filter(
+      (d) =>
+        Boolean(d.requires_signature) &&
+        ["sent", "viewed", "partially_signed"].includes(d.status),
+    )
     .map((d) => d.id);
 
   const { data: activeSigners } =
@@ -145,6 +151,7 @@ export default async function PortalPage() {
   > = {};
 
   for (const doc of docs) {
+    if (!doc.requires_signature) continue;
     if (!["sent", "viewed", "partially_signed"].includes(doc.status)) continue;
     const active = (activeSigners ?? []).find((s) => s.document_id === doc.id);
     if (!active) {
@@ -238,8 +245,8 @@ export default async function PortalPage() {
                     className="surface-raised flex flex-col gap-3 px-6 py-5 sm:flex-row sm:items-center sm:justify-between"
                   >
                     <div>
-                      <p className="font-serif text-xl capitalize text-black">
-                        {d.type}
+                      <p className="font-serif text-xl text-black">
+                        {documentTypeLabel(d.type)}
                       </p>
                       <p className="mt-1 font-mono text-xs text-neutral-500">
                         {projectNameById[d.project_id]}
@@ -291,6 +298,7 @@ export default async function PortalPage() {
                       status: d.status,
                       isMyTurn: Boolean(meta?.isMyTurn),
                       waitingOnName: meta?.waitingOnName,
+                      requiresSignature: Boolean(d.requires_signature),
                     });
                     return (
                       <li
@@ -298,8 +306,8 @@ export default async function PortalPage() {
                         className="flex items-center justify-between gap-4 py-3 first:pt-0"
                       >
                         <div className="min-w-0">
-                          <p className="truncate font-serif text-lg capitalize text-black">
-                            {d.type}
+                          <p className="truncate font-serif text-lg text-black">
+                            {documentTypeLabel(d.type)}
                           </p>
                           <p className="mt-0.5 font-mono text-xs text-neutral-400">
                             {projectNameById[d.project_id]}

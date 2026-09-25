@@ -13,13 +13,19 @@ export function clientDocumentStatusLabel({
   status,
   isMyTurn,
   waitingOnName,
+  requiresSignature = true,
 }: {
   status: ClientFacingDocStatus;
   isMyTurn: boolean;
   waitingOnName?: string | null;
+  requiresSignature?: boolean;
 }): string {
   if (status === "signed") return "Signed";
   if (status === "voided") return "Voided";
+
+  if (!requiresSignature) {
+    return "Shared";
+  }
 
   if (status === "sent" || status === "viewed" || status === "partially_signed") {
     if (isMyTurn) return "Needs your signature";

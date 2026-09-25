@@ -10,6 +10,10 @@ import {
   voidDocument,
   listDocumentSigners,
 } from "@/app/actions/document-signers";
+import {
+  sendDocumentToClient,
+  setDocumentRequiresSignature,
+} from "@/app/actions/document-share";
 import { deleteDocuments } from "@/app/actions/admin-deletes";
 import { DOCUMENT_SIGNED_DATA_DELETE_MESSAGE } from "@/lib/admin-delete-messages";
 import { getCertificateDownloadUrl } from "@/app/actions/certificate";
@@ -24,9 +28,15 @@ import type {
   DocumentSigner,
 } from "@/lib/documents";
 import { clientDocumentStatusLabel } from "@/lib/client-document-status";
+import {
+  DOCUMENT_TYPES,
+  defaultRequiresSignature,
+  documentTypeLabel,
+  type DocumentType,
+} from "@/lib/document-types";
 import PortalSectionHeading from "@/components/PortalSectionHeading";
 
-type DocType = "proposal" | "agreement" | "welcome" | "invoice" | "other";
+type DocType = DocumentType;
 type DocStatus =
   | "draft"
   | "sent"
@@ -42,6 +52,7 @@ type Doc = {
   file_mime_type?: string | null;
   status: DocStatus;
   created_at: string;
+  requires_signature?: boolean | null;
   signature_name?: string | null;
   signed_at?: string | null;
   signature_hash?: string | null;
@@ -51,7 +62,7 @@ type Doc = {
   signer_user_agent?: string | null;
 };
 
-const TYPES: DocType[] = ["proposal", "agreement", "welcome", "invoice", "other"];
+const TYPES: DocType[] = DOCUMENT_TYPES;
 const STATUS_STYLES: Record<DocStatus, string> = {
   draft: "bg-neutral-100 text-neutral-500",
   sent: "bg-blue-50 text-blue-700",
@@ -104,6 +115,9 @@ export default function DocumentsPanel({
   const supabase = useMemo(() => createClient(), []);
   const [docs, setDocs] = useState<Doc[]>(initialDocuments);
   const [pendingType, setPendingType] = useState<DocType>("proposal");
+  const [pendingRequiresSignature, setPendingRequiresSignature] = useState(
+    () => defaultRequiresSignature("proposal"),
+  );
   const [uploadOpen, setUploadOpen] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
@@ -163,6 +177,7 @@ export default function DocumentsPanel({
     if (!autoOpenDocumentId) return;
     const target = initialDocuments.find((d) => d.id === autoOpenDocumentId);
     if (!target) return;
+    if (!target.requires_signature) return;
     if (!["sent", "viewed", "partially_signed"].includes(target.status)) return;
     void openSignExperience(target);
     // Only on first mount for this deep-link target.
@@ -189,6 +204,7 @@ export default function DocumentsPanel({
 
       await Promise.all(
         docs.map(async (doc) => {
+          if (!doc.requires_signature) return;
           if (!ACTIVE_SIGNING_STATUSES.includes(doc.status)) return;
 
           const { count: fieldCount } = await supabase
@@ -275,6 +291,10 @@ export default function DocumentsPanel({
     formData.append("file", file);
     formData.append("projectId", projectId);
     formData.append("type", pendingType);
+    formData.append(
+      "requiresSignature",
+      pendingRequiresSignature ? "true" : "false",
+    );
 
     const result = await uploadDocument(formData);
 
@@ -415,6 +435,49 @@ export default function DocumentsPanel({
     applyDocStatusLocally(id, "sent");
   }
 
+  async function sendToClient(id: string) {
+    const previous = docs;
+    setUpdatingId(id);
+    setError(null);
+
+    const result = await sendDocumentToClient(id);
+    setUpdatingId(null);
+
+    if (!result.success) {
+      setError(result.error);
+      setDocs(previous);
+      return;
+    }
+
+    applyDocStatusLocally(id, "sent");
+  }
+
+  async function toggleRequiresSignature(doc: Doc, next: boolean) {
+    if (doc.status !== "draft") {
+      setError(
+        "Signature requirement can only be changed while the document is still a draft. Upload a fresh file if you need a different path.",
+      );
+      return;
+    }
+
+    const previous = docs;
+    setUpdatingId(doc.id);
+    setError(null);
+    setDocs((curr) =>
+      curr.map((d) =>
+        d.id === doc.id ? { ...d, requires_signature: next } : d,
+      ),
+    );
+
+    const result = await setDocumentRequiresSignature(doc.id, next);
+    setUpdatingId(null);
+
+    if (!result.success) {
+      setError(result.error);
+      setDocs(previous);
+    }
+  }
+
   async function revertToDraft(id: string) {
     const previous = docs;
     setUpdatingId(id);
@@ -484,8 +547,13 @@ export default function DocumentsPanel({
   }
 
   function canOpenForSigning(doc: Doc): boolean {
+    if (!doc.requires_signature) return false;
     if (doc.status === "signed" || doc.status === "voided") return false;
     return ACTIVE_SIGNING_STATUSES.includes(doc.status) && Boolean(myTurnByDoc[doc.id]);
+  }
+
+  function needsSignature(doc: Doc): boolean {
+    return Boolean(doc.requires_signature);
   }
 
   function formatDocDate(iso: string) {
@@ -512,7 +580,7 @@ export default function DocumentsPanel({
           documentId={signSession.doc.id}
           projectId={projectId}
           fileUrl={signSession.doc.file_url}
-          documentType={signSession.doc.type}
+          documentType={documentTypeLabel(signSession.doc.type)}
           fields={signSession.fields}
           values={signSession.values}
           signers={signSession.signers}
@@ -594,7 +662,15 @@ export default function DocumentsPanel({
     const actionable = docs.filter((doc) => canOpenForSigning(doc));
     const waiting = docs.filter(
       (doc) =>
-        ACTIVE_SIGNING_STATUSES.includes(doc.status) && !canOpenForSigning(doc),
+        needsSignature(doc) &&
+        ACTIVE_SIGNING_STATUSES.includes(doc.status) &&
+        !canOpenForSigning(doc),
+    );
+    const shared = docs.filter(
+      (doc) =>
+        !needsSignature(doc) &&
+        doc.status !== "draft" &&
+        doc.status !== "voided",
     );
     const settled = docs.filter(
       (doc) => doc.status === "signed" || doc.status === "voided",
@@ -603,6 +679,7 @@ export default function DocumentsPanel({
       (doc) =>
         !actionable.includes(doc) &&
         !waiting.includes(doc) &&
+        !shared.includes(doc) &&
         !settled.includes(doc),
     );
 
@@ -611,6 +688,7 @@ export default function DocumentsPanel({
         status: doc.status,
         isMyTurn: Boolean(myTurnByDoc[doc.id]),
         waitingOnName: waitingOnByDoc[doc.id] ?? null,
+        requiresSignature: needsSignature(doc),
       });
     }
 
@@ -652,8 +730,8 @@ export default function DocumentsPanel({
                   >
                     <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
                       <div className="min-w-0">
-                        <p className="font-serif text-2xl capitalize tracking-tight text-black">
-                          {doc.type}
+                        <p className="font-serif text-2xl tracking-tight text-black">
+                          {documentTypeLabel(doc.type)}
                         </p>
                         <p className="mt-2 font-mono text-xs text-neutral-500">
                           {clientStatus(doc)}
@@ -692,14 +770,17 @@ export default function DocumentsPanel({
               </ul>
             )}
 
-            {(waiting.length > 0 || settled.length > 0 || other.length > 0) && (
+            {(waiting.length > 0 ||
+              shared.length > 0 ||
+              settled.length > 0 ||
+              other.length > 0) && (
               <ul className="divide-y divide-neutral-200 border-t border-neutral-200">
-                {[...waiting, ...other, ...settled].map((doc) => (
+                {[...waiting, ...shared, ...other, ...settled].map((doc) => (
                   <li key={doc.id} className="py-4">
                     <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                       <div className="min-w-0">
-                        <p className="font-serif text-xl capitalize text-black">
-                          {doc.type}
+                        <p className="font-serif text-xl text-black">
+                          {documentTypeLabel(doc.type)}
                         </p>
                         <p className="mt-1 font-mono text-xs text-neutral-500">
                           {clientStatus(doc)}
@@ -708,23 +789,23 @@ export default function DocumentsPanel({
                         </p>
                       </div>
                       <div className="flex flex-wrap items-center gap-4">
+                        {(doc.status === "signed" || !needsSignature(doc)) && (
+                          <button
+                            type="button"
+                            onClick={() => downloadDoc(doc)}
+                            className="font-mono text-[11px] text-neutral-600 underline decoration-dotted hover:text-black"
+                          >
+                            Download
+                          </button>
+                        )}
                         {doc.status === "signed" && (
-                          <>
-                            <button
-                              type="button"
-                              onClick={() => downloadDoc(doc)}
-                              className="font-mono text-[11px] text-neutral-600 underline decoration-dotted hover:text-black"
-                            >
-                              Download
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => downloadCertificate(doc)}
-                              className="font-mono text-[11px] text-neutral-600 underline decoration-dotted hover:text-black"
-                            >
-                              Certificate
-                            </button>
-                          </>
+                          <button
+                            type="button"
+                            onClick={() => downloadCertificate(doc)}
+                            className="font-mono text-[11px] text-neutral-600 underline decoration-dotted hover:text-black"
+                          >
+                            Certificate
+                          </button>
                         )}
                         <button
                           type="button"
@@ -779,11 +860,22 @@ export default function DocumentsPanel({
             <li key={doc.id} className="py-3 first:pt-0 last:pb-0">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div>
-                  <p className="font-sans text-sm capitalize text-black">{doc.type}</p>
+                  <p className="font-sans text-sm text-black">
+                    {documentTypeLabel(doc.type)}
+                  </p>
                   <p className="font-mono text-xs text-neutral-400">
                     {formatDocDate(doc.created_at)}
+                    {doc.status === "draft" ? (
+                      <>
+                        <span className="text-neutral-300"> · </span>
+                        {needsSignature(doc)
+                          ? "Requires signature"
+                          : "Share only"}
+                      </>
+                    ) : null}
                   </p>
-                  {ACTIVE_SIGNING_STATUSES.includes(doc.status) &&
+                  {needsSignature(doc) &&
+                    ACTIVE_SIGNING_STATUSES.includes(doc.status) &&
                     waitingOnByDoc[doc.id] && (
                       <p className="mt-1 font-mono text-[11px] text-neutral-500">
                         {statusLabel(doc, waitingOnByDoc[doc.id])}
@@ -796,7 +888,7 @@ export default function DocumentsPanel({
                   >
                     {doc.status.replace("_", " ")}
                   </span>
-                  {doc.status === "draft" && (
+                  {doc.status === "draft" && needsSignature(doc) && (
                     <button
                       type="button"
                       disabled={updatingId === doc.id}
@@ -806,7 +898,18 @@ export default function DocumentsPanel({
                       {updatingId === doc.id ? "Sending…" : "Send for signing"}
                     </button>
                   )}
-                  {ACTIVE_SIGNING_STATUSES.includes(doc.status) && (
+                  {doc.status === "draft" && !needsSignature(doc) && (
+                    <button
+                      type="button"
+                      disabled={updatingId === doc.id}
+                      onClick={() => sendToClient(doc.id)}
+                      className="surface-control bg-black px-4 py-2 font-mono text-[11px] uppercase tracking-[0.14em] text-white transition-opacity hover:opacity-80 disabled:opacity-50"
+                    >
+                      {updatingId === doc.id ? "Sending…" : "Send to client"}
+                    </button>
+                  )}
+                  {needsSignature(doc) &&
+                    ACTIVE_SIGNING_STATUSES.includes(doc.status) && (
                     <>
                       <button
                         type="button"
@@ -828,6 +931,17 @@ export default function DocumentsPanel({
                       )}
                     </>
                   )}
+                  {!needsSignature(doc) &&
+                    (doc.status === "sent" || doc.status === "viewed") && (
+                      <button
+                        type="button"
+                        disabled={updatingId === doc.id}
+                        onClick={() => revertToDraft(doc.id)}
+                        className="font-mono text-[11px] uppercase tracking-[0.08em] text-neutral-500 underline decoration-dotted hover:text-black disabled:opacity-50"
+                      >
+                        {updatingId === doc.id ? "Reverting…" : "Revert to draft"}
+                      </button>
+                    )}
                   {canDeleteDocument(doc) ? (
                     <button
                       type="button"
@@ -865,14 +979,29 @@ export default function DocumentsPanel({
               </div>
 
               <div className="mt-2 flex flex-wrap gap-4">
-                {doc.status === "draft" && doc.file_mime_type === "application/pdf" ? (
+                {doc.status === "draft" && (
+                  <label className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.08em] text-neutral-600">
+                    <input
+                      type="checkbox"
+                      checked={needsSignature(doc)}
+                      disabled={updatingId === doc.id}
+                      onChange={(e) =>
+                        toggleRequiresSignature(doc, e.target.checked)
+                      }
+                    />
+                    Requires signature
+                  </label>
+                )}
+                {doc.status === "draft" &&
+                needsSignature(doc) &&
+                doc.file_mime_type === "application/pdf" ? (
                   <Link
                     href={`/admin/projects/${projectId}/documents/${doc.id}/fields`}
                     className="font-mono text-[11px] uppercase tracking-[0.08em] text-neutral-600 underline decoration-dotted hover:text-black"
                   >
                     Add signature fields
                   </Link>
-                ) : doc.status === "draft" ? (
+                ) : doc.status === "draft" && needsSignature(doc) ? (
                   <span
                     className="font-mono text-[11px] uppercase tracking-[0.08em] text-neutral-400"
                     title="Signature fields can only be placed on PDF documents."
@@ -958,7 +1087,11 @@ export default function DocumentsPanel({
         </ul>
       )}
 
-      <Modal open={uploadOpen} onClose={() => setUploadOpen(false)} title="Upload document">
+      <Modal
+        open={uploadOpen}
+        onClose={() => setUploadOpen(false)}
+        title="Upload document"
+      >
         <div className="space-y-4">
           <div>
             <label className="mb-1 block font-mono text-[11px] uppercase tracking-widest text-neutral-500">
@@ -966,16 +1099,38 @@ export default function DocumentsPanel({
             </label>
             <select
               value={pendingType}
-              onChange={(e) => setPendingType(e.target.value as DocType)}
+              onChange={(e) => {
+                const next = e.target.value as DocType;
+                setPendingType(next);
+                setPendingRequiresSignature(defaultRequiresSignature(next));
+              }}
               className="w-full border border-neutral-300 px-3 py-2 text-sm"
             >
               {TYPES.map((t) => (
                 <option key={t} value={t}>
-                  {t}
+                  {documentTypeLabel(t)}
                 </option>
               ))}
             </select>
           </div>
+          <label className="flex items-start gap-3 border border-neutral-200 px-3 py-3">
+            <input
+              type="checkbox"
+              className="mt-0.5"
+              checked={pendingRequiresSignature}
+              onChange={(e) => setPendingRequiresSignature(e.target.checked)}
+            />
+            <span>
+              <span className="block font-mono text-[11px] uppercase tracking-widest text-neutral-700">
+                Requires signature?
+              </span>
+              <span className="mt-1 block font-mono text-xs leading-relaxed text-neutral-500">
+                {pendingRequiresSignature
+                  ? "You'll place fields and send for signing."
+                  : "Shared with the client for view/download only."}
+              </span>
+            </span>
+          </label>
           <div>
             <label className="mb-1 block font-mono text-[11px] uppercase tracking-widest text-neutral-500">
               File

@@ -45,8 +45,11 @@ export default function AcceptInviteForm({ token, email }: { token: string; emai
       </div>
       {error && <p className="font-mono text-xs text-red-600">{error}</p>}
       <button type="submit" disabled={submitting} className="w-full bg-black py-3 font-mono text-[11px] uppercase tracking-[0.14em] text-white transition-opacity hover:opacity-80 disabled:opacity-50">
-        {submitting ? "Setting up…" : "Set password & continue"}
+        {submitting ? "Setting up…" : "Continue to portal"}
       </button>
+      <p className="font-mono text-[11px] leading-relaxed text-neutral-400">
+        If you already had access before, this reconnects your account and sets the password above.
+      </p>
     </form>
   );
 }

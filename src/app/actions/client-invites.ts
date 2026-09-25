@@ -122,36 +122,112 @@ export async function acceptClientInvite(
     return { success: false, error: "This invite has expired. Ask for a new one." };
   }
 
+  if (!password || password.length < 8) {
+    return { success: false, error: "Password must be at least 8 characters." };
+  }
+
+  const inviteEmail = invite.email.trim().toLowerCase();
+
   const { data: newUser, error: createError } = await admin.auth.admin.createUser({
-    email: invite.email,
+    email: inviteEmail,
     password,
     email_confirm: true,
   });
 
-  if (createError || !newUser.user) {
-    console.error("Failed to create user from invite:", createError);
-    return {
-      success: false,
-      error: createError?.message ?? "Failed to create your account.",
-    };
+  let userId = newUser?.user?.id ?? null;
+
+  if (createError || !userId) {
+    if (!isEmailTakenError(createError)) {
+      console.error("Failed to create user from invite:", createError);
+      return {
+        success: false,
+        error: createError?.message ?? "Failed to create your account.",
+      };
+    }
+
+    // Account already exists (e.g. access was revoked earlier — profile stayed,
+    // client_id was cleared). Complete acceptance against that user instead of
+    // stopping at "already registered".
+    const existing = await findAuthUserByEmail(admin, inviteEmail);
+    if (!existing) {
+      return {
+        success: false,
+        error:
+          "An account with this email already exists, but we couldn't finish linking it. Contact skapa.",
+      };
+    }
+
+    const { data: existingProfile, error: profileLoadError } = await admin
+      .from("profiles")
+      .select("id, client_id, role")
+      .eq("id", existing.id)
+      .maybeSingle();
+
+    if (profileLoadError) {
+      console.error("Failed to load existing profile for invite accept:", profileLoadError);
+      return { success: false, error: "Couldn't finish linking your account. Contact skapa." };
+    }
+
+    if (existingProfile?.role === "admin") {
+      return {
+        success: false,
+        error: "This email belongs to a studio account and can't accept a client invite.",
+      };
+    }
+
+    if (
+      existingProfile?.client_id &&
+      existingProfile.client_id !== invite.client_id
+    ) {
+      return {
+        success: false,
+        error:
+          "This email is already linked to a different client. Contact skapa if you need access moved.",
+      };
+    }
+
+    const { error: passwordError } = await admin.auth.admin.updateUserById(existing.id, {
+      password,
+      email_confirm: true,
+    });
+
+    if (passwordError) {
+      console.error("Failed to update password for existing invite user:", passwordError);
+      return {
+        success: false,
+        error: "Couldn't update your password. Try logging in with your existing password, or contact skapa.",
+      };
+    }
+
+    userId = existing.id;
   }
 
-  // handle_new_user's trigger already created a basic profile row (role:
-  // client, no client_id yet) — link it to the invited client now.
+  // New users get a profile from handle_new_user (role: client, no client_id).
+  // Existing revoked users already have a profile with client_id null.
   const { error: linkError } = await admin
     .from("profiles")
     .update({ client_id: invite.client_id })
-    .eq("id", newUser.user.id);
+    .eq("id", userId);
 
   if (linkError) {
-    console.error("Account created but failed to link client:", linkError);
+    console.error("Account ready but failed to link client:", linkError);
     return { success: false, error: "Account created, but setup didn't finish. Contact skapa." };
   }
 
-  await admin
+  const acceptedAt = new Date().toISOString();
+  const { error: acceptError } = await admin
     .from("client_invites")
-    .update({ status: "accepted", accepted_at: new Date().toISOString() })
-    .eq("id", invite.id);
+    .update({ status: "accepted", accepted_at: acceptedAt })
+    .eq("id", invite.id)
+    .eq("status", "pending");
+
+  if (acceptError) {
+    console.error("Failed to mark invite accepted:", acceptError);
+    return {
+      success: false,
+      error: "Account linked, but the invite didn't finish updating. Contact skapa.",
+    };
+  }
 
   const { data: client } = await admin
     .from("clients")
@@ -160,7 +236,7 @@ export async function acceptClientInvite(
     .maybeSingle();
 
   const accountReady = await sendAccountReadyEmail({
-    to: invite.email,
+    to: inviteEmail,
     clientName: client?.name ?? "there",
   });
 
@@ -170,4 +246,45 @@ export async function acceptClientInvite(
   }
 
   return { success: true };
+}
+
+function isEmailTakenError(error: { message?: string; status?: number } | null | undefined): boolean {
+  if (!error) return false;
+  const message = (error.message ?? "").toLowerCase();
+  return (
+    message.includes("already been registered") ||
+    message.includes("already registered") ||
+    message.includes("user already exists") ||
+    message.includes("email address has already") ||
+    message.includes("duplicate") ||
+    error.status === 422
+  );
+}
+
+async function findAuthUserByEmail(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  admin: any,
+  email: string,
+): Promise<{ id: string; email?: string } | null> {
+  const normalized = email.trim().toLowerCase();
+  let page = 1;
+
+  for (;;) {
+    const { data, error } = await admin.auth.admin.listUsers({ page, perPage: 200 });
+    if (error) {
+      console.error("Failed to list users while accepting invite:", error);
+      return null;
+    }
+
+    const users = data?.users ?? [];
+    const match = users.find(
+      (user: { id: string; email?: string | null }) =>
+        (user.email ?? "").trim().toLowerCase() === normalized,
+    );
+    if (match) return match;
+
+    const total = typeof data?.total === "number" ? data.total : users.length;
+    if (users.length === 0 || page * 200 >= total) return null;
+    page += 1;
+  }
 }

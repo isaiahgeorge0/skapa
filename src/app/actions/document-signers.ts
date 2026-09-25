@@ -528,12 +528,19 @@ export async function sendDocumentForSigning(
 
   const { data: document, error: docError } = await db
     .from("documents")
-    .select("id, status, project_id")
+    .select("id, status, project_id, requires_signature")
     .eq("id", documentId)
     .single();
 
   if (docError || !document) {
     return { success: false, error: "Document not found." };
+  }
+
+  if (!document.requires_signature) {
+    return {
+      success: false,
+      error: "This document doesn't require signatures — use Send to client.",
+    };
   }
 
   if (document.status === "voided") {

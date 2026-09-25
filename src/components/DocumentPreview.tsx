@@ -6,6 +6,7 @@ import SignatureCanvas from "react-signature-canvas";
 import { createClient } from "@/lib/supabase/client";
 import { hashFile } from "@/lib/hash-file";
 import { signDocument } from "@/app/actions/sign-document";
+import { documentTypeLabel } from "@/lib/document-types";
 
 const caveat = Caveat({ subsets: ["latin"], weight: ["400", "700"] });
 
@@ -310,7 +311,9 @@ export default function DocumentPreview({
             Document preview
           </p>
           {doc.type && (
-            <p className="font-serif text-lg capitalize text-black">{doc.type}</p>
+            <p className="font-serif text-lg text-black">
+              {documentTypeLabel(doc.type)}
+            </p>
           )}
         </div>
         <button

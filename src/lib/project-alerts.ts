@@ -1,3 +1,5 @@
+import { documentTypeLabel } from "@/lib/document-types";
+
 export type ProjectAlert = {
   id: string;
   text: string;
@@ -60,7 +62,7 @@ export function buildAdminProjectAlerts({
 
   const unviewed = documents.filter((d) => d.status === "sent");
   for (const doc of unviewed.slice(0, 2)) {
-    const label = doc.type?.trim() || "document";
+    const label = documentTypeLabel(doc.type);
     alerts.push({
       id: `doc-unviewed-${doc.id}`,
       text: `Client hasn't viewed ${label}`,

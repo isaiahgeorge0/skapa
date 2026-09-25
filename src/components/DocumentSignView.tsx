@@ -359,7 +359,7 @@ export default function DocumentSignView({
           <p className="font-mono text-[11px] uppercase tracking-widest text-neutral-400">
             {isMyTurn ? "Your turn to sign" : "Document review"}
           </p>
-          <p className="font-serif text-lg capitalize text-black">{documentType}</p>
+          <p className="font-serif text-lg text-black">{documentType}</p>
         </div>
         <button
           type="button"

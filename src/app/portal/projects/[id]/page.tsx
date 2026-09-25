@@ -8,6 +8,7 @@ import ProjectActivityTimeline from "@/components/ProjectActivityTimeline";
 import PortalNowHero from "@/components/PortalNowHero";
 import OverviewPreviewCard from "@/components/OverviewPreviewCard";
 import type { ProjectRequest } from "@/lib/project-request-status";
+import { documentTypeLabel } from "@/lib/document-types";
 
 export const dynamic = "force-dynamic";
 
@@ -113,7 +114,7 @@ export default async function PortalProjectOverviewPage({
 
   const docItems = (documents ?? []).slice(0, 3).map((doc) => ({
     id: doc.id,
-    title: doc.type,
+    title: documentTypeLabel(doc.type),
     meta: `${doc.status.replaceAll("_", " ")} · ${formatShortDate(doc.created_at)}`,
   }));
 

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import DocumentFieldEditor from "@/components/DocumentFieldEditor";
 import {
@@ -7,6 +7,7 @@ import {
   syncDocumentSigners,
 } from "@/app/actions/document-signers";
 import type { DocumentField } from "@/lib/documents";
+import { documentTypeLabel } from "@/lib/document-types";
 
 type ClientRef = { id: string; name: string };
 
@@ -27,12 +28,18 @@ export default async function DocumentFieldsPage({
 
   const { data: document } = await supabase
     .from("documents")
-    .select("id, type, file_url, file_mime_type, project_id, created_at, status")
+    .select(
+      "id, type, file_url, file_mime_type, project_id, created_at, status, requires_signature",
+    )
     .eq("id", documentId)
     .eq("project_id", projectId)
     .single();
 
   if (!document) notFound();
+
+  if (!document.requires_signature || document.status !== "draft") {
+    redirect(`/admin/projects/${projectId}/documents`);
+  }
 
   if (document.file_mime_type !== "application/pdf") {
     return (
@@ -107,7 +114,7 @@ export default async function DocumentFieldsPage({
     });
     return {
       id: doc.id,
-      label: `${projectName ?? "Project"} · ${doc.type} · ${date}`,
+      label: `${projectName ?? "Project"} · ${documentTypeLabel(doc.type)} · ${date}`,
     };
   });
 
@@ -133,7 +140,9 @@ export default async function DocumentFieldsPage({
           >
             ← Documents
           </Link>
-          <h2 className="font-serif text-3xl capitalize text-black">{document.type}</h2>
+          <h2 className="font-serif text-3xl text-black">
+            {documentTypeLabel(document.type)}
+          </h2>
           <p className="mt-2 font-mono text-xs text-neutral-500">
             Place signature, date, and text fields on this PDF before sending it to the client.
           </p>

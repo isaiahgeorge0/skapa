@@ -24,7 +24,9 @@ export default async function PortalProjectDocumentsPage({
 
   const { data: documents } = await supabase
     .from("documents")
-    .select("id, type, file_url, file_mime_type, status, created_at")
+    .select(
+      "id, type, file_url, file_mime_type, status, created_at, requires_signature",
+    )
     .eq("project_id", id)
     .order("created_at", { ascending: false });
 
