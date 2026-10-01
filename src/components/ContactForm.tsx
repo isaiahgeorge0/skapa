@@ -19,7 +19,12 @@ async function postLead(body: unknown): Promise<SubmitLeadResult> {
   return result
 }
 
-export default function ContactForm() {
+export default function ContactForm({
+  startedAt,
+}: {
+  /** Server-clock Date.now() from the page render — never generated in the browser. */
+  startedAt: number
+}) {
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle')
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
@@ -36,6 +41,8 @@ export default function ContactForm() {
           name: (form.elements.namedItem('name') as HTMLInputElement).value,
           email: (form.elements.namedItem('email') as HTMLInputElement).value,
           message: (form.elements.namedItem('message') as HTMLTextAreaElement).value,
+          honeypot: (form.elements.namedItem('hp_token') as HTMLInputElement).value,
+          startedAt,
         }),
         SUBMIT_TIMEOUT_MS,
       )
@@ -68,6 +75,16 @@ export default function ContactForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4 max-w-md">
+      {/* Honeypot — hidden from real visitors and screen readers, but a
+          bot filling in every field will fill this too, and real users
+          never can. Not display:none, since some bots skip those. */}
+      <div
+        aria-hidden="true"
+        style={{ position: 'absolute', left: '-9999px', width: '1px', height: '1px', overflow: 'hidden' }}
+      >
+        <label htmlFor="hp_token">Leave this empty</label>
+        <input id="hp_token" name="hp_token" type="text" tabIndex={-1} autoComplete="off" />
+      </div>
       <div>
         <label htmlFor="name" className="block text-sm mb-1">Name</label>
         <input id="name" name="name" required className="w-full border border-neutral-300 rounded px-3 py-2 text-sm" />

@@ -15,6 +15,10 @@ type ContactLeadInput = {
   name: string;
   email: string;
   message: string;
+  /** Hidden field real users never fill in. Non-empty = bot. */
+  honeypot?: string;
+  /** Server-clock Date.now() from the page render, so we can reject instant submits. */
+  startedAt?: number;
 };
 
 type QuestionnaireLeadInput = {
@@ -30,14 +34,39 @@ type QuestionnaireLeadInput = {
     timeline: string;
     extra: string;
   };
+  /** Hidden field real users never fill in. Non-empty = bot. */
+  honeypot?: string;
+  /** Server-clock Date.now() from the page render, so we can reject instant submits. */
+  startedAt?: number;
 };
 
 export type SubmitLeadInput = ContactLeadInput | QuestionnaireLeadInput;
 
 const DB_TIMEOUT_MS = 8_000;
 
+/**
+ * Minimum time between a form rendering and being submitted. Scripted bots
+ * that POST straight to this endpoint typically fire within a few hundred ms
+ * of "loading" the page (or skip loading it at all); a real person can't
+ * read the form and fill in a name/email that fast.
+ */
+const MIN_FILL_MS = 1_500;
+
 function isValidEmail(email: string): boolean {
   return /\S+@\S+\.\S+/.test(email);
+}
+
+/**
+ * Cheap pre-check before any DB call: a filled honeypot or an implausibly
+ * fast submission means this didn't come from a real person filling in the
+ * form, regardless of what the rate limiter would say. We return a fake
+ * success for these (see processLeadSubmission) rather than an error, so a
+ * scripted bot gets no signal to tell it what tripped and adjust.
+ */
+function looksLikeBot(honeypot: string | undefined, startedAt: number | undefined): boolean {
+  if (honeypot && honeypot.trim().length > 0) return true;
+  if (typeof startedAt !== "number" || !Number.isFinite(startedAt)) return true;
+  return Date.now() - startedAt < MIN_FILL_MS;
 }
 
 async function sendLeadThankYouAfterInsert(email: string, name: string) {
@@ -52,6 +81,10 @@ export async function processLeadSubmission(
   input: SubmitLeadInput,
 ): Promise<SubmitLeadResult> {
   try {
+    if (looksLikeBot(input.honeypot, input.startedAt)) {
+      return { success: true };
+    }
+
     const name = input.name.trim();
     const email = input.email.trim();
 

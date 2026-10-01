@@ -64,13 +64,21 @@ const EMPTY: Answers = {
   extra: "",
 };
 
-export default function StartQuestionnaire() {
+export default function StartQuestionnaire({
+  startedAt,
+}: {
+  /** Server-clock Date.now() from the page render — never generated in the browser. */
+  startedAt: number;
+}) {
   const [stepIndex, setStepIndex] = useState(0);
   const [direction, setDirection] = useState(1);
   const [answers, setAnswers] = useState<Answers>(EMPTY);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [done, setDone] = useState(false);
+  // Hidden decoy field — real visitors never touch it, a bot scripting
+  // through every input field will.
+  const [honeypot, setHoneypot] = useState("");
 
   const step: StepKey = STEPS[stepIndex];
 
@@ -130,6 +138,8 @@ export default function StartQuestionnaire() {
             timeline: answers.timeline,
             extra: answers.extra,
           },
+          honeypot,
+          startedAt,
         }),
         SUBMIT_TIMEOUT_MS,
       );
@@ -177,6 +187,22 @@ export default function StartQuestionnaire() {
 
   return (
     <div className="flex min-h-screen flex-col">
+      {/* Honeypot — hidden from real visitors and screen readers. */}
+      <div
+        aria-hidden="true"
+        style={{ position: "absolute", left: "-9999px", width: "1px", height: "1px", overflow: "hidden" }}
+      >
+        <label htmlFor="hp_token">Leave this empty</label>
+        <input
+          id="hp_token"
+          name="hp_token"
+          type="text"
+          tabIndex={-1}
+          autoComplete="off"
+          value={honeypot}
+          onChange={(e) => setHoneypot(e.target.value)}
+        />
+      </div>
       <div className="flex items-center justify-between px-6 py-6 md:px-10">
         <Link href="/" className="font-serif text-xl text-black">
           skapa <span className="italic text-brand-pink">Creative</span>
