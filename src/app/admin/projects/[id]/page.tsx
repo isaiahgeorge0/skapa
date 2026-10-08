@@ -6,7 +6,9 @@ import AssignedClients from "@/components/AssignedClients";
 import Card from "@/components/Card";
 import ProjectAlertsRow from "@/components/ProjectAlertsRow";
 import OverviewPreviewCard from "@/components/OverviewPreviewCard";
+import ProjectLinksEditor from "@/components/ProjectLinksEditor";
 import { buildAdminProjectAlerts } from "@/lib/project-alerts";
+import { PROJECT_LINK_COLUMNS, type ProjectLink } from "@/lib/project-links";
 import { PHASES } from "@/lib/project-phases";
 import type { ProjectRequest } from "@/lib/project-request-status";
 
@@ -54,6 +56,7 @@ export default async function ProjectOverviewPage({
     { data: messages },
     { data: documents },
     { data: requests },
+    { data: links },
   ] = await Promise.all([
     supabase.from("project_clients").select("clients(id, name, email)").eq("project_id", id),
     supabase.from("clients").select("id, name, email").order("name"),
@@ -75,6 +78,12 @@ export default async function ProjectOverviewPage({
       )
       .eq("project_id", id)
       .order("created_at", { ascending: false }),
+    supabase
+      .from("project_links")
+      .select(PROJECT_LINK_COLUMNS)
+      .eq("project_id", id)
+      .order("sort_order", { ascending: true })
+      .order("created_at", { ascending: true }),
   ]);
 
   // Chronological for alert "last message" check
@@ -173,6 +182,10 @@ export default async function ProjectOverviewPage({
               currentPhaseLabel={PHASE_LABELS[project.phase] ?? project.phase}
             />
           </Card>
+          <ProjectLinksEditor
+            projectId={project.id}
+            initialLinks={(links ?? []) as ProjectLink[]}
+          />
         </div>
       </div>
     </div>

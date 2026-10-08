@@ -61,6 +61,9 @@
 @utility border-portal-accent {
   border-color: var(--portal-accent);
 }
+@utility bg-portal-tint {
+  background-color: color-mix(in srgb, var(--portal-accent) 6%, white);
+}
 
 /* Cream page field + raised white cards (portal / admin projects). */
 @utility surface-page {

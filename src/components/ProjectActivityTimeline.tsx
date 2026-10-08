@@ -19,18 +19,10 @@ export default function ProjectActivityTimeline({
 }: {
   events: TimelineEvent[];
 }) {
-  if (events.length === 0) {
-    return (
-      <div className="border-l-2 border-portal-accent/30 pl-4">
-        <p className="text-sm text-neutral-500">
-          Activity will show here as documents are shared, reviewed and signed.
-        </p>
-      </div>
-    );
-  }
+  if (events.length === 0) return null;
 
   return (
-    <ol className="relative space-y-5 border-l-2 border-portal-accent/35 pl-5">
+    <ol className="relative mt-2 space-y-5 border-l border-black/10 pl-5">
       {events.map((event, index) => (
         <li key={event.id} className="relative">
           <span

@@ -17,6 +17,7 @@ export default function PhaseTracker({
   /** When false, omit the inline Now callout (portal uses PortalNowHero). */
   showNow = true,
   showPercent = false,
+  compact = false,
 }: {
   projectId: string;
   initialPhase: Phase;
@@ -26,6 +27,11 @@ export default function PhaseTracker({
   showNow?: boolean;
   /** Compact percent + bar under the phase dots. */
   showPercent?: boolean;
+  /**
+   * Read-only stepper for tight spaces: dots plus "Step n of N" below sm,
+   * dots with width-capped labels from sm up.
+   */
+  compact?: boolean;
 }) {
   const [phase, setPhase] = useState<Phase>(initialPhase);
   const [saving, setSaving] = useState(false);
@@ -53,6 +59,67 @@ export default function PhaseTracker({
       console.error("Failed to update phase:", error);
       setPhase(previous);
     }
+  }
+
+  if (compact) {
+    const stepCount = PHASES.length;
+    const stepIndex = Math.max(currentIndex, 0);
+    const edgePercent = 100 / (2 * stepCount);
+    return (
+      <div>
+        <ol
+          aria-label="Project phases"
+          className="relative grid"
+          style={{ gridTemplateColumns: `repeat(${stepCount}, minmax(0, 1fr))` }}
+        >
+          <span
+            aria-hidden="true"
+            className="absolute top-[7px] h-px bg-neutral-200"
+            style={{ left: `${edgePercent}%`, right: `${edgePercent}%` }}
+          />
+          <span
+            aria-hidden="true"
+            className={`absolute top-[7px] h-px ${accentFill}`}
+            style={{
+              left: `${edgePercent}%`,
+              width: `${(stepIndex / (stepCount - 1)) * (100 - 2 * edgePercent)}%`,
+            }}
+          />
+          {PHASES.map((p, index) => {
+            const isComplete = index < stepIndex;
+            const isCurrent = index === stepIndex;
+            return (
+              <li
+                key={p.key}
+                aria-current={isCurrent ? "step" : undefined}
+                className="relative z-10 flex min-w-0 flex-col items-center gap-2.5 px-1"
+              >
+                <span
+                  aria-hidden="true"
+                  className={`h-3.5 w-3.5 rounded-full border-2 ${
+                    isComplete
+                      ? `${accentBorder} ${accentFill}`
+                      : isCurrent
+                        ? `${accentBorder} bg-white`
+                        : "border-neutral-300 bg-white"
+                  }`}
+                />
+                <span
+                  className={`sr-only max-w-[110px] break-words text-center font-mono text-[10px] uppercase leading-tight tracking-[0.06em] sm:not-sr-only sm:w-full ${
+                    isCurrent ? "text-black" : isComplete ? "text-neutral-600" : "text-neutral-400"
+                  }`}
+                >
+                  {p.label}
+                </span>
+              </li>
+            );
+          })}
+        </ol>
+        <p aria-hidden="true" className="mt-3 font-mono text-xs text-neutral-500 sm:hidden">
+          Step {stepIndex + 1} of {stepCount} · <span className="text-black">{current.label}</span>
+        </p>
+      </div>
+    );
   }
 
   return (

@@ -210,6 +210,7 @@ export default async function PortalPage() {
     title: documentTypeLabel(d.type),
   }));
   const clientName = linkedClient?.name?.trim() || null;
+  const hasRecentMessages = (recentMessages ?? []).length > 0;
 
   return (
     <div className="mx-auto max-w-5xl px-5 py-10 sm:px-8 md:px-10 md:py-14">
@@ -293,70 +294,68 @@ export default async function PortalPage() {
             </ul>
           </section>
 
-          <div className="grid gap-10 sm:gap-12 md:grid-cols-2 md:gap-14">
-            <PortalSection title="Recent messages" titleSize="sm">
-              {!recentMessages || recentMessages.length === 0 ? (
-                <p className="text-sm text-neutral-400">No messages yet.</p>
-              ) : (
-                <ul className="space-y-5">
-                  {recentMessages.map((m) => (
-                    <li key={m.id}>
-                      <p className="line-clamp-2 text-sm text-black">{m.body}</p>
-                      <p className="mt-1 font-mono text-xs text-neutral-400">
-                        {projectNameById[m.project_id]} ·{" "}
-                        {m.sender_role === "admin" ? "skapa" : "You"} ·{" "}
-                        {new Date(m.created_at).toLocaleDateString("en-GB", {
-                          day: "numeric",
-                          month: "short",
-                        })}
-                      </p>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </PortalSection>
-
-            <PortalSection title="Latest documents" titleSize="sm">
-              {docs.length === 0 ? (
-                <p className="text-sm text-neutral-400">No documents shared yet.</p>
-              ) : (
-                <ul className="divide-y divide-neutral-200">
-                  {docs.map((d) => {
-                    const meta = docStatusMeta[d.id];
-                    const label = clientDocumentStatusLabel({
-                      status: d.status,
-                      isMyTurn: Boolean(meta?.isMyTurn),
-                      waitingOnName: meta?.waitingOnName,
-                      requiresSignature: Boolean(d.requires_signature),
-                    });
-                    return (
-                      <li
-                        key={d.id}
-                        className="flex items-center justify-between gap-4 py-3 first:pt-0"
-                      >
-                        <div className="min-w-0">
-                          <p className="truncate font-serif text-lg text-black">
-                            {documentTypeLabel(d.type)}
-                          </p>
-                          <p className="mt-0.5 font-mono text-xs text-neutral-400">
-                            {projectNameById[d.project_id]}
-                            <span className="text-neutral-300"> · </span>
-                            {label}
-                          </p>
-                        </div>
-                        <Link
-                          href={`/portal/projects/${d.project_id}/documents?open=${d.id}`}
-                          className="shrink-0 font-mono text-[11px] text-neutral-500 underline decoration-dotted hover:text-black"
-                        >
-                          Open
-                        </Link>
+          {hasRecentMessages || docs.length > 0 ? (
+            <div className="grid gap-10 sm:gap-12 md:grid-cols-2 md:gap-14">
+              {hasRecentMessages ? (
+                <PortalSection title="Recent messages" titleSize="sm">
+                  <ul className="space-y-5">
+                    {(recentMessages ?? []).map((m) => (
+                      <li key={m.id}>
+                        <p className="line-clamp-2 text-sm text-black">{m.body}</p>
+                        <p className="mt-1 font-mono text-xs text-neutral-400">
+                          {projectNameById[m.project_id]} ·{" "}
+                          {m.sender_role === "admin" ? "skapa" : "You"} ·{" "}
+                          {new Date(m.created_at).toLocaleDateString("en-GB", {
+                            day: "numeric",
+                            month: "short",
+                          })}
+                        </p>
                       </li>
-                    );
-                  })}
-                </ul>
-              )}
-            </PortalSection>
-          </div>
+                    ))}
+                  </ul>
+                </PortalSection>
+              ) : null}
+
+              {docs.length > 0 ? (
+                <PortalSection title="Latest documents" titleSize="sm">
+                  <ul className="divide-y divide-neutral-200">
+                    {docs.map((d) => {
+                      const meta = docStatusMeta[d.id];
+                      const label = clientDocumentStatusLabel({
+                        status: d.status,
+                        isMyTurn: Boolean(meta?.isMyTurn),
+                        waitingOnName: meta?.waitingOnName,
+                        requiresSignature: Boolean(d.requires_signature),
+                      });
+                      return (
+                        <li
+                          key={d.id}
+                          className="flex items-center justify-between gap-4 py-3 first:pt-0"
+                        >
+                          <div className="min-w-0">
+                            <p className="truncate font-serif text-lg text-black">
+                              {documentTypeLabel(d.type)}
+                            </p>
+                            <p className="mt-0.5 font-mono text-xs text-neutral-400">
+                              {projectNameById[d.project_id]}
+                              <span className="text-neutral-300"> · </span>
+                              {label}
+                            </p>
+                          </div>
+                          <Link
+                            href={`/portal/projects/${d.project_id}/documents?open=${d.id}`}
+                            className="shrink-0 font-mono text-[11px] text-neutral-500 underline decoration-dotted hover:text-black"
+                          >
+                            Open
+                          </Link>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </PortalSection>
+              ) : null}
+            </div>
+          ) : null}
         </PortalSectionStack>
       )}
     </div>

@@ -20,6 +20,8 @@ export default function UpcomingTasksPanel({
   emptyText = null,
   showProject = true,
   clientName,
+  hideAssignee = false,
+  variant = "card",
 }: {
   tasks: UpcomingTaskRow[];
   viewerRole: "admin" | "client";
@@ -28,6 +30,10 @@ export default function UpcomingTasksPanel({
   emptyText?: string | null;
   showProject?: boolean;
   clientName?: string | null;
+  /** Drop the assignee chip when every row belongs to the same person. */
+  hideAssignee?: boolean;
+  /** "plain": hairline rows, no card, for placing inside another surface. */
+  variant?: "card" | "plain";
 }) {
   const router = useRouter();
   const isAdmin = viewerRole === "admin";
@@ -54,8 +60,17 @@ export default function UpcomingTasksPanel({
 
   return (
     <>
-      <ul className="surface-raised divide-y divide-black/[0.05]">
+      <ul
+        className={
+          variant === "plain"
+            ? "divide-y divide-black/[0.06] border-t border-black/[0.06]"
+            : "surface-raised divide-y divide-black/[0.05]"
+        }
+      >
         {rows.map((task) => {
+          const showHigh = task.priority === "high" && !task.is_complete;
+          const hasMeta =
+            (showProject && !!task.project_name) || !hideAssignee || !!task.due_date || showHigh;
           const content = (
             <>
               <p
@@ -65,26 +80,32 @@ export default function UpcomingTasksPanel({
               >
                 {task.title}
               </p>
-              <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
-                {showProject && task.project_name ? (
-                  <span className="mr-1 font-mono text-[11px] text-neutral-500">
-                    {task.project_name}
-                  </span>
-                ) : null}
-                <AssigneeChip
-                  assignee={task.assignee}
-                  viewerRole={viewerRole}
-                  tone={tone}
-                  clientLabel={isAdmin ? "Waiting on client" : undefined}
-                />
-                <DueChip task={task} today={today} tone={tone} />
-                {task.priority === "high" && !task.is_complete ? <HighPriorityMarker /> : null}
-              </div>
+              {hasMeta ? (
+                <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
+                  {showProject && task.project_name ? (
+                    <span className="mr-1 font-mono text-[11px] text-neutral-500">
+                      {task.project_name}
+                    </span>
+                  ) : null}
+                  {hideAssignee ? null : (
+                    <AssigneeChip
+                      assignee={task.assignee}
+                      viewerRole={viewerRole}
+                      tone={tone}
+                      clientLabel={isAdmin ? "Waiting on client" : undefined}
+                    />
+                  )}
+                  <DueChip task={task} today={today} tone={tone} />
+                  {showHigh ? <HighPriorityMarker /> : null}
+                </div>
+              ) : null}
             </>
           );
 
           const rowClass =
-            "block w-full px-5 py-4 text-left transition-colors hover:bg-black/[0.02] md:px-6";
+            variant === "plain"
+              ? "flex min-h-14 w-full flex-col justify-center px-4 py-3 text-left transition-colors hover:bg-white/60 sm:px-6"
+              : "block w-full px-5 py-4 text-left transition-colors hover:bg-black/[0.02] md:px-6";
 
           return (
             <li key={task.id}>
