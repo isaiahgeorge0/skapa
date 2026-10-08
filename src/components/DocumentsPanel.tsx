@@ -697,6 +697,10 @@ export default function DocumentsPanel({
         !shared.includes(doc) &&
         !settled.includes(doc),
     );
+    const restDocs = [...waiting, ...shared, ...other, ...settled];
+    const restIsSettledOnly = restDocs.every(
+      (doc) => doc.status === "signed" || doc.status === "voided",
+    );
 
     function clientStatus(doc: Doc) {
       return clientDocumentStatusLabel({
@@ -770,64 +774,68 @@ export default function DocumentsPanel({
               </ul>
             )}
 
-            {(waiting.length > 0 ||
-              shared.length > 0 ||
-              settled.length > 0 ||
-              other.length > 0) && (
-              <ul className="divide-y divide-neutral-200 border-t border-neutral-200">
-                {[...waiting, ...shared, ...other, ...settled].map((doc) => (
-                  <li key={doc.id} className="py-4">
-                    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                      <div className="min-w-0">
-                        <p className="font-serif text-xl text-black">
-                          {documentTypeLabel(doc.type)}
-                        </p>
-                        <p className="mt-1 font-mono text-xs text-neutral-500">
-                          {clientStatus(doc)}
-                          <span className="text-neutral-300"> · </span>
-                          {formatDocDate(doc.created_at)}
-                        </p>
-                      </div>
-                      <div className="flex flex-wrap items-center gap-4">
-                        {(doc.status === "signed" || !needsSignature(doc)) && (
+            {restDocs.length > 0 && (
+              <div>
+                {actionable.length > 0 ? (
+                  <p className="mb-3 font-mono text-[11px] uppercase tracking-[0.14em] text-neutral-500">
+                    {restIsSettledOnly ? "Earlier" : "Shared with you"}
+                  </p>
+                ) : null}
+                <ul className="space-y-3">
+                  {restDocs.map((doc) => (
+                    <li key={doc.id} className="surface-raised-soft px-5 py-4 md:px-6">
+                      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                        <div className="min-w-0">
+                          <p className="font-serif text-xl text-black">
+                            {documentTypeLabel(doc.type)}
+                          </p>
+                          <p className="mt-1 font-mono text-xs text-neutral-500">
+                            {clientStatus(doc)}
+                            <span className="text-neutral-300"> · </span>
+                            {formatDocDate(doc.created_at)}
+                          </p>
+                        </div>
+                        <div className="flex flex-wrap items-center gap-4">
+                          {(doc.status === "signed" || !needsSignature(doc)) && (
+                            <button
+                              type="button"
+                              onClick={() => downloadDoc(doc)}
+                              className="py-1.5 font-mono text-[11px] text-neutral-600 underline decoration-dotted hover:text-black"
+                            >
+                              Download
+                            </button>
+                          )}
+                          {doc.status === "signed" && (
+                            <button
+                              type="button"
+                              onClick={() => downloadCertificate(doc)}
+                              className="py-1.5 font-mono text-[11px] text-neutral-600 underline decoration-dotted hover:text-black"
+                            >
+                              Certificate
+                            </button>
+                          )}
                           <button
                             type="button"
-                            onClick={() => downloadDoc(doc)}
-                            className="font-mono text-[11px] text-neutral-600 underline decoration-dotted hover:text-black"
+                            onClick={() =>
+                              setExpandedActivityId(
+                                expandedActivityId === doc.id ? null : doc.id,
+                              )
+                            }
+                            className="py-1.5 font-mono text-[11px] text-neutral-400 underline decoration-dotted hover:text-black"
                           >
-                            Download
+                            {expandedActivityId === doc.id ? "Hide" : "Activity"}
                           </button>
-                        )}
-                        {doc.status === "signed" && (
-                          <button
-                            type="button"
-                            onClick={() => downloadCertificate(doc)}
-                            className="font-mono text-[11px] text-neutral-600 underline decoration-dotted hover:text-black"
-                          >
-                            Certificate
-                          </button>
-                        )}
-                        <button
-                          type="button"
-                          onClick={() =>
-                            setExpandedActivityId(
-                              expandedActivityId === doc.id ? null : doc.id,
-                            )
-                          }
-                          className="font-mono text-[11px] text-neutral-400 underline decoration-dotted hover:text-black"
-                        >
-                          {expandedActivityId === doc.id ? "Hide" : "Activity"}
-                        </button>
+                        </div>
                       </div>
-                    </div>
-                    {expandedActivityId === doc.id && (
-                      <div className="mt-3 bg-neutral-50 p-4">
-                        <DocumentAuditTrail documentId={doc.id} />
-                      </div>
-                    )}
-                  </li>
-                ))}
-              </ul>
+                      {expandedActivityId === doc.id && (
+                        <div className="mt-3 bg-neutral-50 p-4">
+                          <DocumentAuditTrail documentId={doc.id} />
+                        </div>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </div>
             )}
           </div>
         )}
