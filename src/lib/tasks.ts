@@ -9,7 +9,8 @@ export type ProjectTask = {
   project_id: string;
   title: string;
   is_complete: boolean;
-  phase: string;
+  /** null = project-wide task, not tied to a phase. */
+  phase: string | null;
   assignee: TaskAssignee;
   due_date: string | null;
   priority: TaskPriority;

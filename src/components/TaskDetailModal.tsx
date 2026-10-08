@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/client";
 import Modal from "@/components/Modal";
 import { AssigneeChip, DueChip, HighPriorityMarker } from "@/components/TaskChips";
 import { updateTaskCompletion } from "@/lib/task-mutations";
+import { PHASES } from "@/lib/project-phases";
 import {
   PROJECT_TASK_COLUMNS,
   TASK_COMMENT_MAX_LENGTH,
@@ -399,7 +400,11 @@ export const PRIORITY_OPTIONS: { value: TaskPriority; label: string }[] = [
   { value: "high", label: "High" },
 ];
 
+const WHOLE_PROJECT_VALUE = "";
+
 export function TaskFieldsEditor({
+  phase,
+  onPhaseChange,
   assignee,
   onAssigneeChange,
   dueDate,
@@ -409,6 +414,8 @@ export function TaskFieldsEditor({
   description,
   onDescriptionChange,
 }: {
+  phase: string | null;
+  onPhaseChange: (value: string | null) => void;
   assignee: TaskAssignee;
   onAssigneeChange: (value: TaskAssignee) => void;
   dueDate: string;
@@ -418,8 +425,30 @@ export function TaskFieldsEditor({
   description: string;
   onDescriptionChange: (value: string) => void;
 }) {
+  const isKnownPhase = phase === null || PHASES.some((p) => p.key === phase);
   return (
     <>
+      <div>
+        <label className={labelClass} htmlFor="task-phase">
+          Phase
+        </label>
+        <select
+          id="task-phase"
+          value={phase ?? WHOLE_PROJECT_VALUE}
+          onChange={(e) =>
+            onPhaseChange(e.target.value === WHOLE_PROJECT_VALUE ? null : e.target.value)
+          }
+          className="w-full border border-neutral-300 bg-white px-3 py-2 text-sm"
+        >
+          <option value={WHOLE_PROJECT_VALUE}>Whole project</option>
+          {PHASES.map((p) => (
+            <option key={p.key} value={p.key}>
+              {p.label}
+            </option>
+          ))}
+          {!isKnownPhase && phase ? <option value={phase}>{phase}</option> : null}
+        </select>
+      </div>
       <div>
         <span className={labelClass}>Assigned to</span>
         <SegmentedControl
@@ -491,6 +520,7 @@ function TaskEditForm({
 }) {
   const supabase = useMemo(() => createClient(), []);
   const [title, setTitle] = useState(task.title);
+  const [phase, setPhase] = useState<string | null>(task.phase);
   const [assignee, setAssignee] = useState<TaskAssignee>(task.assignee);
   const [dueDate, setDueDate] = useState(task.due_date ?? "");
   const [priority, setPriority] = useState<TaskPriority>(task.priority);
@@ -512,6 +542,7 @@ function TaskEditForm({
       .from("project_tasks")
       .update({
         title: trimmedTitle,
+        phase,
         assignee,
         due_date: dueDate || null,
         priority,
@@ -545,6 +576,8 @@ function TaskEditForm({
         />
       </div>
       <TaskFieldsEditor
+        phase={phase}
+        onPhaseChange={setPhase}
         assignee={assignee}
         onAssigneeChange={setAssignee}
         dueDate={dueDate}

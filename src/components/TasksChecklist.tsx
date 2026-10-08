@@ -8,6 +8,7 @@ import TaskDetailModal, { TaskFieldsEditor } from "@/components/TaskDetailModal"
 import { AssigneeChip, DueChip, HighPriorityMarker } from "@/components/TaskChips";
 import { deleteProjectTasks } from "@/app/actions/admin-deletes";
 import { updateTaskCompletion } from "@/lib/task-mutations";
+import { PHASES } from "@/lib/project-phases";
 import {
   PROJECT_TASK_COLUMNS,
   londonToday,
@@ -66,6 +67,7 @@ export default function TasksChecklist({
 
   const [addOpen, setAddOpen] = useState(false);
   const [newTitle, setNewTitle] = useState("");
+  const [newPhase, setNewPhase] = useState<string | null>(null);
   const [newAssignee, setNewAssignee] = useState<TaskAssignee>("admin");
   const [newDueDate, setNewDueDate] = useState("");
   const [newPriority, setNewPriority] = useState<TaskPriority>("normal");
@@ -119,20 +121,59 @@ export default function TasksChecklist({
     };
   }, [supabase, taskIdsKey]);
 
-  const phaseTasks = useMemo(
+  const portalTasks = useMemo(
     () =>
       sortByImportance(
-        tasks.filter((t) => t.phase === currentPhase),
+        tasks.filter((t) => t.phase === null || t.phase === currentPhase),
         today,
       ),
     [tasks, currentPhase, today],
   );
+
+  const adminGroups = useMemo(() => {
+    const byPhase = new Map<string | null, ProjectTask[]>();
+    for (const task of tasks) {
+      const list = byPhase.get(task.phase) ?? [];
+      list.push(task);
+      byPhase.set(task.phase, list);
+    }
+    const groups: { key: string; label: string; isCurrent: boolean; tasks: ProjectTask[] }[] =
+      [];
+    const wholeProject = byPhase.get(null);
+    if (wholeProject?.length) {
+      groups.push({
+        key: "whole-project",
+        label: "Whole project",
+        isCurrent: false,
+        tasks: sortByImportance(wholeProject, today),
+      });
+    }
+    for (const p of PHASES) {
+      const list = byPhase.get(p.key);
+      if (!list?.length) continue;
+      groups.push({
+        key: p.key,
+        label: p.label,
+        isCurrent: p.key === currentPhase,
+        tasks: sortByImportance(list, today),
+      });
+    }
+    for (const [phase, list] of byPhase) {
+      if (phase === null || PHASES.some((p) => p.key === phase)) continue;
+      groups.push({
+        key: phase,
+        label: phase,
+        isCurrent: phase === currentPhase,
+        tasks: sortByImportance(list, today),
+      });
+    }
+    return groups;
+  }, [tasks, currentPhase, today]);
+
   const openTask = openId ? tasks.find((t) => t.id === openId) ?? null : null;
 
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const selectedSet = useMemo(() => new Set(selectedIds), [selectedIds]);
-  const allPhaseSelected =
-    phaseTasks.length > 0 && phaseTasks.every((t) => selectedSet.has(t.id));
 
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [deleteTargetIds, setDeleteTargetIds] = useState<string[]>([]);
@@ -147,14 +188,14 @@ export default function TasksChecklist({
     );
   }
 
-  function toggleAllPhase() {
-    const phaseIds = phaseTasks.map((t) => t.id);
-    if (allPhaseSelected) {
-      const phaseIdSet = new Set(phaseIds);
-      setSelectedIds((curr) => curr.filter((id) => !phaseIdSet.has(id)));
+  function toggleGroup(groupTasks: ProjectTask[]) {
+    const groupIds = groupTasks.map((t) => t.id);
+    if (groupIds.every((id) => selectedSet.has(id))) {
+      const groupIdSet = new Set(groupIds);
+      setSelectedIds((curr) => curr.filter((id) => !groupIdSet.has(id)));
       return;
     }
-    setSelectedIds((curr) => [...new Set([...curr, ...phaseIds])]);
+    setSelectedIds((curr) => [...new Set([...curr, ...groupIds])]);
   }
 
   function openDeleteModal(ids: string[]) {
@@ -220,6 +261,7 @@ export default function TasksChecklist({
 
   function resetAddForm() {
     setNewTitle("");
+    setNewPhase(null);
     setNewAssignee("admin");
     setNewDueDate("");
     setNewPriority("normal");
@@ -237,7 +279,7 @@ export default function TasksChecklist({
       .from("project_tasks")
       .insert({
         project_id: projectId,
-        phase: currentPhase,
+        phase: newPhase,
         title,
         assignee: newAssignee,
         due_date: newDueDate || null,
@@ -313,7 +355,7 @@ export default function TasksChecklist({
   if (!canManage) {
     return (
       <div>
-        {phaseTasks.length === 0 ? (
+        {portalTasks.length === 0 ? (
           <div className="surface-raised-soft px-6 py-6 md:px-7 md:py-7">
             <p className="font-serif text-lg text-black">No checklist items yet.</p>
             <p className="mt-2 max-w-prose text-sm leading-relaxed text-neutral-500">
@@ -323,7 +365,7 @@ export default function TasksChecklist({
           </div>
         ) : (
           <ul className="space-y-1">
-            {phaseTasks.map((task) => (
+            {portalTasks.map((task) => (
               <li key={task.id} className="flex items-start gap-3 py-2">
                 {task.assignee === "client" ? (
                   <button
@@ -395,64 +437,74 @@ export default function TasksChecklist({
         </div>
       )}
 
-      {phaseTasks.length === 0 ? (
-        <p className="mb-4 font-mono text-sm text-neutral-400">
-          No tasks for this phase yet.
-        </p>
+      {adminGroups.length === 0 ? (
+        <p className="mb-4 font-mono text-sm text-neutral-400">No tasks yet.</p>
       ) : (
-        <>
-          <div className="mb-2 flex items-center gap-2 px-2">
-            <input
-              type="checkbox"
-              aria-label="Select all tasks in this phase"
-              checked={allPhaseSelected}
-              onChange={toggleAllPhase}
-            />
-            <span className="font-mono text-[10px] uppercase tracking-widest text-neutral-400">
-              Select all
-            </span>
-          </div>
-          <ul className="space-y-1">
-            {phaseTasks.map((task) => (
-              <li
-                key={task.id}
-                className="group flex items-start gap-3 rounded-lg px-2 py-2 transition-colors hover:bg-neutral-50"
-              >
+        <div className="space-y-8">
+          {adminGroups.map((group) => (
+            <section key={group.key} aria-label={group.label}>
+              <div className="mb-2 flex items-center gap-2 border-b border-neutral-100 px-2 pb-2">
                 <input
                   type="checkbox"
-                  aria-label={`Select ${task.title}`}
-                  checked={selectedSet.has(task.id)}
-                  onChange={() => toggleSelected(task.id)}
-                  className="mt-1 shrink-0"
+                  aria-label={`Select all tasks in ${group.label}`}
+                  checked={group.tasks.every((t) => selectedSet.has(t.id))}
+                  onChange={() => toggleGroup(group.tasks)}
                 />
-                <button
-                  type="button"
-                  onClick={() => toggleTask(task)}
-                  aria-label={task.is_complete ? "Mark incomplete" : "Mark complete"}
-                  className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 transition-colors ${
-                    task.is_complete
-                      ? "border-brand-pink bg-brand-pink text-white"
-                      : "border-neutral-300 hover:border-neutral-500"
-                  }`}
-                >
-                  {task.is_complete && <TickIcon />}
-                </button>
-                <div className="min-w-0 flex-1">
-                  {renderTitle(task, "font-sans text-sm")}
-                  {renderMeta(task)}
-                  {renderToggleError(task)}
-                </div>
-                <button
-                  type="button"
-                  onClick={() => deleteTask(task.id)}
-                  className="mt-0.5 font-mono text-[10px] uppercase tracking-widest text-neutral-400 opacity-0 transition-opacity hover:text-red-600 focus:opacity-100 group-hover:opacity-100"
-                >
-                  Remove
-                </button>
-              </li>
-            ))}
-          </ul>
-        </>
+                <h3 className="font-mono text-[11px] uppercase tracking-[0.14em] text-neutral-700">
+                  {group.label}
+                </h3>
+                {group.isCurrent ? (
+                  <span className="border border-brand-pink px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-[0.1em] text-brand-pink">
+                    Current
+                  </span>
+                ) : null}
+                <span className="ml-auto font-mono text-[10px] uppercase tracking-widest text-neutral-400">
+                  {group.tasks.length} {group.tasks.length === 1 ? "task" : "tasks"}
+                </span>
+              </div>
+              <ul className="space-y-1">
+                {group.tasks.map((task) => (
+                  <li
+                    key={task.id}
+                    className="group flex items-start gap-3 rounded-lg px-2 py-2 transition-colors hover:bg-neutral-50"
+                  >
+                    <input
+                      type="checkbox"
+                      aria-label={`Select ${task.title}`}
+                      checked={selectedSet.has(task.id)}
+                      onChange={() => toggleSelected(task.id)}
+                      className="mt-1 shrink-0"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => toggleTask(task)}
+                      aria-label={task.is_complete ? "Mark incomplete" : "Mark complete"}
+                      className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 transition-colors ${
+                        task.is_complete
+                          ? "border-brand-pink bg-brand-pink text-white"
+                          : "border-neutral-300 hover:border-neutral-500"
+                      }`}
+                    >
+                      {task.is_complete && <TickIcon />}
+                    </button>
+                    <div className="min-w-0 flex-1">
+                      {renderTitle(task, "font-sans text-sm")}
+                      {renderMeta(task)}
+                      {renderToggleError(task)}
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => deleteTask(task.id)}
+                      className="mt-0.5 font-mono text-[10px] uppercase tracking-widest text-neutral-400 opacity-0 transition-opacity hover:text-red-600 focus:opacity-100 group-hover:opacity-100"
+                    >
+                      Remove
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ))}
+        </div>
       )}
 
       <Modal
@@ -481,6 +533,8 @@ export default function TasksChecklist({
             />
           </div>
           <TaskFieldsEditor
+            phase={newPhase}
+            onPhaseChange={setNewPhase}
             assignee={newAssignee}
             onAssigneeChange={setNewAssignee}
             dueDate={newDueDate}
