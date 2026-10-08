@@ -49,6 +49,17 @@ type MsgRow = {
   project_id: string;
 };
 
+function ViewAllLink({ href }: { href: string }) {
+  return (
+    <Link
+      href={href}
+      className="inline-flex min-h-11 items-center font-mono text-[11px] uppercase tracking-[0.14em] text-portal-accent transition-opacity hover:opacity-80"
+    >
+      View all →
+    </Link>
+  );
+}
+
 function firstNameFrom(name: string | null | undefined): string | null {
   const first = name?.trim().split(/\s+/)[0];
   return first || null;
@@ -211,11 +222,16 @@ export default async function PortalPage() {
   }));
   const clientName = linkedClient?.name?.trim() || null;
   const hasRecentMessages = (recentMessages ?? []).length > 0;
+  const attentionCount = attentionTasks.length + signatureItems.length;
+  // "View all" goes to the only project, or the project of the newest item.
+  const singleProjectId = projects?.length === 1 ? projects[0].id : null;
+  const messagesProjectId = singleProjectId ?? recentMessages?.[0]?.project_id ?? null;
+  const documentsProjectId = singleProjectId ?? docs[0]?.project_id ?? null;
 
   return (
     <div className="mx-auto max-w-5xl px-5 py-10 sm:px-8 md:px-10 md:py-14">
-      <header className="mb-10 md:mb-20">
-        <h1 className="font-serif text-4xl leading-[1.05] tracking-tight text-black md:text-5xl">
+      <header className="mb-8 md:mb-12">
+        <h1 className="text-balance font-serif text-3xl leading-[1.05] tracking-tight text-black md:text-4xl">
           Welcome, {greetingName}.
         </h1>
         <p className="mt-3 max-w-xl font-serif text-xl italic text-neutral-500">
@@ -227,7 +243,11 @@ export default async function PortalPage() {
         <p className="text-neutral-400">No projects yet. Check back soon.</p>
       ) : (
         <PortalSectionStack>
-          <PortalSection title="Needs your attention">
+          <PortalSection
+            tier={1}
+            title="Needs your attention"
+            count={attentionCount > 0 ? attentionCount : undefined}
+          >
             <PortalAttentionList
               tasks={attentionTasks}
               signatures={signatureItems}
@@ -239,12 +259,7 @@ export default async function PortalPage() {
           {comingUp.length > 0 ? (
             <PortalSection
               title="Coming up"
-              titleSize="sm"
-              intro={
-                <p className="text-sm text-neutral-500">
-                  What&apos;s next on the calendar, from you and from Skapa.
-                </p>
-              }
+              intro="What's next on the calendar, from you and from Skapa."
             >
               <UpcomingTasksPanel
                 tasks={comingUp}
@@ -297,7 +312,11 @@ export default async function PortalPage() {
           {hasRecentMessages || docs.length > 0 ? (
             <div className="grid gap-10 sm:gap-12 md:grid-cols-2 md:gap-14">
               {hasRecentMessages ? (
-                <PortalSection title="Recent messages" titleSize="sm">
+                <PortalSection
+                  tier={3}
+                  title="Recent messages"
+                  action={<ViewAllLink href={`/portal/projects/${messagesProjectId}/messages`} />}
+                >
                   <ul className="space-y-5">
                     {(recentMessages ?? []).map((m) => (
                       <li key={m.id}>
@@ -317,7 +336,11 @@ export default async function PortalPage() {
               ) : null}
 
               {docs.length > 0 ? (
-                <PortalSection title="Latest documents" titleSize="sm">
+                <PortalSection
+                  tier={3}
+                  title="Latest documents"
+                  action={<ViewAllLink href={`/portal/projects/${documentsProjectId}/documents`} />}
+                >
                   <ul className="divide-y divide-neutral-200">
                     {docs.map((d) => {
                       const meta = docStatusMeta[d.id];

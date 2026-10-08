@@ -49,7 +49,7 @@ export default async function PortalProjectLayout({
       </Link>
 
       <header className="mb-6 md:mb-10">
-        <h1 className="font-serif text-4xl leading-[1.05] tracking-tight text-black md:text-5xl">
+        <h1 className="text-balance font-serif text-3xl leading-[1.05] tracking-tight text-black md:text-4xl">
           {project.name}
         </h1>
         <p className="mt-3 font-mono text-xs text-neutral-400">

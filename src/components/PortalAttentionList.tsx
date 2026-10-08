@@ -21,6 +21,10 @@ type AttentionItem =
 
 const typeLabelClass =
   "font-mono text-[10px] uppercase tracking-[0.14em] text-portal-accent";
+const rowClass =
+  "flex min-h-14 w-full items-center justify-between gap-4 px-4 py-3 text-left transition-colors hover:bg-white/60 sm:px-6";
+const rowCueClass =
+  "hidden shrink-0 font-mono text-[11px] uppercase tracking-[0.14em] text-portal-accent sm:inline";
 
 export default function PortalAttentionList({
   tasks,
@@ -68,37 +72,38 @@ export default function PortalAttentionList({
 
   if (items.length === 0) {
     return (
-      <p className="font-serif text-lg italic text-neutral-500">You&apos;re all caught up.</p>
+      <p className="border-t border-black/[0.06] px-4 py-4 font-serif text-lg italic text-neutral-500 sm:px-6">
+        You&apos;re all caught up.
+      </p>
     );
   }
 
   return (
     <>
-      <ul className="surface-raised divide-y divide-black/[0.05] border-l-4 border-portal-accent">
+      <ul className="divide-y divide-black/[0.06] border-t border-black/[0.06]">
         {items.map((item) => {
           if (item.kind === "signature") {
             const { signature } = item;
             return (
-              <li
-                key={`sig-${signature.id}`}
-                className="flex flex-col gap-3 px-5 py-4 sm:flex-row sm:items-center sm:justify-between md:px-6"
-              >
-                <div className="min-w-0">
-                  <p className={typeLabelClass}>Signature</p>
-                  <p className="mt-1 break-words font-serif text-lg leading-snug text-black">
-                    {signature.title}
-                  </p>
-                  {signature.project_name ? (
-                    <p className="mt-1 font-mono text-[11px] text-neutral-500">
-                      {signature.project_name}
-                    </p>
-                  ) : null}
-                </div>
+              <li key={`sig-${signature.id}`}>
                 <Link
                   href={`/portal/projects/${signature.project_id}/documents?sign=${signature.id}`}
-                  className="shrink-0 self-start bg-portal-accent px-5 py-2.5 text-center font-mono text-[11px] uppercase tracking-[0.14em] text-white transition-opacity hover:opacity-90 sm:self-auto"
+                  className={rowClass}
                 >
-                  Review &amp; sign
+                  <span className="min-w-0">
+                    <span className={`block ${typeLabelClass}`}>Signature</span>
+                    <span className="mt-1 block break-words font-serif text-base leading-snug text-black">
+                      {signature.title}
+                    </span>
+                    {signature.project_name ? (
+                      <span className="mt-1 block font-mono text-[11px] text-neutral-500">
+                        {signature.project_name}
+                      </span>
+                    ) : null}
+                  </span>
+                  <span aria-hidden="true" className={rowCueClass}>
+                    Review &amp; sign →
+                  </span>
                 </Link>
               </li>
             );
@@ -106,31 +111,26 @@ export default function PortalAttentionList({
 
           const { task } = item;
           return (
-            <li
-              key={`task-${task.id}`}
-              className="flex flex-col gap-3 px-5 py-4 sm:flex-row sm:items-center sm:justify-between md:px-6"
-            >
-              <div className="min-w-0">
-                <p className={typeLabelClass}>Task</p>
-                <p className="mt-1 break-words font-serif text-lg leading-snug text-black">
-                  {task.title}
-                </p>
-                <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
-                  {task.project_name ? (
-                    <span className="mr-1 font-mono text-[11px] text-neutral-500">
-                      {task.project_name}
-                    </span>
-                  ) : null}
-                  <DueChip task={task} today={today} tone="portal" />
-                  {task.priority === "high" ? <HighPriorityMarker /> : null}
-                </div>
-              </div>
-              <button
-                type="button"
-                onClick={() => setOpenTask(task)}
-                className="shrink-0 self-start border border-portal-accent px-5 py-2.5 font-mono text-[11px] uppercase tracking-[0.14em] text-portal-accent transition-opacity hover:opacity-80 sm:self-auto"
-              >
-                Open
+            <li key={`task-${task.id}`}>
+              <button type="button" onClick={() => setOpenTask(task)} className={rowClass}>
+                <span className="min-w-0">
+                  <span className={`block ${typeLabelClass}`}>Task</span>
+                  <span className="mt-1 block break-words font-serif text-base leading-snug text-black">
+                    {task.title}
+                  </span>
+                  <span className="mt-1.5 flex flex-wrap items-center gap-1.5">
+                    {task.project_name ? (
+                      <span className="mr-1 font-mono text-[11px] text-neutral-500">
+                        {task.project_name}
+                      </span>
+                    ) : null}
+                    <DueChip task={task} today={today} tone="portal" />
+                    {task.priority === "high" ? <HighPriorityMarker /> : null}
+                  </span>
+                </span>
+                <span aria-hidden="true" className={rowCueClass}>
+                  Open →
+                </span>
               </button>
             </li>
           );

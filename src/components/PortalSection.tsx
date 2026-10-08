@@ -1,19 +1,17 @@
-import PortalSectionHeading from "@/components/PortalSectionHeading";
-
 /**
  * Portal content block with two-tier rhythm:
  * - Tight gap from heading → body (one connected unit)
- * - Large gap between sections comes from the parent `.portal-section-stack`
+ * - Large gap between sections comes from the parent `PortalSectionStack`
  *
- * `tier` sets visual weight on the project overview:
- * - 1 (action): tinted accent card, the only tinted block on the page. Children
+ * `tier` sets visual weight (heading rank follows it):
+ * - 1 (action): tinted accent card, the only tinted block on a page. Children
  *   render edge to edge inside it, so rows own their horizontal padding.
- * - 2 (status): white raised card around the children.
+ * - 2 (status): serif heading with accent rule, white raised card around the children.
  * - 3 (reference): flat block, small mono label, hairline above, no card.
+ * - default: the tier 2 heading without the card.
  */
 export default function PortalSection({
   title,
-  titleSize = "md",
   intro,
   children,
   className = "",
@@ -22,7 +20,6 @@ export default function PortalSection({
   action,
 }: {
   title: string;
-  titleSize?: "sm" | "md";
   intro?: React.ReactNode;
   children: React.ReactNode;
   className?: string;
@@ -39,28 +36,18 @@ export default function PortalSection({
       >
         <header className="px-4 pb-3 pt-4 sm:px-6 sm:pt-5">
           <div className="flex items-center gap-3">
-            <h2 className="font-serif text-xl tracking-tight text-black sm:text-2xl">{title}</h2>
+            <h2 className="text-balance font-serif text-xl tracking-tight text-black sm:text-2xl">
+              {title}
+            </h2>
             {count !== undefined ? (
               <span className="inline-flex h-6 min-w-6 items-center justify-center rounded-full bg-portal-accent px-2 font-mono text-[11px] tabular-nums text-white">
                 {count}
               </span>
             ) : null}
           </div>
-          {intro ? <div className="mt-1">{intro}</div> : null}
+          {intro ? <div className="mt-1 text-sm text-neutral-600">{intro}</div> : null}
         </header>
         <div>{children}</div>
-      </section>
-    );
-  }
-
-  if (tier === 2) {
-    return (
-      <section className={className}>
-        <header className="mb-3 md:mb-3.5">
-          <PortalSectionHeading size={titleSize}>{title}</PortalSectionHeading>
-          {intro ? <div className="mt-1.5 pl-[22px]">{intro}</div> : null}
-        </header>
-        <div className="surface-raised px-4 py-4 sm:px-6 sm:py-5">{children}</div>
       </section>
     );
   }
@@ -68,13 +55,13 @@ export default function PortalSection({
   if (tier === 3) {
     return (
       <section className={`border-t border-black/[0.06] pt-4 ${className}`}>
-        <header className="mb-1 flex items-baseline justify-between gap-3">
-          <h2 className="font-mono text-[11px] uppercase tracking-[0.14em] text-neutral-500">
+        <header className="mb-1 flex items-center justify-between gap-3">
+          <h2 className="font-mono text-[11px] font-medium uppercase tracking-[0.14em] text-neutral-600">
             {title}
           </h2>
           {action}
         </header>
-        {intro ? <div className="mb-2">{intro}</div> : null}
+        {intro ? <div className="mb-2 text-sm text-neutral-600">{intro}</div> : null}
         <div>{children}</div>
       </section>
     );
@@ -82,11 +69,18 @@ export default function PortalSection({
 
   return (
     <section className={className}>
-      <header className="mb-3 md:mb-3.5">
-        <PortalSectionHeading size={titleSize}>{title}</PortalSectionHeading>
-        {intro ? <div className="mt-1.5 pl-[22px]">{intro}</div> : null}
+      <header className="mb-4">
+        <h2 className="text-balance font-serif text-2xl tracking-tight text-black md:text-[1.75rem]">
+          {title}
+        </h2>
+        <span aria-hidden="true" className="mt-2.5 block h-[2px] w-8 bg-portal-accent" />
+        {intro ? <div className="mt-3 text-sm text-neutral-600">{intro}</div> : null}
       </header>
-      <div>{children}</div>
+      {tier === 2 ? (
+        <div className="surface-raised px-4 py-4 sm:px-6 sm:py-5">{children}</div>
+      ) : (
+        <div>{children}</div>
+      )}
     </section>
   );
 }

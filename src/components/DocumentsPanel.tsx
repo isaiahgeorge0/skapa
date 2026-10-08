@@ -34,8 +34,6 @@ import {
   documentTypeLabel,
   type DocumentType,
 } from "@/lib/document-types";
-import PortalSectionHeading from "@/components/PortalSectionHeading";
-
 type DocType = DocumentType;
 type DocStatus =
   | "draft"
@@ -710,22 +708,7 @@ export default function DocumentsPanel({
     }
 
     return (
-      <section>
-        <header className="mb-3 md:mb-3.5">
-          <PortalSectionHeading>Documents</PortalSectionHeading>
-          {actionable.length > 0 ? (
-            <p className="mt-1.5 pl-[22px] font-serif text-lg italic text-neutral-500">
-              {actionable.length === 1
-                ? "One ready for you."
-                : `${actionable.length} ready for you.`}
-            </p>
-          ) : (
-            <p className="mt-1.5 pl-[22px] text-sm text-neutral-500">
-              Shared files for this project.
-            </p>
-          )}
-        </header>
-
+      <section aria-label="Documents">
         {error && <p className="mb-4 font-mono text-xs text-red-600">{error}</p>}
 
         {docs.length === 0 ? (

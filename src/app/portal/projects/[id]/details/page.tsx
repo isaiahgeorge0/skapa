@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import PortalSection, { PortalSectionStack } from "@/components/PortalSection";
+import PortalPageHeader from "@/components/PortalPageHeader";
 import ProjectLinksList from "@/components/ProjectLinksList";
 import { PHASES } from "@/lib/project-phases";
 import { PROJECT_LINK_COLUMNS, parseHttpUrl, type ProjectLink } from "@/lib/project-links";
@@ -22,7 +23,7 @@ export default async function PortalProjectDetailsPage({
   const [{ data: project }, { data: links }] = await Promise.all([
     supabase
       .from("projects")
-      .select("id, service_type, phase, target_completion_date")
+      .select("id, name, service_type, phase, target_completion_date")
       .eq("id", id)
       .single(),
     supabase
@@ -45,8 +46,9 @@ export default async function PortalProjectDetailsPage({
     : null;
 
   return (
-    <PortalSectionStack density="compact">
-      <PortalSection title="Details">
+    <>
+      <PortalPageHeader eyebrow={project.name} title="Project details" />
+      <PortalSectionStack density="compact">
         <dl className="surface-raised max-w-md space-y-6 px-6 py-7 md:px-7 md:py-8">
           <div>
             <dt className="font-mono text-[11px] uppercase tracking-[0.14em] text-neutral-400">
@@ -69,13 +71,13 @@ export default async function PortalProjectDetailsPage({
             <dd className="mt-1.5 text-black">{targetDate ?? "Not set"}</dd>
           </div>
         </dl>
-      </PortalSection>
 
-      {linkList.length > 0 ? (
-        <PortalSection tier={3} title="Links" className="max-w-md">
-          <ProjectLinksList links={linkList} />
-        </PortalSection>
-      ) : null}
-    </PortalSectionStack>
+        {linkList.length > 0 ? (
+          <PortalSection tier={3} title="Links" className="max-w-md">
+            <ProjectLinksList links={linkList} />
+          </PortalSection>
+        ) : null}
+      </PortalSectionStack>
+    </>
   );
 }

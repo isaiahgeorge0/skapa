@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import ClientRequestsPanel from "@/components/ClientRequestsPanel";
-import PortalSection from "@/components/PortalSection";
+import PortalPageHeader from "@/components/PortalPageHeader";
 import type { ProjectRequest } from "@/lib/project-request-status";
 
 export const dynamic = "force-dynamic";
@@ -17,7 +17,7 @@ export default async function PortalProjectRequestsPage({
 
   const { data: project } = await supabase
     .from("projects")
-    .select("id")
+    .select("id, name")
     .eq("id", id)
     .single();
   if (!project) notFound();
@@ -31,19 +31,24 @@ export default async function PortalProjectRequestsPage({
     .eq("project_id", id)
     .order("created_at", { ascending: false });
 
+  const requestCount = (requests ?? []).length;
+
   return (
-    <PortalSection
-      title="Requests"
-      intro={
-        <p className="text-sm text-neutral-500">
-          Ask for changes or extras without losing the thread.
-        </p>
-      }
-    >
+    <>
+      <PortalPageHeader
+        eyebrow={project.name}
+        title="Requests"
+        intro="Ask for changes or extras without losing the thread."
+        meta={
+          requestCount > 0
+            ? `${requestCount} ${requestCount === 1 ? "request" : "requests"}`
+            : undefined
+        }
+      />
       <ClientRequestsPanel
         projectId={project.id}
         initialRequests={(requests ?? []) as ProjectRequest[]}
       />
-    </PortalSection>
+    </>
   );
 }
