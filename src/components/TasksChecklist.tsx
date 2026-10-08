@@ -1,30 +1,133 @@
 "use client";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import Card from "@/components/Card";
 import Modal from "@/components/Modal";
+import TaskDetailModal, { TaskFieldsEditor } from "@/components/TaskDetailModal";
+import { AssigneeChip, DueChip, HighPriorityMarker } from "@/components/TaskChips";
 import { deleteProjectTasks } from "@/app/actions/admin-deletes";
+import { updateTaskCompletion } from "@/lib/task-mutations";
+import {
+  PROJECT_TASK_COLUMNS,
+  londonToday,
+  sortByImportance,
+  type ProjectTask,
+  type TaskAssignee,
+  type TaskPriority,
+} from "@/lib/tasks";
 
-type Task = { id: string; title: string; is_complete: boolean; phase: string };
+function TickIcon() {
+  return (
+    <svg viewBox="0 0 12 12" className="h-3 w-3" fill="none">
+      <path
+        d="M2 6l2.5 2.5L10 3"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
 
 export default function TasksChecklist({
   projectId,
   currentPhase,
   initialTasks,
   canManage = true,
+  openTaskId,
+  projectName,
+  clientName,
 }: {
   projectId: string;
   currentPhase: string;
-  initialTasks: Task[];
+  initialTasks: ProjectTask[];
   canManage?: boolean;
+  /** Deep-link (?task=) — opens this task's modal on mount, whatever its phase. */
+  openTaskId?: string;
+  projectName?: string | null;
+  clientName?: string | null;
 }) {
+  const router = useRouter();
   const supabase = useMemo(() => createClient(), []);
-  const [tasks, setTasks] = useState<Task[]>(initialTasks);
+  const viewerRole = canManage ? "admin" : "client";
+  const tone = canManage ? "admin" : "portal";
+  const today = londonToday();
+
+  const [tasks, setTasks] = useState<ProjectTask[]>(initialTasks);
+  const [openId, setOpenId] = useState<string | null>(() =>
+    openTaskId && initialTasks.some((t) => t.id === openTaskId) ? openTaskId : null,
+  );
+  const [noteCounts, setNoteCounts] = useState<Record<string, number>>({});
+  const [toggleError, setToggleError] = useState<{ taskId: string; message: string } | null>(
+    null,
+  );
+
   const [addOpen, setAddOpen] = useState(false);
   const [newTitle, setNewTitle] = useState("");
+  const [newAssignee, setNewAssignee] = useState<TaskAssignee>("admin");
+  const [newDueDate, setNewDueDate] = useState("");
+  const [newPriority, setNewPriority] = useState<TaskPriority>("normal");
+  const [newDescription, setNewDescription] = useState("");
   const [adding, setAdding] = useState(false);
+  const [addError, setAddError] = useState<string | null>(null);
 
-  const phaseTasks = tasks.filter((t) => t.phase === currentPhase);
+  // Server refreshes (router.refresh) replace the list.
+  const [prevInitialTasks, setPrevInitialTasks] = useState(initialTasks);
+  if (initialTasks !== prevInitialTasks) {
+    setPrevInitialTasks(initialTasks);
+    setTasks(initialTasks);
+  }
+
+  // A new ?task= target while the page stays mounted.
+  const [prevOpenTaskId, setPrevOpenTaskId] = useState(openTaskId);
+  if (openTaskId !== prevOpenTaskId) {
+    setPrevOpenTaskId(openTaskId);
+    if (openTaskId && initialTasks.some((t) => t.id === openTaskId)) {
+      setOpenId(openTaskId);
+    }
+  }
+
+  const taskIdsKey = tasks
+    .map((t) => t.id)
+    .sort()
+    .join(",");
+
+  useEffect(() => {
+    const ids = taskIdsKey ? taskIdsKey.split(",") : [];
+    if (ids.length === 0) return;
+    let cancelled = false;
+    void supabase
+      .from("task_comments")
+      .select("task_id")
+      .in("task_id", ids)
+      .then(({ data, error }) => {
+        if (cancelled) return;
+        if (error) {
+          console.error("Failed to load note counts:", error);
+          return;
+        }
+        const counts: Record<string, number> = {};
+        for (const row of data ?? []) {
+          counts[row.task_id] = (counts[row.task_id] ?? 0) + 1;
+        }
+        setNoteCounts(counts);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [supabase, taskIdsKey]);
+
+  const phaseTasks = useMemo(
+    () =>
+      sortByImportance(
+        tasks.filter((t) => t.phase === currentPhase),
+        today,
+      ),
+    [tasks, currentPhase, today],
+  );
+  const openTask = openId ? tasks.find((t) => t.id === openId) ?? null : null;
 
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const selectedSet = useMemo(() => new Set(selectedIds), [selectedIds]);
@@ -96,19 +199,32 @@ export default function TasksChecklist({
     openDeleteModal([id]);
   }
 
-  async function toggleTask(task: Task) {
-    const previous = tasks;
+  function applyTaskChange(updated: ProjectTask) {
+    setTasks((curr) => curr.map((t) => (t.id === updated.id ? updated : t)));
+    if (!canManage) router.refresh();
+  }
+
+  async function toggleTask(task: ProjectTask) {
+    setToggleError(null);
     setTasks((curr) =>
       curr.map((t) => (t.id === task.id ? { ...t, is_complete: !t.is_complete } : t)),
     );
-    const { error } = await supabase
-      .from("project_tasks")
-      .update({ is_complete: !task.is_complete })
-      .eq("id", task.id);
-    if (error) {
-      console.error("Failed to toggle task:", error);
-      setTasks(previous);
+    const result = await updateTaskCompletion(supabase, task.id, !task.is_complete);
+    if (!result.ok) {
+      setTasks((curr) => curr.map((t) => (t.id === task.id ? task : t)));
+      setToggleError({ taskId: task.id, message: result.error });
+      return;
     }
+    applyTaskChange(result.task);
+  }
+
+  function resetAddForm() {
+    setNewTitle("");
+    setNewAssignee("admin");
+    setNewDueDate("");
+    setNewPriority("normal");
+    setNewDescription("");
+    setAddError(null);
   }
 
   async function addTask(e: React.FormEvent) {
@@ -116,20 +232,83 @@ export default function TasksChecklist({
     const title = newTitle.trim();
     if (!title) return;
     setAdding(true);
+    setAddError(null);
     const { data, error } = await supabase
       .from("project_tasks")
-      .insert({ project_id: projectId, phase: currentPhase, title })
-      .select()
+      .insert({
+        project_id: projectId,
+        phase: currentPhase,
+        title,
+        assignee: newAssignee,
+        due_date: newDueDate || null,
+        priority: newPriority,
+        description: newDescription.trim() || null,
+      })
+      .select(PROJECT_TASK_COLUMNS)
       .single();
     setAdding(false);
-    if (!error && data) {
-      setTasks((curr) => [...curr, data as Task]);
-      setNewTitle("");
-      setAddOpen(false);
-    } else if (error) {
+    if (error || !data) {
       console.error("Failed to add task:", error);
+      setAddError("Couldn't add the task. Try again.");
+      return;
     }
+    setTasks((curr) => [...curr, data as unknown as ProjectTask]);
+    resetAddForm();
+    setAddOpen(false);
   }
+
+  function renderMeta(task: ProjectTask) {
+    const notes = noteCounts[task.id] ?? 0;
+    return (
+      <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
+        <AssigneeChip assignee={task.assignee} viewerRole={viewerRole} tone={tone} />
+        <DueChip task={task} today={today} tone={tone} />
+        {task.priority === "high" && !task.is_complete ? <HighPriorityMarker /> : null}
+        {notes > 0 ? (
+          <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-neutral-400">
+            {notes} {notes === 1 ? "note" : "notes"}
+          </span>
+        ) : null}
+      </div>
+    );
+  }
+
+  function renderTitle(task: ProjectTask, sizeClass: string) {
+    return (
+      <button
+        type="button"
+        onClick={() => setOpenId(task.id)}
+        className={`block text-left ${sizeClass} underline-offset-4 hover:underline hover:decoration-dotted ${
+          task.is_complete ? "text-neutral-400 line-through" : "text-black"
+        }`}
+      >
+        {task.title}
+      </button>
+    );
+  }
+
+  function renderToggleError(task: ProjectTask) {
+    if (toggleError?.taskId !== task.id) return null;
+    return (
+      <p className="mt-1.5 font-mono text-[11px] text-red-600" role="alert">
+        {toggleError.message}
+      </p>
+    );
+  }
+
+  const detailModal = openTask ? (
+    <TaskDetailModal
+      task={openTask}
+      projectName={projectName}
+      viewerRole={viewerRole}
+      clientName={clientName}
+      onClose={() => setOpenId(null)}
+      onTaskChange={applyTaskChange}
+      onCommentCountChange={(taskId, count) =>
+        setNoteCounts((curr) => (curr[taskId] === count ? curr : { ...curr, [taskId]: count }))
+      }
+    />
+  ) : null;
 
   if (!canManage) {
     return (
@@ -145,36 +324,43 @@ export default function TasksChecklist({
         ) : (
           <ul className="space-y-1">
             {phaseTasks.map((task) => (
-              <li
-                key={task.id}
-                className="flex items-center gap-3 py-2"
-              >
-                <button
-                  onClick={() => toggleTask(task)}
-                  aria-label={task.is_complete ? "Mark incomplete" : "Mark complete"}
-                  className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 transition-colors ${
-                    task.is_complete
-                      ? "border-black bg-black text-white"
-                      : "border-neutral-300 hover:border-neutral-500"
-                  }`}
-                >
-                  {task.is_complete && (
-                    <svg viewBox="0 0 12 12" className="h-3 w-3" fill="none">
-                      <path d="M2 6l2.5 2.5L10 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                  )}
-                </button>
-                <span
-                  className={`flex-1 text-sm ${
-                    task.is_complete ? "text-neutral-400 line-through" : "text-black"
-                  }`}
-                >
-                  {task.title}
-                </span>
+              <li key={task.id} className="flex items-start gap-3 py-2">
+                {task.assignee === "client" ? (
+                  <button
+                    type="button"
+                    onClick={() => toggleTask(task)}
+                    aria-label={task.is_complete ? "Mark incomplete" : "Mark complete"}
+                    className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 transition-colors ${
+                      task.is_complete
+                        ? "border-black bg-black text-white"
+                        : "border-neutral-300 hover:border-neutral-500"
+                    }`}
+                  >
+                    {task.is_complete && <TickIcon />}
+                  </button>
+                ) : (
+                  <span
+                    role="img"
+                    aria-label={task.is_complete ? "Done by Skapa" : "Skapa is on this"}
+                    className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 ${
+                      task.is_complete
+                        ? "border-neutral-300 bg-neutral-300 text-white"
+                        : "border-dashed border-neutral-300"
+                    }`}
+                  >
+                    {task.is_complete && <TickIcon />}
+                  </span>
+                )}
+                <div className="min-w-0 flex-1">
+                  {renderTitle(task, "text-sm")}
+                  {renderMeta(task)}
+                  {renderToggleError(task)}
+                </div>
               </li>
             ))}
           </ul>
         )}
+        {detailModal}
       </div>
     );
   }
@@ -230,37 +416,36 @@ export default function TasksChecklist({
             {phaseTasks.map((task) => (
               <li
                 key={task.id}
-                className="group flex items-center gap-3 rounded-lg px-2 py-1.5 transition-colors hover:bg-neutral-50"
+                className="group flex items-start gap-3 rounded-lg px-2 py-2 transition-colors hover:bg-neutral-50"
               >
                 <input
                   type="checkbox"
                   aria-label={`Select ${task.title}`}
                   checked={selectedSet.has(task.id)}
                   onChange={() => toggleSelected(task.id)}
-                  className="shrink-0"
+                  className="mt-1 shrink-0"
                 />
                 <button
+                  type="button"
                   onClick={() => toggleTask(task)}
                   aria-label={task.is_complete ? "Mark incomplete" : "Mark complete"}
-                  className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 transition-colors ${
+                  className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 transition-colors ${
                     task.is_complete
                       ? "border-brand-pink bg-brand-pink text-white"
                       : "border-neutral-300 hover:border-neutral-500"
                   }`}
                 >
-                  {task.is_complete && (
-                    <svg viewBox="0 0 12 12" className="h-3 w-3" fill="none">
-                      <path d="M2 6l2.5 2.5L10 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                  )}
+                  {task.is_complete && <TickIcon />}
                 </button>
-                <span className={`flex-1 font-sans text-sm ${task.is_complete ? "text-neutral-400 line-through" : "text-black"}`}>
-                  {task.title}
-                </span>
+                <div className="min-w-0 flex-1">
+                  {renderTitle(task, "font-sans text-sm")}
+                  {renderMeta(task)}
+                  {renderToggleError(task)}
+                </div>
                 <button
                   type="button"
                   onClick={() => deleteTask(task.id)}
-                  className="font-mono text-[10px] uppercase tracking-widest text-neutral-400 opacity-0 transition-opacity hover:text-red-600 group-hover:opacity-100"
+                  className="mt-0.5 font-mono text-[10px] uppercase tracking-widest text-neutral-400 opacity-0 transition-opacity hover:text-red-600 focus:opacity-100 group-hover:opacity-100"
                 >
                   Remove
                 </button>
@@ -270,13 +455,24 @@ export default function TasksChecklist({
         </>
       )}
 
-      <Modal open={addOpen} onClose={() => setAddOpen(false)} title="Add task">
-        <form onSubmit={addTask} className="space-y-4">
+      <Modal
+        open={addOpen}
+        onClose={() => {
+          setAddOpen(false);
+          setAddError(null);
+        }}
+        title="Add task"
+      >
+        <form onSubmit={addTask} className="space-y-5">
           <div>
-            <label className="mb-1 block font-mono text-[11px] uppercase tracking-widest text-neutral-500">
+            <label
+              htmlFor="new-task-title"
+              className="mb-1.5 block font-mono text-[11px] uppercase tracking-[0.14em] text-neutral-500"
+            >
               Task
             </label>
             <input
+              id="new-task-title"
               autoFocus
               value={newTitle}
               onChange={(e) => setNewTitle(e.target.value)}
@@ -284,6 +480,21 @@ export default function TasksChecklist({
               className="w-full border border-neutral-300 px-3 py-2 text-sm"
             />
           </div>
+          <TaskFieldsEditor
+            assignee={newAssignee}
+            onAssigneeChange={setNewAssignee}
+            dueDate={newDueDate}
+            onDueDateChange={setNewDueDate}
+            priority={newPriority}
+            onPriorityChange={setNewPriority}
+            description={newDescription}
+            onDescriptionChange={setNewDescription}
+          />
+          {addError ? (
+            <p className="font-mono text-xs text-red-600" role="alert">
+              {addError}
+            </p>
+          ) : null}
           <button
             type="submit"
             disabled={adding || !newTitle.trim()}
@@ -330,6 +541,8 @@ export default function TasksChecklist({
           </div>
         )}
       </Modal>
+
+      {detailModal}
     </Card>
   );
 }

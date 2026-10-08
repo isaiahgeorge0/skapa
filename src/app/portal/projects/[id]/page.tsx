@@ -7,8 +7,15 @@ import PortalSection, { PortalSectionStack } from "@/components/PortalSection";
 import ProjectActivityTimeline from "@/components/ProjectActivityTimeline";
 import PortalNowHero from "@/components/PortalNowHero";
 import OverviewPreviewCard from "@/components/OverviewPreviewCard";
+import UpcomingTasksPanel from "@/components/UpcomingTasksPanel";
 import type { ProjectRequest } from "@/lib/project-request-status";
 import { documentTypeLabel } from "@/lib/document-types";
+import {
+  PROJECT_TASK_COLUMNS,
+  londonToday,
+  sortByImportance,
+  type ProjectTask,
+} from "@/lib/tasks";
 
 export const dynamic = "force-dynamic";
 
@@ -33,10 +40,13 @@ function pluralize(count: number, noun: string) {
 
 export default async function PortalProjectOverviewPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ task?: string }>;
 }) {
   const { id } = await params;
+  const { task: openTaskId } = await searchParams;
   const supabase = await createClient();
   const base = `/portal/projects/${id}`;
 
@@ -63,17 +73,30 @@ export default async function PortalProjectOverviewPage({
         .limit(3),
       supabase
         .from("project_tasks")
-        .select("id, title, is_complete, phase")
+        .select(PROJECT_TASK_COLUMNS)
         .eq("project_id", id)
         .order("created_at", { ascending: true }),
     ]);
 
   const admin = createAdminClient();
-  const { data: requests } = await admin
-    .from("project_requests")
-    .select("id, title, status, created_at")
-    .eq("project_id", id)
-    .order("created_at", { ascending: false });
+  const [{ data: requests }, { data: client }] = await Promise.all([
+    admin
+      .from("project_requests")
+      .select("id, title, status, created_at")
+      .eq("project_id", id)
+      .order("created_at", { ascending: false }),
+    project.client_id
+      ? admin.from("clients").select("name").eq("id", project.client_id).maybeSingle()
+      : Promise.resolve({ data: null }),
+  ]);
+
+  const today = londonToday();
+  const taskList = (tasks ?? []) as unknown as ProjectTask[];
+  const needsFromClient = sortByImportance(
+    taskList.filter((t) => t.assignee === "client" && !t.is_complete),
+    today,
+  );
+  const clientName = client?.name?.trim() || null;
 
   const requestList = (requests ?? []) as Pick<
     ProjectRequest,
@@ -163,6 +186,24 @@ export default async function PortalProjectOverviewPage({
       </div>
 
       <PortalSectionStack>
+        <PortalSection
+          title="Needs from you"
+          intro={
+            <p className="text-sm text-neutral-500">
+              Everything waiting on you for this project, most urgent first.
+            </p>
+          }
+        >
+          <UpcomingTasksPanel
+            tasks={needsFromClient}
+            viewerRole="client"
+            today={today}
+            showProject={false}
+            clientName={clientName}
+            emptyText="Nothing needed from you right now."
+          />
+        </PortalSection>
+
         <PortalSection title="Where things stand">
           <div className="surface-raised px-6 py-7 md:px-7 md:py-8">
             <PhaseTracker
@@ -185,8 +226,11 @@ export default async function PortalProjectOverviewPage({
           <TasksChecklist
             projectId={project.id}
             currentPhase={project.phase}
-            initialTasks={tasks ?? []}
+            initialTasks={taskList}
             canManage={false}
+            openTaskId={openTaskId}
+            projectName={project.name}
+            clientName={clientName}
           />
         </PortalSection>
 

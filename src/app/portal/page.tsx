@@ -6,6 +6,14 @@ import {
   clientProjectStatusLabel,
 } from "@/lib/client-document-status";
 import { documentTypeLabel } from "@/lib/document-types";
+import PortalAttentionList, { type AttentionSignature } from "@/components/PortalAttentionList";
+import UpcomingTasksPanel, { type UpcomingTaskRow } from "@/components/UpcomingTasksPanel";
+import {
+  PROJECT_TASK_COLUMNS,
+  londonToday,
+  sortByImportance,
+  type ProjectTask,
+} from "@/lib/tasks";
 
 export const dynamic = "force-dynamic";
 
@@ -91,7 +99,7 @@ export default async function PortalPage() {
 
   const projectIds = (projects ?? []).map((p) => p.id);
 
-  const [{ data: recentDocs }, { data: recentMessages }] = await Promise.all([
+  const [{ data: recentDocs }, { data: recentMessages }, { data: openTaskRows }] = await Promise.all([
     projectIds.length
       ? supabase
           .from("documents")
@@ -108,6 +116,13 @@ export default async function PortalPage() {
           .order("created_at", { ascending: false })
           .limit(5)
       : Promise.resolve({ data: [] as MsgRow[] }),
+    projectIds.length
+      ? supabase
+          .from("project_tasks")
+          .select(PROJECT_TASK_COLUMNS)
+          .in("project_id", projectIds)
+          .eq("is_complete", false)
+      : Promise.resolve({ data: [] as ProjectTask[] }),
   ]);
 
   const docs = (recentDocs ?? []) as DocRow[];
@@ -175,6 +190,27 @@ export default async function PortalPage() {
 
   const docsNeedingYou = docs.filter((d) => docStatusMeta[d.id]?.isMyTurn);
 
+  const today = londonToday();
+  const openTasks: UpcomingTaskRow[] = sortByImportance(
+    ((openTaskRows ?? []) as unknown as ProjectTask[]).map((t) => ({
+      ...t,
+      project_name: projectNameById[t.project_id] ?? null,
+    })),
+    today,
+  );
+  const attentionTasks = openTasks.filter((t) => t.assignee === "client");
+  const attentionIds = new Set(attentionTasks.map((t) => t.id));
+  const comingUp = openTasks
+    .filter((t) => t.due_date && !attentionIds.has(t.id))
+    .slice(0, 5);
+  const signatureItems: AttentionSignature[] = docsNeedingYou.map((d) => ({
+    id: d.id,
+    project_id: d.project_id,
+    project_name: projectNameById[d.project_id] ?? null,
+    title: documentTypeLabel(d.type),
+  }));
+  const clientName = linkedClient?.name?.trim() || null;
+
   return (
     <div className="mx-auto max-w-5xl px-5 py-10 sm:px-8 md:px-10 md:py-14">
       <header className="mb-10 md:mb-20">
@@ -190,6 +226,34 @@ export default async function PortalPage() {
         <p className="text-neutral-400">No projects yet. Check back soon.</p>
       ) : (
         <PortalSectionStack>
+          <PortalSection title="Needs your attention">
+            <PortalAttentionList
+              tasks={attentionTasks}
+              signatures={signatureItems}
+              today={today}
+              clientName={clientName}
+            />
+          </PortalSection>
+
+          {comingUp.length > 0 ? (
+            <PortalSection
+              title="Coming up"
+              titleSize="sm"
+              intro={
+                <p className="text-sm text-neutral-500">
+                  What&apos;s next on the calendar, from you and from Skapa.
+                </p>
+              }
+            >
+              <UpcomingTasksPanel
+                tasks={comingUp}
+                viewerRole="client"
+                today={today}
+                clientName={clientName}
+              />
+            </PortalSection>
+          ) : null}
+
           <section>
             <ul className="grid gap-4 sm:grid-cols-2">
               {projects.map((p) => {
@@ -228,41 +292,6 @@ export default async function PortalPage() {
               })}
             </ul>
           </section>
-
-          {docsNeedingYou.length > 0 && (
-            <PortalSection
-              title="Needs your signature"
-              intro={
-                <p className="font-serif text-lg italic text-neutral-500">
-                  Don&apos;t leave these hanging.
-                </p>
-              }
-            >
-              <ul className="space-y-3">
-                {docsNeedingYou.map((d) => (
-                  <li
-                    key={d.id}
-                    className="surface-raised flex flex-col gap-3 px-6 py-5 sm:flex-row sm:items-center sm:justify-between"
-                  >
-                    <div>
-                      <p className="font-serif text-xl text-black">
-                        {documentTypeLabel(d.type)}
-                      </p>
-                      <p className="mt-1 font-mono text-xs text-neutral-500">
-                        {projectNameById[d.project_id]}
-                      </p>
-                    </div>
-                    <Link
-                      href={`/portal/projects/${d.project_id}/documents?sign=${d.id}`}
-                      className="shrink-0 bg-portal-accent px-5 py-2.5 text-center font-mono text-[11px] uppercase tracking-[0.14em] text-white transition-opacity hover:opacity-90"
-                    >
-                      Review &amp; sign
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </PortalSection>
-          )}
 
           <div className="grid gap-10 sm:gap-12 md:grid-cols-2 md:gap-14">
             <PortalSection title="Recent messages" titleSize="sm">

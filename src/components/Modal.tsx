@@ -34,10 +34,13 @@ export default function Modal({
       onClick={onClose}
     >
       <div
-        className="w-full max-w-lg overflow-hidden rounded-2xl border border-neutral-100 bg-white shadow-2xl"
+        role="dialog"
+        aria-modal="true"
+        aria-label={title}
+        className="max-h-[90vh] w-full max-w-lg overflow-y-auto overscroll-contain rounded-2xl border border-neutral-100 bg-white shadow-2xl supports-[height:100dvh]:max-h-[90dvh]"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between border-b border-neutral-100 px-6 py-4">
+        <div className="sticky top-0 z-10 flex items-center justify-between border-b border-neutral-100 bg-white px-6 py-4">
           <p className="font-mono text-[11px] uppercase tracking-widest text-neutral-500">
             {title}
           </p>
