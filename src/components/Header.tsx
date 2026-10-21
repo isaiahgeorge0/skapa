@@ -25,18 +25,18 @@ function MenuButton({
       aria-label={open ? "Close menu" : "Open menu"}
       aria-expanded={open}
       onClick={onToggle}
-      className="relative flex h-11 w-11 items-center justify-center rounded-full bg-white/90 shadow-sm backdrop-blur"
+      className="relative flex h-11 w-11 items-center justify-center rounded-full bg-white/90 shadow-sm backdrop-blur focus:outline-none focus-visible:ring-2 focus-visible:ring-black"
     >
       <span className="sr-only">Menu</span>
       <div className="flex flex-col items-center justify-center gap-[5px]">
         <span
-          className={`block h-[1.5px] w-5 bg-black transition-transform duration-300 ease-out ${
-            open ? "translate-y-[6.5px] rotate-45" : ""
+          className={`block h-[1.5px] w-5 origin-center bg-black transition-transform duration-300 ease-out ${
+            open ? "translate-y-[3.25px] rotate-45" : ""
           }`}
         />
         <span
-          className={`block h-[1.5px] w-5 bg-black transition-transform duration-300 ease-out ${
-            open ? "-translate-y-[6.5px] -rotate-45" : ""
+          className={`block h-[1.5px] w-5 origin-center bg-black transition-transform duration-300 ease-out ${
+            open ? "-translate-y-[3.25px] -rotate-45" : ""
           }`}
         />
       </div>
