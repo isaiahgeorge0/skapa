@@ -12,7 +12,7 @@ export const metadata: Metadata = pageMetadata({
 export default function AboutPage() {
   return (
     <div>
-      <div className="mx-auto grid max-w-6xl items-start gap-12 px-6 py-24 md:grid-cols-12 md:gap-14 md:px-10 md:py-32">
+      <div className="grid site-container items-start gap-12 py-24 md:grid-cols-12 md:gap-14 md:py-32">
         <div className="md:col-span-6">
           <p className="mb-8 font-mono text-sm uppercase tracking-widest text-brand-blue">
             About
@@ -35,7 +35,7 @@ export default function AboutPage() {
               alt="Man using a tablet in a rustic industrial loft space"
               fill
               className="object-cover"
-              sizes="(max-width: 768px) 100vw, 50vw"
+              sizes="(max-width: 768px) 100vw, (min-width: 1600px) 800px, 50vw"
               priority
             />
           </div>
@@ -43,7 +43,7 @@ export default function AboutPage() {
       </div>
 
       <div className="bg-brand-cream">
-        <div className="mx-auto max-w-6xl px-6 py-16 md:px-10 md:py-20">
+        <div className="site-container py-16 md:py-20">
           <p className="max-w-2xl font-serif text-2xl leading-snug text-black md:text-3xl">
             One team. One conversation.{" "}
             <span className="italic text-brand-pink">One result you can rely on.</span>

@@ -5,7 +5,7 @@ export default function Footer() {
   return (
     <footer className="mt-auto">
       <div className="bg-brand-blue">
-        <div className="mx-auto flex max-w-6xl flex-col gap-8 px-6 py-12 md:flex-row md:items-end md:justify-between md:px-10 md:py-14">
+        <div className="flex site-container flex-col gap-8 py-12 md:flex-row md:items-end md:justify-between md:py-14">
           <SkapaWordmarkStack size="lg" />
           <div className="md:text-right">
             <Link

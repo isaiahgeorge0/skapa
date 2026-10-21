@@ -31,7 +31,7 @@ export default function ChapterReconsider() {
       id="reconsider"
       className="scroll-mt-chapter border-t border-black/5 bg-bs-offwhite lg:scroll-mt-0"
     >
-      <div className="mx-auto max-w-6xl px-6 py-20 md:px-10 md:py-28 lg:pr-24">
+      <div className="site-container py-20 md:py-28 lg:pr-24">
         <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.9fr)] lg:gap-16">
           <div>
             <p className="mb-5 font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-500">

@@ -17,7 +17,7 @@ export default function ChapterReady() {
           <div className="absolute top-[18%] left-[8%] hidden h-24 w-24 border border-bs-offwhite/25 md:block" />
         </div>
 
-        <div className="relative z-10 mx-auto max-w-6xl px-6 pt-chapter-safe pb-20 md:px-10 md:py-32 lg:pr-24">
+        <div className="relative z-10 site-container pt-chapter-safe pb-20 md:py-32 lg:pr-24">
           <p className="mb-5 font-mono text-[11px] uppercase tracking-[0.2em] text-bs-yellow">
             READY FOR WHAT&apos;S NEXT?
           </p>

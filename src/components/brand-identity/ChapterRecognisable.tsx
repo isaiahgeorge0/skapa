@@ -384,7 +384,7 @@ export default function ChapterRecognisable() {
         id="make-it-recognisable"
         className="scroll-mt-chapter border-t border-black/5 bg-bs-offwhite lg:scroll-mt-0"
       >
-        <div className="mx-auto max-w-6xl px-6 py-20 md:px-10 md:py-28 lg:pr-24">
+        <div className="site-container py-20 md:py-28 lg:pr-24">
           <p className="mb-5 font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-500">
             06 · Make it recognisable
           </p>
@@ -411,7 +411,7 @@ export default function ChapterRecognisable() {
       id="make-it-recognisable"
       className="relative scroll-mt-chapter border-t border-black/5 bg-bs-offwhite lg:scroll-mt-0"
     >
-      <div className="mx-auto max-w-6xl px-6 pt-chapter-safe pb-4 md:px-10 md:pt-28 md:pb-0 lg:pr-24">
+      <div className="site-container pt-chapter-safe pb-4 md:pt-28 md:pb-0 lg:pr-24">
         <p className="mb-5 font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-500">
           06 · Make it recognisable
         </p>
@@ -450,7 +450,7 @@ export default function ChapterRecognisable() {
         </div>
       </div>
 
-      <div className="mx-auto max-w-6xl px-6 pt-8 pb-20 md:px-10 md:pt-10 md:pb-28 lg:pr-24">
+      <div className="site-container pt-8 pb-20 md:pt-10 md:pb-28 lg:pr-24">
         <p className="max-w-xl font-mono text-sm leading-relaxed text-neutral-500">
           Application studies: browser-built representations of the same
           identity across real mediums.

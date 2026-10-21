@@ -112,6 +112,41 @@
   );
 }
 
+/*
+ * Marketing site frame. One shared width so header, body and footer edges align.
+ * 100rem = 1600px at the default root size; scales with the marketing root bump.
+ */
+@utility site-container {
+  width: 100%;
+  margin-inline: auto;
+  max-width: 100rem;
+  padding-inline: clamp(1.5rem, 4vw, 5rem);
+}
+
+/* Single-column reading bands (statement sections, long-form). Use sparingly. */
+@utility site-container-narrow {
+  width: 100%;
+  margin-inline: auto;
+  max-width: 72rem;
+  padding-inline: clamp(1.5rem, 4vw, 5rem);
+}
+
+/*
+ * Scale the marketing site on very large screens. Scoped via :has(.site-marketing)
+ * so portal and admin keep the default 16px root.
+ */
+@media (min-width: 1920px) {
+  html:has(.site-marketing) {
+    font-size: 112.5%;
+  }
+}
+
+@media (min-width: 2400px) {
+  html:has(.site-marketing) {
+    font-size: 125%;
+  }
+}
+
 body {
   background: var(--background);
   color: var(--foreground);

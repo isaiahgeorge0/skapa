@@ -96,7 +96,7 @@ function HeroCopy() {
 function StaticHeroInner() {
   return (
     <div
-      className={`mx-auto grid max-w-6xl items-center gap-10 px-8 pb-20 sm:px-10 md:grid-cols-12 md:px-10 md:pb-28 lg:pr-24 ${MOBILE_STAGE_TOP}`}
+      className={`grid site-container items-center gap-10 pb-20 md:grid-cols-12 md:pb-28 lg:pr-24 ${MOBILE_STAGE_TOP}`}
     >
       <HeroCopy />
       <div className="md:col-span-7">

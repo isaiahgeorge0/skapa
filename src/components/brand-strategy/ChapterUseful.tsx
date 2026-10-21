@@ -311,7 +311,7 @@ export default function ChapterUseful() {
       id="make-it-useful"
       className="scroll-mt-chapter lg:scroll-mt-0 border-t border-black/5 bg-bs-offwhite"
     >
-      <div className="mx-auto max-w-6xl px-6 py-20 md:px-10 md:py-28 lg:pr-24">
+      <div className="site-container py-20 md:py-28 lg:pr-24">
         <p className="mb-5 font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-500">
           04 · Make it useful
         </p>
@@ -329,7 +329,7 @@ export default function ChapterUseful() {
               alt="Curved architectural forms creating a sense of order and structure"
               fill
               className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
-              sizes="100vw"
+              sizes="(min-width: 1600px) 90rem, 100vw"
             />
             <div
               aria-hidden="true"
@@ -389,7 +389,7 @@ export default function ChapterUseful() {
             alt=""
             fill
             className="object-cover object-[center_40%]"
-            sizes="100vw"
+            sizes="(min-width: 1600px) 90rem, 100vw"
           />
           <div
             aria-hidden="true"
@@ -471,7 +471,7 @@ export default function ChapterUseful() {
                 alt="Physical brand materials and typography samples arranged on a surface"
                 fill
                 className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
-                sizes="(max-width: 768px) 100vw, 55vw"
+                sizes="(max-width: 768px) 100vw, (min-width: 1600px) 70rem, 55vw"
               />
               <div
                 aria-hidden="true"

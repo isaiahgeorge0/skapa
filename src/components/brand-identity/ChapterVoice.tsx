@@ -46,7 +46,7 @@ export default function ChapterVoice() {
         id="give-it-a-voice"
         className="scroll-mt-chapter border-t border-black/5 bg-bs-offwhite lg:scroll-mt-0"
       >
-        <div className="mx-auto max-w-6xl px-6 py-20 md:px-10 md:py-28 lg:pr-24">
+        <div className="site-container py-20 md:py-28 lg:pr-24">
           <p className="mb-5 font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-500">
             03 · Give it a voice
           </p>
@@ -104,7 +104,7 @@ export default function ChapterVoice() {
     >
       <div ref={trackRef} className="relative h-[280vh] md:h-[290vh]">
         <div className="sticky top-0 isolate flex h-[100svh] flex-col justify-start overflow-hidden bg-bs-offwhite pt-chapter-safe md:justify-center md:pt-0">
-          <div className="mx-auto w-full max-w-6xl px-6 pb-8 md:px-10 md:pb-0 lg:pr-24">
+          <div className="w-full site-container pb-8 md:pb-0 lg:pr-24">
             <p className="mb-3 font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-500 md:mb-5">
               03 · Give it a voice
             </p>

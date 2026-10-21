@@ -152,7 +152,7 @@ export default function ChapterChange() {
         id="change"
         className="relative scroll-mt-chapter overflow-hidden bg-[#e8e7e3] lg:scroll-mt-0"
       >
-        <div className="relative mx-auto max-w-6xl px-8 py-20 md:px-10 md:py-28 lg:pr-24">
+        <div className="relative site-container py-20 md:py-28 lg:pr-24">
           <p className="mb-5 font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-500">
             Rebranding · 01
           </p>
@@ -201,10 +201,10 @@ export default function ChapterChange() {
             </div>
           </motion.div>
 
-          <div className="relative z-10 mx-auto h-full max-w-6xl md:px-10 lg:pr-24">
+          <div className="relative z-10 h-full site-container lg:pr-24">
             <Stage
               opacity={heroOpacity}
-              className={`justify-start px-8 pb-16 ${MOBILE_STAGE_TOP} sm:px-10 md:justify-center md:px-0 md:pt-0 md:py-12`}
+              className={`justify-start pb-16 ${MOBILE_STAGE_TOP} md:justify-center md:pt-0 md:py-12`}
             >
               <motion.div style={{ y: heroY }} className="max-w-3xl">
                 <p className="mb-4 font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-500 md:mb-5">
@@ -234,7 +234,7 @@ export default function ChapterChange() {
 
             <Stage
               opacity={resolveOpacity}
-              className={`justify-start px-8 pb-16 ${MOBILE_STAGE_TOP} sm:px-10 md:justify-center md:px-0 md:pt-0 md:py-12`}
+              className={`justify-start pb-16 ${MOBILE_STAGE_TOP} md:justify-center md:pt-0 md:py-12`}
             >
               <motion.div style={{ y: resolveY }} className="max-w-2xl">
                 <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-500">

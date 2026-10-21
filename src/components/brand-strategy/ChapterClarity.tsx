@@ -331,13 +331,13 @@ export default function ChapterClarity() {
             className="absolute top-0 right-0 hidden h-[48%] w-[30%] bg-bs-pink md:block"
             aria-hidden="true"
           />
-          <div className="relative z-10 mx-auto max-w-6xl px-8 pt-10 pb-14 sm:px-10 md:px-12 md:py-12 md:pt-12 lg:px-14 lg:pr-24">
+          <div className="relative z-10 site-container pt-10 pb-14 md:py-12 md:pt-12 lg:pr-24">
             <HeroCopy />
           </div>
         </div>
 
         <div className="bg-bs-offwhite">
-          <div className="mx-auto max-w-6xl space-y-20 px-6 py-20 md:px-10 md:py-24 lg:pr-24">
+          <div className="site-container space-y-20 py-20 md:py-24 lg:pr-24">
             <QuestionOne />
             <QuestionTwo />
             <QuestionThree />
@@ -359,23 +359,23 @@ export default function ChapterClarity() {
             Question sequence lives UNDER the hero curtain.
             As the purple/pink field slides away, it uncovers this stage.
           */}
-          <div className="relative z-10 mx-auto h-full max-w-6xl">
-            <StageCopy opacity={q1Opacity} y={q1Y} className="justify-center px-6 py-10 md:px-10 md:py-12 lg:pr-24">
+          <div className="relative z-10 h-full site-container lg:pr-24">
+            <StageCopy opacity={q1Opacity} y={q1Y} className="justify-center py-10 md:py-12">
               <QuestionOne ruleScale={q1RuleScale} />
             </StageCopy>
 
-            <StageCopy opacity={q2Opacity} y={q2Y} className="justify-center px-6 py-10 md:px-10 md:py-12 lg:pr-24">
+            <StageCopy opacity={q2Opacity} y={q2Y} className="justify-center py-10 md:py-12">
               <QuestionTwo />
             </StageCopy>
 
-            <StageCopy opacity={q3Opacity} y={q3Y} className="justify-center px-6 py-10 md:px-10 md:py-12 lg:pr-24">
+            <StageCopy opacity={q3Opacity} y={q3Y} className="justify-center py-10 md:py-12">
               <QuestionThree />
             </StageCopy>
 
             <StageCopy
               opacity={resolveOpacity}
               y={resolveY}
-              className="justify-center px-6 py-10 md:px-10 md:py-12 lg:pr-24"
+              className="justify-center py-10 md:py-12"
             >
               <ResolveCopy />
             </StageCopy>
@@ -396,11 +396,11 @@ export default function ChapterClarity() {
             Mobile: copy sits in the lower field so pink can own the top edge.
           */}
           <div className="pointer-events-none absolute inset-0 z-30">
-            <div className="pointer-events-auto mx-auto h-full max-w-6xl">
+            <div className="pointer-events-auto h-full site-container lg:pr-24">
               <StageCopy
                 opacity={heroCopyOpacity}
                 y={heroCopyY}
-                className="justify-start px-8 pt-[max(7.75rem,calc(var(--skapa-site-chrome-height)+var(--skapa-chapter-pill-clearance)+0.75rem))] pb-12 sm:px-10 md:justify-center md:px-12 md:py-12 md:pt-12 lg:px-14 lg:pr-24"
+                className="justify-start pt-[max(7.75rem,calc(var(--skapa-site-chrome-height)+var(--skapa-chapter-pill-clearance)+0.75rem))] pb-12 md:justify-center md:py-12 md:pt-12"
               >
                 <HeroCopy />
               </StageCopy>

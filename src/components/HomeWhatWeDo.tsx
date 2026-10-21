@@ -13,7 +13,7 @@ const SERVICES = [
     image: "/images/brand.jpg",
     alt: "Brand strategy notes, colour references and photography laid out on a desk",
     href: "/what-we-do/brand" as string | null,
-    sizes: "(min-width: 768px) 50vw, 100vw",
+    sizes: "(min-width: 1600px) 900px, (min-width: 768px) 50vw, 100vw",
   },
   {
     key: "creative",
@@ -22,7 +22,7 @@ const SERVICES = [
     image: "/images/creative.jpg",
     alt: "Studio photoshoot in progress with lighting, camera and product packing",
     href: null,
-    sizes: "(min-width: 768px) 40vw, 92vw",
+    sizes: "(min-width: 1600px) 700px, (min-width: 768px) 40vw, 92vw",
   },
   {
     key: "digital",
@@ -31,7 +31,7 @@ const SERVICES = [
     image: "/images/service-digital.jpg",
     alt: "Laptop, phone and screens showing website design and development work",
     href: null,
-    sizes: "(min-width: 768px) 40vw, 92vw",
+    sizes: "(min-width: 1600px) 700px, (min-width: 768px) 40vw, 92vw",
   },
   {
     key: "social",
@@ -40,7 +40,7 @@ const SERVICES = [
     image: "/images/service-social.jpg",
     alt: "Hands holding a phone open on a social media profile",
     href: null,
-    sizes: "(min-width: 768px) 45vw, 100vw",
+    sizes: "(min-width: 1600px) 800px, (min-width: 768px) 45vw, 100vw",
   },
 ] as const;
 
@@ -118,20 +118,20 @@ function DesktopConverge() {
   const [brand, creative, digital, social] = SERVICES;
 
   return (
-    <div ref={trackRef} className="relative hidden h-[175vh] md:block">
+    <div ref={trackRef} className="relative hidden h-[175vh] overflow-x-clip md:block">
       <div className="sticky top-0 flex h-[100svh] w-full items-center">
         <div className="grid w-full grid-cols-12 items-start gap-x-8 gap-y-4 lg:gap-x-10">
           <motion.div
             className="col-span-7"
             style={{ x: brandX, y: brandY, opacity: brandO }}
           >
-            <ServiceBlock service={brand} frameClass="h-[34vh] max-h-[18.5rem]" />
+            <ServiceBlock service={brand} frameClass="h-[34vh] max-h-[18.5rem] 2xl:max-h-[22rem]" />
           </motion.div>
           <motion.div
             className="col-span-5 pt-10 lg:pt-12"
             style={{ x: creativeX, y: creativeY, opacity: creativeO }}
           >
-            <ServiceBlock service={creative} frameClass="h-[28vh] max-h-[15.5rem]" />
+            <ServiceBlock service={creative} frameClass="h-[28vh] max-h-[15.5rem] 2xl:max-h-[19rem]" />
           </motion.div>
           <motion.div
             className="col-span-5 mt-2"
@@ -139,7 +139,7 @@ function DesktopConverge() {
           >
             <ServiceBlock
               service={digital}
-              frameClass="h-[24vh] max-h-[13.5rem]"
+              frameClass="h-[24vh] max-h-[13.5rem] 2xl:max-h-[17rem]"
               objectClass="object-[center_40%]"
             />
           </motion.div>
@@ -147,7 +147,7 @@ function DesktopConverge() {
             className="col-span-6 col-start-7 -mt-5 lg:-mt-6"
             style={{ x: socialX, y: socialY, opacity: socialO }}
           >
-            <ServiceBlock service={social} frameClass="h-[30vh] max-h-[16.5rem]" />
+            <ServiceBlock service={social} frameClass="h-[30vh] max-h-[16.5rem] 2xl:max-h-[20rem]" />
           </motion.div>
         </div>
       </div>
@@ -161,20 +161,20 @@ function SettledComposition() {
   return (
     <div className="grid w-full grid-cols-12 items-start gap-x-8 gap-y-4 lg:gap-x-10">
       <div className="col-span-7">
-        <ServiceBlock service={brand} frameClass="h-[34vh] max-h-[18.5rem]" />
+        <ServiceBlock service={brand} frameClass="h-[34vh] max-h-[18.5rem] 2xl:max-h-[22rem]" />
       </div>
       <div className="col-span-5 pt-10 lg:pt-12">
-        <ServiceBlock service={creative} frameClass="h-[28vh] max-h-[15.5rem]" />
+        <ServiceBlock service={creative} frameClass="h-[28vh] max-h-[15.5rem] 2xl:max-h-[19rem]" />
       </div>
       <div className="col-span-5 mt-2">
         <ServiceBlock
           service={digital}
-          frameClass="h-[24vh] max-h-[13.5rem]"
+          frameClass="h-[24vh] max-h-[13.5rem] 2xl:max-h-[17rem]"
           objectClass="object-[center_40%]"
         />
       </div>
       <div className="col-span-6 col-start-7 -mt-5 lg:-mt-6">
-        <ServiceBlock service={social} frameClass="h-[30vh] max-h-[16.5rem]" />
+        <ServiceBlock service={social} frameClass="h-[30vh] max-h-[16.5rem] 2xl:max-h-[20rem]" />
       </div>
     </div>
   );

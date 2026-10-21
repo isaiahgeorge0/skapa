@@ -276,7 +276,7 @@ export default function ChapterSystem() {
         id="make-it-a-system"
         className="scroll-mt-chapter border-t border-black/5 bg-bs-offwhite lg:scroll-mt-0"
       >
-        <div className="mx-auto max-w-6xl px-6 py-20 md:px-10 md:py-28 lg:pr-24">
+        <div className="site-container py-20 md:py-28 lg:pr-24">
           <p className="mb-5 font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-500">
             05 · Make it a system
           </p>
@@ -319,7 +319,7 @@ export default function ChapterSystem() {
       <div ref={desktopTrackRef} className="relative hidden md:block">
         <div className="relative h-[620vh]">
           <div className="sticky top-0 flex h-[100svh] items-center overflow-hidden">
-            <div className="mx-auto grid w-full max-w-6xl grid-cols-12 gap-10 px-6 md:px-10 lg:pr-24">
+            <div className="grid w-full site-container grid-cols-12 gap-10 lg:pr-24">
               <div className="col-span-5 flex flex-col justify-center">
                 <p className="mb-5 font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-500">
                   05 · Make it a system
@@ -389,7 +389,7 @@ export default function ChapterSystem() {
         </div>
       </div>
 
-      <div className="mx-auto max-w-6xl px-6 pb-16 pt-6 md:px-10 lg:pr-24">
+      <div className="site-container pb-16 pt-6 lg:pr-24">
         <p className="max-w-2xl font-mono text-sm leading-relaxed text-neutral-500">
           Brand identity is the connected system, not a logo dropped onto
           whatever comes next.

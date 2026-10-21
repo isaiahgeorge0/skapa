@@ -342,7 +342,7 @@ export default function ChapterGap() {
         id="the-gap"
         className="scroll-mt-chapter border-t border-black/5 bg-bs-offwhite lg:scroll-mt-0"
       >
-        <div className="mx-auto max-w-6xl px-6 py-20 md:px-10 md:py-28 lg:pr-24">
+        <div className="site-container py-20 md:py-28 lg:pr-24">
           <p className="mb-5 font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-500">
             02 · The gap
           </p>
@@ -409,7 +409,7 @@ export default function ChapterGap() {
           </div>
 
           {/* Desktop stages */}
-          <div className="relative z-10 mx-auto hidden h-full max-w-6xl md:block md:px-10 lg:pr-24">
+          <div className="relative z-10 hidden h-full site-container md:block lg:pr-24">
             <Stage
               opacity={introOpacity}
               className="justify-start px-0 pt-20 pb-12"

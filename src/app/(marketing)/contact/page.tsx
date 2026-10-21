@@ -18,7 +18,7 @@ export default async function ContactPage() {
   const startedAt = Date.now();
 
   return (
-    <div className="mx-auto grid max-w-6xl items-start gap-12 px-6 py-24 md:grid-cols-12 md:gap-14 md:px-10 md:py-32">
+    <div className="grid site-container items-start gap-12 py-24 md:grid-cols-12 md:gap-14 md:py-32">
       <div className="md:col-span-5">
         <div className="relative aspect-[4/5] w-full">
           <Image
@@ -26,7 +26,7 @@ export default async function ContactPage() {
             alt="Man laughing on the phone with a colorful calendar on a laptop screen"
             fill
             className="object-cover"
-            sizes="(max-width: 768px) 100vw, 40vw"
+            sizes="(max-width: 768px) 100vw, (min-width: 1600px) 640px, 40vw"
             priority
           />
         </div>

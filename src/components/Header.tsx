@@ -108,7 +108,7 @@ export default function Header() {
         style={{ minHeight: "var(--skapa-site-chrome-height)" }}
         aria-hidden={scrolled}
       >
-        <div className="relative mx-auto flex h-[var(--skapa-site-chrome-height)] max-w-6xl items-center justify-between gap-8 px-6 md:px-10">
+        <div className="relative flex h-[var(--skapa-site-chrome-height)] site-container items-center justify-between gap-8">
           <Link href="/" className="font-serif text-2xl tracking-tight text-black">
             skapa <span className="italic text-brand-pink">Creative</span>
           </Link>

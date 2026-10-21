@@ -20,11 +20,11 @@ export const metadata: Metadata = pageMetadata({
 export default function HomePage() {
   return (
     <div>
-      {/* Desktop hero — pink / yellow / blue used together as one composition */}
+      {/* Desktop hero — copy + CTA left, imagery right on lg+ */}
       <div className="hidden md:block">
-        <section className="mx-auto flex max-w-6xl flex-col px-6 pt-8 pb-0 md:h-[calc(100vh-96px)] md:px-10 md:pt-10">
-          <FadeInOnLoad className="flex flex-1 flex-col gap-6 md:gap-8">
-            <div className="flex flex-col gap-8 md:flex-row md:items-start md:justify-between md:gap-12">
+        <section className="site-container flex flex-col pt-8 pb-0 md:h-[calc(100vh-var(--skapa-site-chrome-height))] md:pt-10">
+          <FadeInOnLoad className="flex min-h-0 flex-1 flex-col gap-6 md:gap-8 lg:grid lg:grid-cols-12 lg:items-stretch lg:gap-10">
+            <div className="flex flex-col gap-8 lg:col-span-5 lg:justify-between lg:gap-10">
               <div className="max-w-3xl">
                 <p className="mb-6 font-mono text-sm uppercase tracking-widest text-brand-blue">
                   Creative &amp; digital agency
@@ -36,10 +36,10 @@ export default function HomePage() {
                 </h1>
               </div>
 
-              <div className="flex shrink-0 flex-col items-start gap-6 bg-brand-blue px-6 py-6 md:min-w-[240px] md:items-end md:px-7 md:py-7">
+              <div className="flex w-full max-w-sm shrink-0 flex-col items-start gap-6 bg-brand-blue px-6 py-6 md:items-end md:px-7 md:py-7 lg:max-w-none">
                 <SkapaWordmarkStack size="sm" className="md:text-right" />
                 <div className="md:text-right">
-                  <p className="mb-4 max-w-[260px] font-serif text-xl italic leading-snug text-brand-cream md:ml-auto md:text-2xl">
+                  <p className="mb-4 max-w-[16.25rem] font-serif text-xl italic leading-snug text-brand-cream md:ml-auto md:text-2xl">
                     Kickstart your creative ideas now.
                   </p>
                   <Link
@@ -52,14 +52,14 @@ export default function HomePage() {
               </div>
             </div>
 
-            <div className="relative aspect-[4/3] w-full overflow-hidden md:aspect-auto md:flex-1 md:min-h-[240px]">
+            <div className="relative min-h-[15rem] flex-1 overflow-hidden lg:col-span-7 lg:min-h-0">
               <ParallaxImage offset={["start end", "end -50%"]}>
                 <Image
                   src="/images/pexels-anastasia-shuraeva-7278565.jpg"
                   alt="Two people collaborating on a laptop in a warm, plant-filled studio"
                   fill
                   className="object-cover object-[center_60%]"
-                  sizes="100vw"
+                  sizes="(min-width: 1024px) 55vw, (min-width: 768px) 100vw, 100vw"
                   priority
                 />
               </ParallaxImage>
@@ -70,9 +70,9 @@ export default function HomePage() {
 
       {/* Mobile hero — same three-accent roles on the photo plane */}
       <div className="overflow-x-hidden md:hidden">
-        <section className="mx-auto max-w-6xl px-6 pt-8 pb-8">
+        <section className="site-container pt-8 pb-8">
           <FadeInOnLoad className="flex flex-1 flex-col gap-6">
-            <div className="relative h-[calc(32vh+220px)] overflow-hidden">
+            <div className="relative h-[calc(32vh+13.75rem)] overflow-hidden">
               <div className="absolute inset-0 left-1/2 w-screen -translate-x-1/2">
                 <ParallaxImage offset={["start end", "end -50%"]} className="h-full">
                   <Image
@@ -117,7 +117,7 @@ export default function HomePage() {
       </div>
 
       <section className="bg-brand-cream">
-        <div className="mx-auto max-w-4xl px-6 py-24 md:px-10 md:py-32">
+        <div className="site-container-narrow py-24 md:py-32">
           <ScrollRevealText
             text="Most creative agencies specialise in one thing and hand the rest off to freelancers who&apos;ve never met each other, let alone your brand."
             accentText="skapa keeps brand, digital, and marketing under one roof, with one team, one conversation, and one result you can actually rely on."
@@ -127,7 +127,7 @@ export default function HomePage() {
       </section>
 
       <section className="border-t border-neutral-200">
-        <div className="mx-auto max-w-6xl px-6 pt-20 pb-16 md:px-10 md:pt-28 md:pb-8">
+        <div className="site-container pt-20 pb-16 md:pt-28 md:pb-8">
           <div className="mb-10 flex items-end justify-between gap-6 md:mb-8">
             <Reveal>
               <p className="font-mono text-sm uppercase tracking-widest text-brand-blue">

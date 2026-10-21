@@ -73,7 +73,7 @@ export default function ChapterPersonality() {
         id="give-it-personality"
         className="scroll-mt-chapter border-t border-black/5 bg-bs-offwhite lg:scroll-mt-0"
       >
-        <div className="mx-auto max-w-6xl px-6 py-20 md:px-10 md:py-28 lg:pr-24">
+        <div className="site-container py-20 md:py-28 lg:pr-24">
           <p className="mb-5 font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-500">
             04 · Give it personality
           </p>
@@ -144,7 +144,7 @@ export default function ChapterPersonality() {
             #fff1a7
           </motion.p>
 
-          <div className="relative z-10 mx-auto flex h-full max-w-6xl flex-col px-6 pt-chapter-safe pb-8 md:px-10 md:py-20 lg:pr-24">
+          <div className="relative z-10 flex h-full site-container flex-col pt-chapter-safe pb-8 md:py-20 lg:pr-24">
             <div className="relative max-w-3xl">
               <motion.p
                 style={{ color: eyebrowColor }}

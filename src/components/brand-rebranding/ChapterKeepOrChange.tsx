@@ -317,7 +317,7 @@ export default function ChapterKeepOrChange() {
         id="keep-or-change"
         className="scroll-mt-chapter border-t border-black/5 bg-bs-offwhite lg:scroll-mt-0"
       >
-        <div className="mx-auto max-w-6xl px-6 py-20 md:px-10 md:py-28 lg:pr-24">
+        <div className="site-container py-20 md:py-28 lg:pr-24">
           <p className="mb-5 font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-500">
             03 · Keep or change
           </p>
@@ -365,7 +365,7 @@ export default function ChapterKeepOrChange() {
     >
       {/* ─── Desktop: interactive workbench (unchanged) ─── */}
       <div className="hidden md:block">
-        <div className="mx-auto max-w-6xl px-10 py-28 lg:pr-24">
+        <div className="site-container py-28 lg:pr-24">
           <div className="max-w-3xl">
             <p className="mb-5 font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-500">
               03 · Keep or change

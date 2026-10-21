@@ -80,7 +80,7 @@ export default function ChapterFamiliar() {
       id="sound-familiar"
       className="relative scroll-mt-chapter lg:scroll-mt-0 border-t border-black/5 bg-bs-offwhite"
     >
-      <div className="mx-auto max-w-6xl px-6 py-20 md:px-10 md:py-28 lg:pr-24">
+      <div className="site-container py-20 md:py-28 lg:pr-24">
         <p className="mb-5 font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-500">
           02 · Sound familiar?
         </p>

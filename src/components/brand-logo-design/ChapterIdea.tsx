@@ -258,7 +258,7 @@ function StaticHero() {
           </div>
         </div>
 
-        <div className="relative z-10 mx-auto max-w-6xl px-8 pb-20 sm:px-10 md:px-10 md:pb-28 lg:pr-24">
+        <div className="relative z-10 site-container pb-20 md:pb-28 lg:pr-24">
           <div className="max-w-2xl">
             <p className="mb-5 font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-500">
               Logo design · 01

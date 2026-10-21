@@ -25,7 +25,7 @@ function Hero() {
         aria-hidden="true"
         className="pointer-events-none absolute bottom-0 left-0 h-[18%] w-[42%] bg-bs-yellow md:h-[22%] md:w-[30%]"
       />
-      <div className="relative mx-auto max-w-6xl px-6 pb-20 pt-[calc(var(--skapa-site-chrome-height)+1.5rem)] md:px-10 md:pb-28 md:pt-28">
+      <div className="relative site-container pb-20 pt-[calc(var(--skapa-site-chrome-height)+1.5rem)] md:pb-28 md:pt-28">
         <p className="mb-5 font-mono text-[11px] uppercase tracking-[0.2em] text-bs-yellow">
           Brand
         </p>
@@ -56,7 +56,7 @@ function System() {
       id="brand-services"
       className="scroll-mt-24 border-t border-black/5"
     >
-      <div className="mx-auto max-w-6xl px-6 py-20 md:px-10 md:py-28">
+      <div className="site-container py-20 md:py-28">
         <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-500">
           The brand system
         </p>
@@ -149,7 +149,7 @@ function SystemMark({ index }: { index: number }) {
 function Choose() {
   return (
     <section className="border-t border-black/5 bg-white">
-      <div className="mx-auto max-w-6xl px-6 py-20 md:px-10 md:py-28">
+      <div className="site-container py-20 md:py-28">
         <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-500">
           Help me choose
         </p>
@@ -187,7 +187,7 @@ function Choose() {
 function Connected() {
   return (
     <section className="border-t border-black/5">
-      <div className="mx-auto grid max-w-6xl gap-10 px-6 py-20 md:grid-cols-12 md:gap-12 md:px-10 md:py-28">
+      <div className="grid site-container gap-10 py-20 md:grid-cols-12 md:gap-12 md:py-28">
         <div className="md:col-span-5">
           <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-500">
             Connected, not packaged
@@ -221,7 +221,7 @@ function Connected() {
 function Close() {
   return (
     <section className="bg-black text-bs-offwhite">
-      <div className="mx-auto max-w-6xl px-6 py-24 md:px-10 md:py-32">
+      <div className="site-container py-24 md:py-32">
         <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-bs-yellow">
           Next
         </p>

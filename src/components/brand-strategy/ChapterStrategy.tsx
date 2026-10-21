@@ -363,7 +363,7 @@ export default function ChapterStrategy() {
         className="pointer-events-none absolute top-0 left-0 h-1 w-24 bg-bs-purple md:w-40"
       />
 
-      <div className="mx-auto max-w-6xl px-6 py-20 md:px-10 md:py-28 lg:pr-24">
+      <div className="site-container py-20 md:py-28 lg:pr-24">
         <p className="mb-5 font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-500">
           03 · Build the strategy
         </p>

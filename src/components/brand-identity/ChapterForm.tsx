@@ -169,7 +169,7 @@ export default function ChapterForm() {
         id="give-it-form"
         className="scroll-mt-chapter border-t border-black/5 bg-bs-offwhite lg:scroll-mt-0"
       >
-        <div className="mx-auto max-w-6xl px-6 py-20 md:px-10 md:py-28 lg:pr-24">
+        <div className="site-container py-20 md:py-28 lg:pr-24">
           <p className="mb-5 font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-500">
             02 · Give it form
           </p>
@@ -210,7 +210,7 @@ export default function ChapterForm() {
       <div ref={trackRef} className="relative h-[200vh] md:h-[250vh]">
         <div className="sticky top-0 isolate h-[100svh] overflow-hidden bg-bs-offwhite pt-chapter-safe md:flex md:flex-col md:justify-center md:pt-0">
           {/* Desktop: approved stacked composition */}
-          <div className="mx-auto hidden w-full max-w-6xl px-6 md:block md:px-10 lg:pr-24">
+          <div className="hidden w-full site-container md:block lg:pr-24">
             <p className="mb-4 font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-500">
               02 · Give it form
             </p>

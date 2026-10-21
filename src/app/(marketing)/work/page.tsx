@@ -13,7 +13,7 @@ export const metadata: Metadata = pageMetadata({
 
 export default function WorkPage() {
   return (
-    <div className="mx-auto max-w-6xl px-6 py-24 md:px-10 md:py-32">
+    <div className="site-container py-24 md:py-32">
       <Reveal>
         <p className="mb-8 font-mono text-sm uppercase tracking-widest text-brand-blue">
           Work

@@ -12,7 +12,7 @@ export default function ChapterResult() {
       id="the-result"
       className="scroll-mt-chapter border-t border-black/5 bg-bs-offwhite lg:scroll-mt-0"
     >
-      <div className="mx-auto max-w-6xl px-6 py-24 md:px-10 md:py-36 lg:pr-24">
+      <div className="site-container py-24 md:py-36 lg:pr-24">
         <div className="mx-auto max-w-xl text-center">
           <p className="mb-5 font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-500">
             The result
