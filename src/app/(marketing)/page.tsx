@@ -20,23 +20,23 @@ export const metadata: Metadata = pageMetadata({
 export default function HomePage() {
   return (
     <div>
-      {/* Desktop hero — copy + CTA left, imagery right on lg+ */}
+      {/* Desktop hero — headline and blue box across the top, photo below */}
       <div className="hidden md:block">
         <section className="site-container flex flex-col pt-8 pb-0 md:h-[calc(100vh-var(--skapa-site-chrome-height))] md:pt-10">
-          <FadeInOnLoad className="flex min-h-0 flex-1 flex-col gap-6 md:gap-8 lg:grid lg:grid-cols-12 lg:items-stretch lg:gap-10">
-            <div className="flex flex-col gap-8 lg:col-span-5 lg:justify-between lg:gap-10">
-              <div className="max-w-3xl">
+          <FadeInOnLoad className="flex flex-1 flex-col gap-6 md:gap-8">
+            <div className="flex flex-col gap-8 md:flex-row md:items-start md:justify-between md:gap-12">
+              <div className="max-w-3xl 2xl:max-w-4xl">
                 <p className="mb-6 font-mono text-sm uppercase tracking-widest text-brand-blue">
                   Creative &amp; digital agency
                 </p>
-                <h1 className="font-serif text-3xl leading-[1.05] tracking-tight text-black sm:text-4xl md:text-5xl lg:text-6xl">
+                <h1 className="font-serif text-3xl leading-[1.05] tracking-tight text-black sm:text-4xl md:text-5xl lg:text-6xl 2xl:text-7xl">
                   Brand, digital, and social
                   <br />
                   <span className="italic text-brand-pink">all under one roof.</span>
                 </h1>
               </div>
 
-              <div className="flex w-full max-w-sm shrink-0 flex-col items-start gap-6 bg-brand-blue px-6 py-6 md:items-end md:px-7 md:py-7 lg:max-w-none">
+              <div className="flex shrink-0 flex-col items-start gap-6 bg-brand-blue px-6 py-6 md:min-w-[15rem] md:items-end md:px-7 md:py-7">
                 <SkapaWordmarkStack size="sm" className="md:text-right" />
                 <div className="md:text-right">
                   <p className="mb-4 max-w-[16.25rem] font-serif text-xl italic leading-snug text-brand-cream md:ml-auto md:text-2xl">
@@ -52,14 +52,14 @@ export default function HomePage() {
               </div>
             </div>
 
-            <div className="relative min-h-[15rem] flex-1 overflow-hidden lg:col-span-7 lg:min-h-0">
+            <div className="relative aspect-[4/3] w-full overflow-hidden md:aspect-auto md:flex-1 md:min-h-[240px]">
               <ParallaxImage offset={["start end", "end -50%"]}>
                 <Image
                   src="/images/pexels-anastasia-shuraeva-7278565.jpg"
                   alt="Two people collaborating on a laptop in a warm, plant-filled studio"
                   fill
                   className="object-cover object-[center_60%]"
-                  sizes="(min-width: 1024px) 55vw, (min-width: 768px) 100vw, 100vw"
+                  sizes="100vw"
                   priority
                 />
               </ParallaxImage>
