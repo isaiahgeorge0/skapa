@@ -180,6 +180,8 @@ function SettledComposition() {
   );
 }
 
+const MOBILE_FRAME = "aspect-[4/5]";
+
 function MobileFolding() {
   return (
     <div className="relative md:hidden">
@@ -187,24 +189,18 @@ function MobileFolding() {
         {SERVICES.map((service, index) => (
           <div
             key={service.key}
-            className={`sticky overflow-hidden border border-neutral-200 bg-white shadow-[0_8px_28px_rgba(0,0,0,0.07)] ${
-              index === 1 ? "ml-auto w-[94%]" : index === 2 ? "w-[96%]" : "w-full"
-            }`}
+            className="sticky w-full overflow-hidden border border-neutral-200 bg-white shadow-[0_8px_28px_rgba(0,0,0,0.07)]"
             style={{
-              top: "calc(var(--skapa-site-chrome-height) + 0.75rem)",
+              top: `calc(var(--skapa-site-chrome-height) + 0.75rem + (${index} * 0.625rem))`,
               zIndex: index + 1,
             }}
           >
             <ServiceBlock
               service={service}
-              frameClass={
-                index === 2
-                  ? "aspect-[5/4]"
-                  : index === 1
-                    ? "aspect-[3/4]"
-                    : "aspect-[4/5]"
+              frameClass={MOBILE_FRAME}
+              objectClass={
+                service.key === "digital" ? "object-[center_40%]" : "object-center"
               }
-              objectClass={index === 2 ? "object-[center_40%]" : "object-center"}
               compact
             />
           </div>
@@ -218,23 +214,14 @@ function MobileFolding() {
 function MobileStatic() {
   return (
     <div className="flex flex-col gap-10 md:hidden">
-      {SERVICES.map((service, index) => (
-        <div
-          key={service.key}
-          className={
-            index === 1 ? "ml-auto w-[88%]" : index === 2 ? "w-[92%]" : "w-full"
-          }
-        >
+      {SERVICES.map((service) => (
+        <div key={service.key} className="w-full">
           <ServiceBlock
             service={service}
-            frameClass={
-              index === 2
-                ? "aspect-[5/4]"
-                : index === 1
-                  ? "aspect-[3/4]"
-                  : "aspect-[4/5]"
+            frameClass={MOBILE_FRAME}
+            objectClass={
+              service.key === "digital" ? "object-[center_40%]" : "object-center"
             }
-            objectClass={index === 2 ? "object-[center_40%]" : "object-center"}
           />
         </div>
       ))}
@@ -253,26 +240,40 @@ function ServiceBlock({
   objectClass?: string;
   compact?: boolean;
 }) {
-  const caption = (
-    <div
-      className={`flex items-baseline justify-between gap-4 ${
-        compact ? "px-4 py-3.5" : "mt-3.5"
+  const explore = service.href ? (
+    <span
+      aria-hidden="true"
+      className="shrink-0 font-mono text-[10px] uppercase tracking-[0.16em] text-neutral-400 transition-colors group-hover:text-black md:text-[11px]"
+    >
+      Explore →
+    </span>
+  ) : null;
+
+  const tagline = (
+    <p
+      className={`mt-1 max-w-[36ch] font-mono text-[13px] leading-relaxed text-neutral-500 md:text-sm ${
+        compact ? "min-h-[3.25em]" : ""
       }`}
     >
+      {service.tagline}
+    </p>
+  );
+
+  const caption = compact ? (
+    <div className="px-4 py-3.5">
+      <div className="flex items-baseline justify-between gap-4">
+        <p className="font-serif text-xl text-black">{service.label}</p>
+        {explore}
+      </div>
+      {tagline}
+    </div>
+  ) : (
+    <div className="mt-3.5 flex items-baseline justify-between gap-4">
       <div>
         <p className="font-serif text-xl text-black md:text-[1.35rem]">{service.label}</p>
-        <p className="mt-1 max-w-[36ch] font-mono text-[13px] leading-relaxed text-neutral-500 md:text-sm">
-          {service.tagline}
-        </p>
+        {tagline}
       </div>
-      {service.href ? (
-        <span
-          aria-hidden="true"
-          className="shrink-0 font-mono text-[10px] uppercase tracking-[0.16em] text-neutral-400 transition-colors group-hover:text-black md:text-[11px]"
-        >
-          Explore →
-        </span>
-      ) : null}
+      {explore}
     </div>
   );
 
