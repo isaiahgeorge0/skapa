@@ -10,7 +10,7 @@ const FORWARD_TIMEOUT_MS = 4_000;
  *
  * Replaces `withSentryConfig({ tunnelRoute })` rewrites, which (on this app)
  * forward client query params onto the EU ingest URL and can leave the
- * Next.js proxy hanging on `socket hang up` — starving other requests
+ * Next.js proxy hanging on `socket hang up`, starving other requests
  * including contact /start server actions.
  *
  * This handler:

@@ -22,7 +22,7 @@ export function parseHttpUrl(url: string): URL | null {
 
 /**
  * Trims and validates a user-typed link. Bare domains (example.com) get https://.
- * Anything that isn't http(s) — javascript:, data:, mailto: — is rejected.
+ * Anything that isn't http(s), such as javascript:, data: or mailto:, is rejected.
  */
 export function normalizeLinkUrl(
   input: string,

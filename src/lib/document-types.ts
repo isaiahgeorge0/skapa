@@ -1,4 +1,4 @@
-/** Document type helpers — stored values stay lowercase; UI uses labels. */
+/** Document type helpers. Stored values stay lowercase; UI uses labels. */
 
 export type DocumentType =
   | "proposal"
@@ -33,7 +33,7 @@ export function documentTypeLabel(type: string | null | undefined): string {
   return type.charAt(0).toUpperCase() + type.slice(1);
 }
 
-/** Default for the upload form — agreement assumes signing; everything else is share-only. */
+/** Default for the upload form. Agreement assumes signing; everything else is share-only. */
 export function defaultRequiresSignature(type: DocumentType): boolean {
   return type === "agreement";
 }

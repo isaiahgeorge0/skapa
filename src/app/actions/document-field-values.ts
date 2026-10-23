@@ -134,7 +134,7 @@ export async function saveDocumentFieldValue(
     return { success: false, error: "This field is not assigned to you." };
   }
 
-  // Service-role write after auth/ownership checks — avoids RLS surprises.
+  // Service-role write after auth/ownership checks. Avoids RLS surprises.
   const db = createAdminClient();
 
   const { data: existing } = await db

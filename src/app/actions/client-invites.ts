@@ -62,7 +62,7 @@ export async function sendClientInvite(
   });
 
   if (!emailResult.success) {
-    // The invite record still exists even if the email failed — worth
+    // The invite record still exists even if the email failed. Worth
     // surfacing this distinctly so the admin knows to resend rather than
     // assuming it went out.
     return {
@@ -87,7 +87,7 @@ export async function revokeClientInvite(inviteId: string): Promise<ActionResult
 
 export async function revokeClientAccess(profileId: string): Promise<ActionResult> {
   const supabase = await createClient();
-  // Cuts off portal access without deleting the person's account entirely —
+  // Cuts off portal access without deleting the person's account entirely.
   // unlinking client_id means RLS no longer resolves any projects for them.
   const { error } = await supabase
     .from("profiles")
@@ -145,7 +145,7 @@ export async function acceptClientInvite(
       };
     }
 
-    // Account already exists (e.g. access was revoked earlier — profile stayed,
+    // Account already exists (e.g. access was revoked earlier. Profile stayed,
     // client_id was cleared). Complete acceptance against that user instead of
     // stopping at "already registered".
     const existing = await findAuthUserByEmail(admin, inviteEmail);
@@ -241,7 +241,7 @@ export async function acceptClientInvite(
   });
 
   if (!accountReady.success) {
-    // Account is live — don't fail setup if the follow-up email misses.
+    // Account is live. Don't fail setup if the follow-up email misses.
     console.error("Account ready email failed after invite accept:", accountReady.error);
   }
 

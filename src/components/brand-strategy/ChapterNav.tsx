@@ -169,7 +169,7 @@ export default function ChapterNav() {
       </nav>
 
       {/*
-        Mobile/tablet — compact centred pill under site chrome.
+        Mobile/tablet. Compact centred pill under site chrome.
         Fixed (not full-width sticky) so it stays secondary to nav + hero.
       */}
       <div

@@ -10,6 +10,9 @@ const links = [
   { href: "/contact", label: "Contact" },
 ] as const;
 
+const linkClass =
+  "font-mono text-[11px] uppercase tracking-[0.14em] text-brand-cream transition-opacity hover:opacity-70";
+
 export default function Footer() {
   return (
     <footer className="mt-auto">
@@ -33,14 +36,26 @@ export default function Footer() {
               <ul className="flex flex-wrap gap-x-5 gap-y-2 md:justify-end">
                 {links.map((link) => (
                   <li key={link.href}>
-                    <Link
-                      href={link.href}
-                      className="font-mono text-[11px] uppercase tracking-[0.14em] text-brand-cream transition-opacity hover:opacity-70"
-                    >
+                    <Link href={link.href} className={linkClass}>
                       {link.label}
                     </Link>
                   </li>
                 ))}
+                <li>
+                  <a href="mailto:hello@skapa.uk" className={linkClass}>
+                    hello@skapa.uk
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="https://www.instagram.com/skapa.uk"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={linkClass}
+                  >
+                    Instagram
+                  </a>
+                </li>
               </ul>
             </nav>
             <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-brand-cream/70">

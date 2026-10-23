@@ -29,7 +29,7 @@ const EVENT_DOTS: Record<Event["event_type"], string> = {
   voided: "bg-neutral-500",
 };
 
-// Reusable timeline for ANY document — pass a document_id and it fetches
+// Reusable timeline for ANY document. Pass a document_id and it fetches
 // and renders that document's full event history. Intended to live inside
 // a project's Documents section (per-document, expandable), not as a
 // separate global page.

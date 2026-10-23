@@ -236,7 +236,7 @@ export async function updateDocumentField(
       return { success: false, error: "Invalid assignee role." };
     }
 
-    // Use !== undefined so an explicit null (unassigned) is preserved —
+    // Use !== undefined so an explicit null (unassigned) is preserved.
     // `??` would incorrectly fall back to the existing role.
     const assignee = normalizeAssignee(
       payload.assigned_to_role !== undefined

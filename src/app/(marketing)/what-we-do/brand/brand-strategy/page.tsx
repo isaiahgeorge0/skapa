@@ -88,7 +88,7 @@ export default function BrandStrategyPage() {
       <ChapterStrategy />
       <ChapterUseful />
       <ChapterForYou />
-      {/* Strategy in practice — insert approved case study / proof here later */}
+      {/* Strategy in practice. Insert approved case study / proof here later */}
       <ChapterStart />
     </div>
   );

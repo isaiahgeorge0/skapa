@@ -53,7 +53,7 @@ export async function sendDocumentToClient(
   if (document.requires_signature) {
     return {
       success: false,
-      error: "This document requires signatures — use Send for signing.",
+      error: "This document requires signatures. Use Send for signing.",
     };
   }
 

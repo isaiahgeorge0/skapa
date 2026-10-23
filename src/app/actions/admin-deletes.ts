@@ -308,7 +308,7 @@ export async function deleteProjects(
 
   const db = createAdminClient();
 
-  // Pre-check for documents with field values or whole-doc signatures —
+  // Pre-check for documents with field values or whole-doc signatures.
   // cascading delete would hit the field-value immutability trigger.
   const { data: docs } = await db
     .from("documents")

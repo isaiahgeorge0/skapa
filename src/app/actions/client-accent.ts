@@ -58,7 +58,7 @@ export async function updateClientAccentColor(
     return { success: false, error: error.message };
   }
 
-  // Portal layout + project pages read this value — bust any cached RSC payload.
+  // Portal layout + project pages read this value. Bust any cached RSC payload.
   revalidatePath("/portal", "layout");
   revalidatePath("/admin/clients");
   revalidatePath(`/admin/clients/${clientId}`);

@@ -41,7 +41,7 @@ export async function notifyDocumentSignedConfirmations(
     }
   }
 
-  // Whole-document signing has no signer queue — confirm the project client.
+  // Whole-document signing has no signer queue. Confirm the project client.
   if (clientIds.size === 0 && project?.client_id) {
     clientIds.add(project.client_id);
   }

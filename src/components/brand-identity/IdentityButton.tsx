@@ -8,7 +8,7 @@ type Props = {
   className?: string;
 };
 
-/** Capability-page CTA — same interaction language as Brand Strategy, local to Identity. */
+/** Capability-page CTA. Same interaction language as Brand Strategy, local to Identity. */
 export default function IdentityButton({
   href,
   children,

@@ -1,6 +1,6 @@
 import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 
-// Service-role client — bypasses RLS entirely. Only ever use this on the
+// Service-role client. Bypasses RLS entirely. Only ever use this on the
 // server, only for operations that genuinely need elevated privileges
 // (creating auth users during invite acceptance). Never import this into
 // any client component or expose SUPABASE_SERVICE_ROLE_KEY to the browser.

@@ -512,7 +512,7 @@ export async function sendDocumentForSigning(
   const { user, error: authError } = await requireAdmin();
   if (authError || !user) return { success: false, error: authError ?? "Unauthorized" };
 
-  // Service-role writes after admin auth — signer queue updates must not be blocked by RLS.
+  // Service-role writes after admin auth. Signer queue updates must not be blocked by RLS.
   const db = createAdminClient();
 
   const { data: fields, error: fieldsError } = await db
@@ -539,7 +539,7 @@ export async function sendDocumentForSigning(
   if (!document.requires_signature) {
     return {
       success: false,
-      error: "This document doesn't require signatures — use Send to client.",
+      error: "This document doesn't require signatures. Use Send to client.",
     };
   }
 
@@ -558,7 +558,7 @@ export async function sendDocumentForSigning(
   }
 
   // Whole-document signing: DOCX, or PDF sent without field placement.
-  // No document_signers queue — client signs via DocumentPreview / signDocument.
+  // No document_signers queue. Client signs via DocumentPreview / signDocument.
   if (fieldList.length === 0) {
     const { error: updateError } = await db
       .from("documents")
@@ -776,7 +776,7 @@ export async function voidDocument(
   if (document.status === "draft") {
     return {
       success: false,
-      error: "Draft documents don't need voiding — delete or leave them unused.",
+      error: "Draft documents don't need voiding. Delete them, or leave them unused.",
     };
   }
 
@@ -801,7 +801,7 @@ export async function voidDocument(
       event_type: "voided",
       actor_id: user.id,
       actor_role: "admin",
-      detail: "Document voided — signing cancelled. Completed signatures retained.",
+      detail: "Document voided. Signing cancelled. Completed signatures retained.",
     })
     .select("id")
     .single();
@@ -873,7 +873,7 @@ export async function advanceSigningQueue(
     .select("id, status, signed_at")
     .maybeSingle();
 
-  // Service-role write — user-scoped updates silently no-op under client RLS,
+  // Service-role write. User-scoped updates silently no-op under client RLS,
   // which left the signer as 'sent' and re-notified the same person as "next".
   if (completeError || !completedRow) {
     console.error("Failed to mark signer complete with IP/UA:", completeError);
@@ -906,7 +906,7 @@ export async function advanceSigningQueue(
       }
     }
 
-    // Do not write signer_ip / signer_user_agent onto documents —
+    // Do not write signer_ip / signer_user_agent onto documents.
     // each signer's IP/UA lives on their document_signers row.
     await admin
       .from("documents")

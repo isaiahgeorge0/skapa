@@ -9,7 +9,7 @@ import { getClientAccentColor, portalAccentStyle } from "@/lib/portal-accent";
 
 export const metadata: Metadata = noindexNofollow;
 
-/** Always read a fresh accent_color — never serve a stale portal shell. */
+/** Always read a fresh accent_color. Never serve a stale portal shell. */
 export const dynamic = "force-dynamic";
 
 export default async function PortalLayout({

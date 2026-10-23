@@ -25,7 +25,7 @@ type MessageLike = {
 
 /**
  * Build actionable admin overview alerts for a single project.
- * Only surfaces signals that warrant attention — empty when quiet.
+ * Only surfaces signals that warrant attention. Empty when quiet.
  */
 export function buildAdminProjectAlerts({
   projectId,
@@ -49,7 +49,7 @@ export function buildAdminProjectAlerts({
   if (awaitingReply.length === 1) {
     alerts.push({
       id: "request-awaiting",
-      text: `1 request awaiting reply — “${awaitingReply[0].title}”`,
+      text: `1 request awaiting reply · “${awaitingReply[0].title}”`,
       href: `${base}/requests`,
     });
   } else if (awaitingReply.length > 1) {
@@ -76,7 +76,7 @@ export function buildAdminProjectAlerts({
   if (lastMessage?.sender_role === "client") {
     alerts.push({
       id: "client-message",
-      text: "Client messaged — awaiting your reply",
+      text: "Client messaged. Awaiting your reply",
       href: `${base}/messages`,
     });
   }

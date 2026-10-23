@@ -72,7 +72,7 @@ function looksLikeBot(honeypot: string | undefined, startedAt: number | undefine
 async function sendLeadThankYouAfterInsert(email: string, name: string) {
   const result = await sendLeadThankYouEmail({ to: email, leadName: name });
   if (!result.success) {
-    // Lead is already stored — don't fail the submission if the email misses.
+    // Lead is already stored. Don't fail the submission if the email misses.
     console.error("Lead thank-you email failed:", result.error);
   }
 }

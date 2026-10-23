@@ -22,7 +22,7 @@ async function postLead(body: unknown): Promise<SubmitLeadResult> {
 export default function ContactForm({
   startedAt,
 }: {
-  /** Server-clock Date.now() from the page render — never generated in the browser. */
+  /** Server-clock Date.now() from the page render. Never generated in the browser. */
   startedAt: number
 }) {
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle')
@@ -75,7 +75,7 @@ export default function ContactForm({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4 max-w-md">
-      {/* Honeypot — hidden from real visitors and screen readers, but a
+      {/* Honeypot. Hidden from real visitors and screen readers, but a
           bot filling in every field will fill this too, and real users
           never can. Not display:none, since some bots skip those. */}
       <div

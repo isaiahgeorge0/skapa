@@ -208,7 +208,7 @@ export async function buildCertificatePdf(input: CertificateInput): Promise<Uint
 
 /**
  * Generate and store the Certificate of Completion once.
- * Safe to call multiple times — existing object is left alone.
+ * Safe to call multiple times. Existing object is left alone.
  */
 export async function generateAndStoreCertificate(
   documentId: string,
@@ -293,7 +293,7 @@ export async function generateAndStoreCertificate(
           name: "Isaiah / Skapa (Supplier)",
           roleLabel: "Supplier",
           email: "hello@skapa.uk",
-          // Always from this signer's own row — never documents.signer_ip.
+          // Always from this signer's own row, never documents.signer_ip.
           ip: signerIp || "–",
           userAgent: signerUa || "–",
           signedAt: signer.signed_at as string | null,
