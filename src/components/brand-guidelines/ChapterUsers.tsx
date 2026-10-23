@@ -20,7 +20,7 @@ export default function ChapterUsers() {
           <p className="mb-5 font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-500">
             06 · Who uses them
           </p>
-          <h2 className="font-serif text-3xl leading-snug tracking-tight text-black md:text-5xl">
+          <h2 className="font-display font-medium text-3xl leading-snug tracking-tight text-black md:text-5xl">
             Made for everyone who touches the brand.
           </h2>
           <p className="mt-5 max-w-xl font-mono text-sm leading-relaxed text-neutral-600 md:text-base">
@@ -35,7 +35,7 @@ export default function ChapterUsers() {
               key={user}
               className="mb-0 flex items-baseline justify-between gap-6 border-t border-black/10 py-4"
             >
-              <span className="font-serif text-2xl tracking-tight text-black md:text-3xl">
+              <span className="font-display font-medium text-2xl tracking-tight text-black md:text-3xl">
                 {user}
               </span>
               <span className="font-mono text-[10px] tracking-[0.14em] text-neutral-400">

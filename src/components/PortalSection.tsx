@@ -36,7 +36,7 @@ export default function PortalSection({
       >
         <header className="px-4 pb-3 pt-4 sm:px-6 sm:pt-5">
           <div className="flex items-center gap-3">
-            <h2 className="text-balance font-serif text-xl tracking-tight text-black sm:text-2xl">
+            <h2 className="text-balance font-display font-medium text-xl tracking-tight text-black sm:text-2xl">
               {title}
             </h2>
             {count !== undefined ? (
@@ -70,7 +70,7 @@ export default function PortalSection({
   return (
     <section className={className}>
       <header className="mb-4">
-        <h2 className="text-balance font-serif text-2xl tracking-tight text-black md:text-[1.75rem]">
+        <h2 className="text-balance font-display font-medium text-2xl tracking-tight text-black md:text-[1.75rem]">
           {title}
         </h2>
         <span aria-hidden="true" className="mt-2.5 block h-[2px] w-8 bg-portal-accent" />

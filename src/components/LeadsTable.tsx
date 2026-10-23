@@ -267,7 +267,7 @@ export default function LeadsTable({ initialLeads }: { initialLeads: Lead[] }) {
           <p className="mb-2 font-mono text-xs uppercase tracking-widest text-neutral-500">
             Admin
           </p>
-          <h1 className="font-serif text-4xl text-black">Leads</h1>
+          <h1 className="font-display font-medium tracking-tight text-4xl text-black">Leads</h1>
         </div>
         <button
           onClick={() => setAddOpen(true)}

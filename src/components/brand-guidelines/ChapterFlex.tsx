@@ -13,7 +13,7 @@ const APPLICATIONS = [
           </span>
         </div>
         <div className="mt-6 min-w-0">
-          <p className="font-serif text-2xl tracking-tight md:text-3xl">
+          <p className="font-display font-medium text-2xl tracking-tight md:text-3xl">
             Clear by design.
           </p>
           <div className="mt-4 h-8 w-28 max-w-full bg-bs-offwhite/20" />
@@ -39,7 +39,7 @@ const APPLICATIONS = [
     content: (
       <>
         <GuideMark className="h-6 w-6 shrink-0" color="#4b4ae4" />
-        <p className="mt-5 font-serif text-2xl tracking-tight">Quarterly</p>
+        <p className="mt-5 font-display font-medium text-2xl tracking-tight">Quarterly</p>
         <div className="mt-4 space-y-2">
           <div className="h-1.5 w-full bg-neutral-200" />
           <div className="h-1.5 w-[80%] bg-neutral-200" />
@@ -53,7 +53,7 @@ const APPLICATIONS = [
     className: "bg-bs-yellow text-black sm:col-span-2",
     content: (
       <div className="flex min-h-0 flex-1 items-end justify-between gap-3">
-        <p className="min-w-0 flex-1 font-serif text-2xl leading-tight tracking-tight md:text-3xl">
+        <p className="min-w-0 flex-1 font-display font-medium text-2xl leading-tight tracking-tight md:text-3xl">
           Same brand. New format.
         </p>
         <GuideMark className="h-9 w-9 shrink-0" color="#111111" />
@@ -67,7 +67,7 @@ const APPLICATIONS = [
       <div className="flex min-h-0 flex-1 flex-col justify-between">
         <GuideMark className="h-8 w-8 shrink-0" color="#111111" />
         <div className="min-w-0 pt-6">
-          <p className="font-serif text-xl">Letterhead</p>
+          <p className="font-display font-medium tracking-tight text-xl">Letterhead</p>
           <p className="mt-1 font-mono text-[10px] uppercase tracking-[0.14em] text-neutral-500">
             A4 · Print
           </p>
@@ -88,7 +88,7 @@ export default function ChapterFlex() {
           <p className="mb-5 font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-500">
             05 · Built to flex
           </p>
-          <h2 className="font-serif text-3xl leading-snug tracking-tight text-black md:text-5xl">
+          <h2 className="font-display font-medium text-3xl leading-snug tracking-tight text-black md:text-5xl">
             Consistency doesn&apos;t mean everything looks the same.
           </h2>
           <p className="mt-5 max-w-xl font-mono text-sm leading-relaxed text-neutral-600 md:text-base">

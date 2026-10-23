@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useState, useTransition } from "react";
+import { useState, useTransition } from "react";
 import {
   archiveProjects,
   unarchiveProjects,
@@ -16,12 +16,13 @@ export default function ProjectArchiveControl({
 }) {
   const router = useRouter();
   const [archivedAt, setArchivedAt] = useState(initialArchivedAt);
+  const [syncedArchivedAt, setSyncedArchivedAt] = useState(initialArchivedAt);
+  if (initialArchivedAt !== syncedArchivedAt) {
+    setSyncedArchivedAt(initialArchivedAt);
+    setArchivedAt(initialArchivedAt);
+  }
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
-
-  useEffect(() => {
-    setArchivedAt(initialArchivedAt);
-  }, [initialArchivedAt]);
 
   const isArchived = Boolean(archivedAt);
 
@@ -62,7 +63,7 @@ export default function ProjectArchiveControl({
       </button>
       {isArchived ? (
         <p className="font-mono text-[10px] uppercase tracking-widest text-neutral-400">
-          Archived — hidden from default list
+          Archived, hidden from default list
         </p>
       ) : null}
       {error ? (

@@ -1,7 +1,8 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 import { motion, useScroll, useTransform, type MotionValue } from "motion/react";
 import { BRAND } from "@/lib/brand";
+import { useReducedMotion } from "@/lib/use-reduced-motion";
 
 function Word({
   children,
@@ -34,17 +35,7 @@ export default function ScrollRevealText({
   accentColor?: string;
 }) {
   const containerRef = useRef<HTMLParagraphElement>(null);
-  const [reducedMotion, setReducedMotion] = useState(false);
-  const [ready, setReady] = useState(false);
-
-  useEffect(() => {
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    setReducedMotion(mq.matches);
-    setReady(true);
-    const sync = () => setReducedMotion(mq.matches);
-    mq.addEventListener("change", sync);
-    return () => mq.removeEventListener("change", sync);
-  }, []);
+  const { reducedMotion, ready } = useReducedMotion();
 
   // Progress is measured across the paragraph's own scroll-through range:
   // starts activating just below the fold, finishes as it nears center.

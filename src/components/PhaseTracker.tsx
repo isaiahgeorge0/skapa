@@ -218,7 +218,7 @@ export default function PhaseTracker({
           <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-neutral-400">
             Now
           </p>
-          <p className="mt-1 font-serif text-lg text-black">{current.label}</p>
+          <p className="mt-1 font-display font-medium text-lg text-black">{current.label}</p>
           <p className="mt-1 max-w-prose text-sm text-neutral-500">
             {current.description}
           </p>

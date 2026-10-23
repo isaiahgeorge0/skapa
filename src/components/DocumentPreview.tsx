@@ -87,7 +87,7 @@ function DocxPreview({ arrayBuffer }: { arrayBuffer: ArrayBuffer }) {
 
   return (
     <div
-      className="document-preview-page font-serif text-base leading-relaxed text-black [&_h1]:mb-4 [&_h1]:text-2xl [&_h1]:font-normal [&_h2]:mb-3 [&_h2]:text-xl [&_h2]:font-normal [&_li]:mb-1 [&_ol]:mb-4 [&_ol]:list-decimal [&_ol]:pl-6 [&_p]:mb-3 [&_table]:mb-4 [&_table]:w-full [&_table]:border-collapse [&_td]:border [&_td]:border-neutral-200 [&_td]:p-2 [&_th]:border [&_th]:border-neutral-200 [&_th]:bg-neutral-50 [&_th]:p-2 [&_th]:text-left [&_ul]:mb-4 [&_ul]:list-disc [&_ul]:pl-6"
+      className="document-preview-page font-display text-base leading-relaxed text-black [&_h1]:mb-4 [&_h1]:text-2xl [&_h1]:font-normal [&_h2]:mb-3 [&_h2]:text-xl [&_h2]:font-normal [&_li]:mb-1 [&_ol]:mb-4 [&_ol]:list-decimal [&_ol]:pl-6 [&_p]:mb-3 [&_table]:mb-4 [&_table]:w-full [&_table]:border-collapse [&_td]:border [&_td]:border-neutral-200 [&_td]:p-2 [&_th]:border [&_th]:border-neutral-200 [&_th]:bg-neutral-50 [&_th]:p-2 [&_th]:text-left [&_ul]:mb-4 [&_ul]:list-disc [&_ul]:pl-6"
       dangerouslySetInnerHTML={{ __html: html }}
     />
   );
@@ -311,7 +311,7 @@ export default function DocumentPreview({
             Document preview
           </p>
           {doc.type && (
-            <p className="font-serif text-lg text-black">
+            <p className="font-display font-medium text-lg text-black">
               {documentTypeLabel(doc.type)}
             </p>
           )}
@@ -354,7 +354,7 @@ export default function DocumentPreview({
               </div>
 
               <section className="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm md:p-8">
-                <h2 className="mb-6 font-serif text-2xl text-black">Sign this document</h2>
+                <h2 className="mb-6 font-display font-medium tracking-tight text-2xl text-black">Sign this document</h2>
 
                 <label className="mb-6 flex items-start gap-3 text-sm text-neutral-700">
                   <input

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { login } from "./actions";
 import { noindexNofollow } from "@/lib/seo";
+import { SkapaSignature } from "@/components/brand/Logo";
 
 export const metadata: Metadata = {
   title: "Sign in",
@@ -17,8 +18,8 @@ export default async function LoginPage({
   return (
     <div className="min-h-screen flex items-center justify-center bg-white">
       <div className="w-full max-w-sm">
-        <h1 className="text-3xl font-serif mb-1">
-          skapa <span className="italic text-brand-pink">Creative</span>
+        <h1 className="mb-1">
+          <SkapaSignature tone="ink" className="h-7" />
         </h1>
         <p className="text-sm text-neutral-500 mb-8">Sign in to your project</p>
 

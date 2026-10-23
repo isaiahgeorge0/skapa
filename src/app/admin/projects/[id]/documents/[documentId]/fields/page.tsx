@@ -44,7 +44,7 @@ export default async function DocumentFieldsPage({
   if (document.file_mime_type !== "application/pdf") {
     return (
       <div className="rounded-lg border border-neutral-200 bg-neutral-50 p-6">
-        <h2 className="mb-2 font-serif text-2xl text-black">PDF required for field placement</h2>
+        <h2 className="mb-2 font-display font-medium tracking-tight text-2xl text-black">PDF required for field placement</h2>
         <p className="mb-4 font-mono text-sm leading-relaxed text-neutral-600">
           Signature, date, and text fields can only be placed on PDF documents with a fixed page
           layout. This file was detected as{" "}
@@ -140,7 +140,7 @@ export default async function DocumentFieldsPage({
           >
             ← Documents
           </Link>
-          <h2 className="font-serif text-3xl text-black">
+          <h2 className="font-display font-medium tracking-tight text-3xl text-black">
             {documentTypeLabel(document.type)}
           </h2>
           <p className="mt-2 font-mono text-xs text-neutral-500">

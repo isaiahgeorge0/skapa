@@ -27,7 +27,7 @@ export default function PortalPageHeader({
             </p>
           ) : null}
           <h2
-            className={`text-balance break-words font-serif text-3xl leading-[1.05] tracking-tight text-black sm:text-4xl ${
+            className={`text-balance break-words font-display font-medium text-3xl leading-[1.05] tracking-tight text-black sm:text-4xl ${
               eyebrow ? "mt-2" : ""
             }`}
           >
@@ -35,7 +35,7 @@ export default function PortalPageHeader({
           </h2>
           <span aria-hidden="true" className="mt-4 block h-[3px] w-10 rounded-full bg-portal-accent" />
           {intro ? (
-            <div className="mt-4 max-w-prose text-pretty font-serif text-lg leading-snug text-neutral-600">
+            <div className="mt-4 max-w-prose text-pretty font-display font-medium text-lg leading-snug text-neutral-600">
               {intro}
             </div>
           ) : null}

@@ -63,7 +63,7 @@ function SystemVisual({ id }: { id: (typeof SYSTEM)[number]["id"] }) {
           Hierarchy
         </p>
         <div>
-          <p className="font-serif text-4xl tracking-tight text-black md:text-5xl">
+          <p className="font-display font-medium text-4xl tracking-tight text-black md:text-5xl">
             Display
           </p>
           <p className="mt-3 font-mono text-sm text-neutral-600">
@@ -225,7 +225,7 @@ function SystemInfo({
           {String(active + 1).padStart(2, "0")} / {SYSTEM.length}
         </p>
         <h2
-          className={`mt-2 font-serif leading-snug tracking-tight text-black ${
+          className={`mt-2 font-display font-medium leading-snug tracking-tight text-black ${
             compact ? "text-[1.75rem]" : "mt-3 text-4xl lg:text-5xl"
           }`}
         >
@@ -280,7 +280,7 @@ export default function ChapterSystem() {
           <p className="mb-5 font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-500">
             05 · Make it a system
           </p>
-          <h2 className="max-w-3xl font-serif text-3xl leading-snug tracking-tight text-black md:text-5xl">
+          <h2 className="max-w-3xl font-display font-medium text-3xl leading-snug tracking-tight text-black md:text-5xl">
             Individual ingredients become powerful when they belong together.
           </h2>
           <p className="mt-6 max-w-2xl font-mono text-sm leading-relaxed text-neutral-600 md:text-base">
@@ -292,7 +292,7 @@ export default function ChapterSystem() {
             {SYSTEM.map((item) => (
               <article key={item.id} className="grid gap-6 md:grid-cols-2 md:gap-10">
                 <div>
-                  <h3 className="font-serif text-2xl text-black md:text-3xl">
+                  <h3 className="font-display font-medium tracking-tight text-2xl text-black md:text-3xl">
                     {item.title}
                   </h3>
                   <p className="mt-3 font-mono text-sm leading-relaxed text-neutral-600">

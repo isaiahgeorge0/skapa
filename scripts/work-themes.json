@@ -1,0 +1,30 @@
+{
+  "yard-kitchen": {
+    "bg": "#0d1014",
+    "fg": "#f1eadf",
+    "accent": "#f0582f",
+    "displayFont": "\"Big Shoulders\"",
+    "bodyFont": "\"Instrument Sans\", \"Instrument Sans Fallback\""
+  },
+  "flowers-kitchen": {
+    "bg": "#f3eadb",
+    "fg": "#2b1b16",
+    "accent": "#8f1d2c",
+    "displayFont": "Fraunces, \"Fraunces Fallback\"",
+    "bodyFont": "\"DM Sans\", \"DM Sans Fallback\""
+  },
+  "wisk": {
+    "bg": "#141b27",
+    "fg": "#fefffe",
+    "accent": "#c3ff32",
+    "displayFont": "ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+    "bodyFont": "ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\""
+  },
+  "blue-peak": {
+    "bg": "#fefefe",
+    "fg": "#0e2240",
+    "accent": "#1800ad",
+    "displayFont": "\"Times New Roman\", Times, Tinos, \"Tinos Fallback\", serif",
+    "bodyFont": "\"Nunito Sans\", \"Nunito Sans Fallback\", ui-sans-serif, system-ui, sans-serif"
+  }
+}

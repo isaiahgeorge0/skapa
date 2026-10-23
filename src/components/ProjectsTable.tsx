@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import Modal from "@/components/Modal";
 import { deleteProjects } from "@/app/actions/admin-deletes";
 import {
@@ -39,6 +39,11 @@ export default function ProjectsTable({
   initialProjects: ProjectsTableRow[];
 }) {
   const [projects, setProjects] = useState(initialProjects);
+  const [syncedProjects, setSyncedProjects] = useState(initialProjects);
+  if (initialProjects !== syncedProjects) {
+    setSyncedProjects(initialProjects);
+    setProjects(initialProjects);
+  }
   const [showArchived, setShowArchived] = useState(false);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [archiveError, setArchiveError] = useState<string | null>(null);
@@ -48,10 +53,6 @@ export default function ProjectsTable({
   const [deleteTargetIds, setDeleteTargetIds] = useState<string[]>([]);
   const [deleting, setDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
-
-  useEffect(() => {
-    setProjects(initialProjects);
-  }, [initialProjects]);
 
   const visibleProjects = useMemo(
     () =>

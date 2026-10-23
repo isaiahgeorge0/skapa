@@ -12,7 +12,7 @@ export default function ChapterExisting() {
           <p className="mb-5 font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-500">
             08 · Existing brand
           </p>
-          <h2 className="font-serif text-3xl leading-snug tracking-tight text-black md:text-5xl">
+          <h2 className="font-display font-medium text-3xl leading-snug tracking-tight text-black md:text-5xl">
             Already have the identity?
           </h2>
           <p className="mt-5 max-w-xl font-mono text-sm leading-relaxed text-neutral-600 md:text-base">
@@ -27,7 +27,7 @@ export default function ChapterExisting() {
             <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-bs-purple">
               Brand identity
             </p>
-            <h3 className="mt-4 font-serif text-2xl tracking-tight text-black md:text-3xl">
+            <h3 className="mt-4 font-display font-medium text-2xl tracking-tight text-black md:text-3xl">
               The identity needs work
             </h3>
             <p className="mt-4 font-mono text-sm leading-relaxed text-neutral-600 md:text-base">
@@ -45,7 +45,7 @@ export default function ChapterExisting() {
             <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-bs-yellow">
               Rebranding
             </p>
-            <h3 className="mt-4 font-serif text-2xl tracking-tight md:text-3xl">
+            <h3 className="mt-4 font-display font-medium text-2xl tracking-tight md:text-3xl">
               The brand no longer fits
             </h3>
             <p className="mt-4 font-mono text-sm leading-relaxed text-bs-offwhite/80 md:text-base">

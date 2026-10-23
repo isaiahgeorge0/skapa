@@ -32,7 +32,7 @@ export default async function AdminClientDetailPage({
         <p className="mb-2 font-mono text-xs uppercase tracking-widest text-neutral-500">
           Client
         </p>
-        <h1 className="mb-8 font-serif text-4xl text-black">{client.name}</h1>
+        <h1 className="mb-8 font-display font-medium tracking-tight text-4xl text-black">{client.name}</h1>
 
         <EditableClientDetails
           clientId={client.id}
@@ -61,7 +61,7 @@ export default async function AdminClientDetailPage({
 
         <div className="mt-10 border-t border-neutral-200 pt-8">
           <div className="mb-6 flex items-baseline justify-between gap-4">
-            <h2 className="font-serif text-2xl text-black">Projects</h2>
+            <h2 className="font-display font-medium tracking-tight text-2xl text-black">Projects</h2>
             <Link
               href={`/admin/projects/new?client=${client.id}`}
               className="font-mono text-[11px] uppercase tracking-[0.08em] text-neutral-700 underline underline-offset-2 hover:text-black"
@@ -82,7 +82,7 @@ export default async function AdminClientDetailPage({
                     href={`/admin/projects/${project.id}`}
                     className="flex items-baseline justify-between gap-4 py-4 transition-colors hover:bg-neutral-50"
                   >
-                    <span className="font-serif text-lg text-black">
+                    <span className="font-display font-medium text-lg text-black">
                       {project.name}
                     </span>
                     <span className="shrink-0 font-mono text-[11px] uppercase tracking-[0.08em] text-neutral-500">

@@ -77,7 +77,7 @@ export default function ChapterPersonality() {
           <p className="mb-5 font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-500">
             04 · Give it personality
           </p>
-          <h2 className="max-w-3xl font-serif text-3xl leading-snug tracking-tight text-black md:text-5xl">
+          <h2 className="max-w-3xl font-display font-medium text-3xl leading-snug tracking-tight text-black md:text-5xl">
             Colour isn&apos;t decoration. It changes how a brand feels.
           </h2>
           <p className="mt-6 max-w-2xl font-mono text-sm leading-relaxed text-neutral-600 md:text-base">
@@ -154,7 +154,7 @@ export default function ChapterPersonality() {
               </motion.p>
               <motion.h2
                 style={{ color: headColor }}
-                className="font-serif text-[1.85rem] leading-snug tracking-tight md:text-5xl"
+                className="font-display font-medium text-[1.85rem] leading-snug tracking-tight md:text-5xl"
               >
                 Then colour arrives, and the system starts feeling like
                 something.
@@ -175,7 +175,7 @@ export default function ChapterPersonality() {
               >
                 That early note · #4b4ae4 · kept
               </motion.p>
-              <p className="font-serif text-[1.45rem] leading-snug text-bs-offwhite md:text-3xl">
+              <p className="font-display font-medium tracking-tight text-[1.45rem] leading-snug text-bs-offwhite md:text-3xl">
                 Colour isn&apos;t decoration. It changes how a brand feels.
               </p>
               <p className="mt-3 font-mono text-[13px] leading-relaxed text-bs-offwhite/85 md:mt-4 md:text-sm">

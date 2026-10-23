@@ -47,7 +47,7 @@ export default function ChapterWhatChanges() {
             <p className="mb-5 font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-500">
               08 · What changes
             </p>
-            <h2 className="max-w-lg font-serif text-3xl leading-snug tracking-tight text-black md:text-5xl">
+            <h2 className="max-w-lg font-display font-medium text-3xl leading-snug tracking-tight text-black md:text-5xl">
               Not every rebrand needs every part.
             </h2>
             <p className="mt-5 max-w-md font-mono text-sm leading-relaxed text-neutral-600 md:text-base">
@@ -91,7 +91,7 @@ export default function ChapterWhatChanges() {
                     <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-neutral-400">
                       {String(index + 1).padStart(2, "0")}
                     </p>
-                    <h3 className="mt-5 font-serif text-[1.6rem] leading-[0.95] tracking-tight text-black xl:text-[1.3rem] 2xl:text-[1.5rem]">
+                    <h3 className="mt-5 font-display font-medium text-[1.6rem] leading-[0.95] tracking-tight text-black xl:text-[1.3rem] 2xl:text-[1.5rem]">
                       {item.label}
                     </h3>
                     <p className="mt-3 font-mono text-[13px] leading-relaxed text-neutral-600 xl:text-[12px] 2xl:text-[13px]">

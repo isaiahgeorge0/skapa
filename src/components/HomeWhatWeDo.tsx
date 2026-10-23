@@ -3,7 +3,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { motion, useScroll, useTransform } from "motion/react";
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
+import { useReducedMotion } from "@/lib/use-reduced-motion";
 
 const SERVICES = [
   {
@@ -47,17 +48,7 @@ const SERVICES = [
 type Service = (typeof SERVICES)[number];
 
 export default function HomeWhatWeDo() {
-  const [reducedMotion, setReducedMotion] = useState(false);
-  const [ready, setReady] = useState(false);
-
-  useEffect(() => {
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const sync = () => setReducedMotion(mq.matches);
-    sync();
-    setReady(true);
-    mq.addEventListener("change", sync);
-    return () => mq.removeEventListener("change", sync);
-  }, []);
+  const { reducedMotion, ready } = useReducedMotion();
 
   if (!ready) {
     return (
@@ -120,7 +111,7 @@ function DesktopConverge() {
   return (
     <div ref={trackRef} className="relative hidden h-[175vh] overflow-x-clip md:block">
       <div className="sticky top-0 flex h-[100svh] w-full items-center">
-        <div className="grid w-full grid-cols-12 items-start gap-x-8 gap-y-4 lg:gap-x-10">
+        <div className="grid w-full grid-cols-12 items-start gap-x-8 gap-y-8 lg:gap-x-10 lg:gap-y-10">
           <motion.div
             className="col-span-7"
             style={{ x: brandX, y: brandY, opacity: brandO }}
@@ -128,13 +119,13 @@ function DesktopConverge() {
             <ServiceBlock service={brand} frameClass="h-[34vh] max-h-[18.5rem] 2xl:max-h-[22rem]" />
           </motion.div>
           <motion.div
-            className="col-span-5 pt-10 lg:pt-12"
+            className="col-span-5 pt-8 lg:pt-10"
             style={{ x: creativeX, y: creativeY, opacity: creativeO }}
           >
             <ServiceBlock service={creative} frameClass="h-[28vh] max-h-[15.5rem] 2xl:max-h-[19rem]" />
           </motion.div>
           <motion.div
-            className="col-span-5 mt-2"
+            className="col-span-5"
             style={{ x: digitalX, y: digitalY, opacity: digitalO }}
           >
             <ServiceBlock
@@ -144,7 +135,7 @@ function DesktopConverge() {
             />
           </motion.div>
           <motion.div
-            className="col-span-6 col-start-7 -mt-5 lg:-mt-6"
+            className="col-span-6 col-start-7"
             style={{ x: socialX, y: socialY, opacity: socialO }}
           >
             <ServiceBlock service={social} frameClass="h-[30vh] max-h-[16.5rem] 2xl:max-h-[20rem]" />
@@ -159,21 +150,21 @@ function SettledComposition() {
   const [brand, creative, digital, social] = SERVICES;
 
   return (
-    <div className="grid w-full grid-cols-12 items-start gap-x-8 gap-y-4 lg:gap-x-10">
+    <div className="grid w-full grid-cols-12 items-start gap-x-8 gap-y-8 lg:gap-x-10 lg:gap-y-10">
       <div className="col-span-7">
         <ServiceBlock service={brand} frameClass="h-[34vh] max-h-[18.5rem] 2xl:max-h-[22rem]" />
       </div>
-      <div className="col-span-5 pt-10 lg:pt-12">
+      <div className="col-span-5 pt-8 lg:pt-10">
         <ServiceBlock service={creative} frameClass="h-[28vh] max-h-[15.5rem] 2xl:max-h-[19rem]" />
       </div>
-      <div className="col-span-5 mt-2">
+      <div className="col-span-5">
         <ServiceBlock
           service={digital}
           frameClass="h-[24vh] max-h-[13.5rem] 2xl:max-h-[17rem]"
           objectClass="object-[center_40%]"
         />
       </div>
-      <div className="col-span-6 col-start-7 -mt-5 lg:-mt-6">
+      <div className="col-span-6 col-start-7">
         <ServiceBlock service={social} frameClass="h-[30vh] max-h-[16.5rem] 2xl:max-h-[20rem]" />
       </div>
     </div>
@@ -262,7 +253,7 @@ function ServiceBlock({
   const caption = compact ? (
     <div className="px-4 py-3.5">
       <div className="flex items-baseline justify-between gap-4">
-        <p className="font-serif text-xl text-black">{service.label}</p>
+        <p className="font-display font-medium tracking-tight text-xl text-black">{service.label}</p>
         {explore}
       </div>
       {tagline}
@@ -270,7 +261,7 @@ function ServiceBlock({
   ) : (
     <div className="mt-3.5 flex items-baseline justify-between gap-4">
       <div>
-        <p className="font-serif text-xl text-black md:text-[1.35rem]">{service.label}</p>
+        <p className="font-display font-medium tracking-tight text-xl text-black md:text-[1.35rem]">{service.label}</p>
         {tagline}
       </div>
       {explore}

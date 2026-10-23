@@ -72,7 +72,7 @@ function Stage({
   );
 }
 
-function phaseOpacity(
+function usePhaseOpacity(
   progress: MotionValue<number>,
   enter: number,
   holdStart: number,
@@ -103,7 +103,7 @@ function PhaseCopy({
         <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-bs-purple">
           {label}
         </p>
-        <h3 className="mt-4 font-serif leading-[1.02] tracking-tight text-black max-md:text-[1.7rem] md:text-5xl">
+        <h3 className="mt-4 font-display font-medium leading-[1.02] tracking-tight text-black max-md:text-[1.7rem] md:text-5xl">
           {title}
         </h3>
         <p className="mt-4 font-mono text-sm leading-relaxed text-neutral-600 md:mt-6">
@@ -183,7 +183,7 @@ function DesktopSpecimen({
         <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-neutral-500">
           Specimen System A
         </p>
-        <p className="mt-4 font-serif text-[clamp(2rem,4vw,4.5rem)] leading-[0.95] tracking-tight text-black">
+        <p className="mt-4 font-display font-medium text-[clamp(2rem,4vw,4.5rem)] leading-[0.95] tracking-tight text-black">
           Catches up
         </p>
         <p className="mt-3 font-mono text-sm leading-relaxed text-neutral-600">
@@ -198,7 +198,7 @@ function DesktopSpecimen({
         <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-neutral-500">
           Voice
         </p>
-        <p className="mt-3 font-serif text-2xl leading-snug tracking-tight text-black">
+        <p className="mt-3 font-display font-medium text-2xl leading-snug tracking-tight text-black">
           Clear enough to lead. Warm enough to stay human.
         </p>
       </motion.div>
@@ -299,7 +299,7 @@ function MobileSpecimen({
         <p className="font-mono text-[9px] uppercase tracking-[0.16em] text-neutral-500">
           Specimen A
         </p>
-        <p className="mt-2 font-serif text-[1.7rem] leading-[0.95] tracking-tight text-black">
+        <p className="mt-2 font-display font-medium text-[1.7rem] leading-[0.95] tracking-tight text-black">
           Catches up
         </p>
       </motion.div>
@@ -312,7 +312,7 @@ function MobileSpecimen({
         <p className="font-mono text-[9px] uppercase tracking-[0.14em] text-neutral-500">
           Voice
         </p>
-        <p className="mt-2 font-serif text-[1.1rem] leading-snug tracking-tight text-black">
+        <p className="mt-2 font-display font-medium text-[1.1rem] leading-snug tracking-tight text-black">
           Clear enough to lead.
         </p>
       </motion.div>
@@ -375,7 +375,7 @@ function StaticSpecimen() {
           <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-neutral-500">
             Specimen System A
           </p>
-          <h3 className="mt-4 font-serif text-3xl leading-none tracking-tight text-black md:text-5xl">
+          <h3 className="mt-4 font-display font-medium text-3xl leading-none tracking-tight text-black md:text-5xl">
             Then the brand catches up.
           </h3>
           <p className="mt-4 max-w-xl font-mono text-sm leading-relaxed text-neutral-600">
@@ -412,12 +412,12 @@ export default function ChapterTransform() {
   const introY = useTransform(scrollYProgress, [0.2, 0.3], [0, -24]);
 
   const desktopPhaseOpacities = [
-    phaseOpacity(scrollYProgress, 0.14, 0.2, 0.27, 0.33),
-    phaseOpacity(scrollYProgress, 0.27, 0.33, 0.4, 0.46),
-    phaseOpacity(scrollYProgress, 0.4, 0.46, 0.53, 0.59),
-    phaseOpacity(scrollYProgress, 0.53, 0.59, 0.66, 0.72),
-    phaseOpacity(scrollYProgress, 0.66, 0.72, 0.79, 0.85),
-    phaseOpacity(scrollYProgress, 0.79, 0.85, 0.95, 1),
+    usePhaseOpacity(scrollYProgress, 0.14, 0.2, 0.27, 0.33),
+    usePhaseOpacity(scrollYProgress, 0.27, 0.33, 0.4, 0.46),
+    usePhaseOpacity(scrollYProgress, 0.4, 0.46, 0.53, 0.59),
+    usePhaseOpacity(scrollYProgress, 0.53, 0.59, 0.66, 0.72),
+    usePhaseOpacity(scrollYProgress, 0.66, 0.72, 0.79, 0.85),
+    usePhaseOpacity(scrollYProgress, 0.79, 0.85, 0.95, 1),
   ];
 
   const resolveOpacity = useTransform(scrollYProgress, [0.82, 0.9, 1], [0, 1, 1]);
@@ -441,12 +441,12 @@ export default function ChapterTransform() {
 
   // Mobile: phase copy (each phase gets its own moment below the specimen)
   const mobileCopyOpacities = [
-    phaseOpacity(scrollYProgress, 0.18, 0.24, 0.32, 0.37),
-    phaseOpacity(scrollYProgress, 0.33, 0.38, 0.46, 0.51),
-    phaseOpacity(scrollYProgress, 0.47, 0.52, 0.58, 0.63),
-    phaseOpacity(scrollYProgress, 0.59, 0.64, 0.7, 0.75),
-    phaseOpacity(scrollYProgress, 0.71, 0.76, 0.82, 0.87),
-    phaseOpacity(scrollYProgress, 0.83, 0.88, 0.96, 1),
+    usePhaseOpacity(scrollYProgress, 0.18, 0.24, 0.32, 0.37),
+    usePhaseOpacity(scrollYProgress, 0.33, 0.38, 0.46, 0.51),
+    usePhaseOpacity(scrollYProgress, 0.47, 0.52, 0.58, 0.63),
+    usePhaseOpacity(scrollYProgress, 0.59, 0.64, 0.7, 0.75),
+    usePhaseOpacity(scrollYProgress, 0.71, 0.76, 0.82, 0.87),
+    usePhaseOpacity(scrollYProgress, 0.83, 0.88, 0.96, 1),
   ];
 
   if (reducedMotion) {
@@ -459,7 +459,7 @@ export default function ChapterTransform() {
           <p className="mb-5 font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-500">
             05 · Transform
           </p>
-          <h2 className="max-w-3xl font-serif text-3xl leading-snug tracking-tight text-black md:text-5xl">
+          <h2 className="max-w-3xl font-display font-medium text-3xl leading-snug tracking-tight text-black md:text-5xl">
             Then the brand catches up.
           </h2>
           <p className="mt-6 max-w-2xl font-mono text-sm leading-relaxed text-neutral-600 md:text-base">
@@ -491,7 +491,7 @@ export default function ChapterTransform() {
                 <p className="mb-5 font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-500">
                   05 · Transform
                 </p>
-                <h2 className="font-serif text-6xl leading-[1.02] tracking-tight text-black">
+                <h2 className="font-display font-medium text-6xl leading-[1.02] tracking-tight text-black">
                   Then the brand catches up.
                 </h2>
               </motion.div>
@@ -519,7 +519,7 @@ export default function ChapterTransform() {
                     <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-bs-pink">
                       Resolved
                     </p>
-                    <p className="mt-4 font-serif text-4xl leading-snug tracking-tight text-black">
+                    <p className="mt-4 font-display font-medium text-4xl leading-snug tracking-tight text-black">
                       Position, type, colour, voice, image and system finally
                       read as one brand.
                     </p>
@@ -540,7 +540,7 @@ export default function ChapterTransform() {
                 <p className="mb-4 font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-500">
                   05 · Transform
                 </p>
-                <h2 className="font-serif text-[2.1rem] leading-[1.05] tracking-tight text-black">
+                <h2 className="font-display font-medium text-[2.1rem] leading-[1.05] tracking-tight text-black">
                   Then the brand catches up.
                 </h2>
               </motion.div>

@@ -34,7 +34,7 @@ const STUDIES: Study[] = [
     label: "02",
     approach: "Typographic",
     render: () => (
-      <div className="flex h-full items-center justify-center font-serif text-4xl tracking-tight md:text-5xl">
+      <div className="flex h-full items-center justify-center font-display font-medium text-4xl tracking-tight md:text-5xl">
         Aa
       </div>
     ),
@@ -174,7 +174,7 @@ export default function ChapterPossibilities() {
           <p className="mb-5 font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-500">
             02 · Before there&apos;s a logo
           </p>
-          <h2 className="font-serif text-3xl leading-snug tracking-tight text-black md:text-5xl">
+          <h2 className="font-display font-medium text-3xl leading-snug tracking-tight text-black md:text-5xl">
             First, there are possibilities.
           </h2>
           <p className="mt-5 max-w-xl font-mono text-sm leading-relaxed text-neutral-600 md:text-base">

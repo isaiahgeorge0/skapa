@@ -55,7 +55,7 @@ export default function PortalLatest({ groups }: { groups: PortalLatestGroup[] }
                     href={item.href}
                     className="group flex min-h-11 flex-col justify-center py-2.5"
                   >
-                    <span className="line-clamp-2 break-words font-serif text-base leading-snug text-black group-hover:underline group-hover:decoration-dotted group-hover:underline-offset-4">
+                    <span className="line-clamp-2 break-words font-display font-medium text-base leading-snug text-black group-hover:underline group-hover:decoration-dotted group-hover:underline-offset-4">
                       {item.title}
                     </span>
                     <span className="mt-1 font-mono text-[11px] uppercase tracking-[0.08em] text-neutral-400">

@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { logout } from "@/app/login/actions";
+import { SkapaSignature } from "@/components/brand/Logo";
 import GlobalSearch from "@/components/GlobalSearch";
 
 const NAV = [
@@ -21,11 +22,8 @@ export default function AdminSidebar({
   return (
     <aside className="sticky top-0 flex h-screen w-60 shrink-0 flex-col justify-between border-r border-black/[0.04] bg-white px-5 py-8">
       <div>
-        <Link
-          href="/admin"
-          className="mb-8 block font-serif text-xl text-black"
-        >
-          skapa <span className="italic text-brand-pink">Creative</span>
+        <Link href="/admin" aria-label="Skapa Creative, admin" className="mb-8 inline-flex">
+          <SkapaSignature tone="ink" alt="" className="h-7" />
         </Link>
 
         <div className="mb-6">

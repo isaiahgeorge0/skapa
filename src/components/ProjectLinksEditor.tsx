@@ -213,7 +213,7 @@ export default function ProjectLinksEditor({
         <ul className="divide-y divide-black/[0.06]">
           {links.map((link, index) => (
             <li key={link.id} className="py-3 first:pt-0 last:pb-0">
-              <p className="break-words font-serif text-base leading-snug text-black">
+              <p className="break-words font-display font-medium text-base leading-snug text-black">
                 {link.title}
               </p>
               <a

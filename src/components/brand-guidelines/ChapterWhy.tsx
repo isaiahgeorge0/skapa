@@ -1,23 +1,22 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import GuideMark from "./GuideMark";
 import { useReducedMotion } from "./useReducedMotion";
 
 const VARIANTS = [
-  { id: "a", label: "Off", mark: "#4b4ae4", type: "font-serif text-lg", bg: "bg-white", pad: "items-start" },
+  { id: "a", label: "Off", mark: "#4b4ae4", type: "font-display font-medium text-lg", bg: "bg-white", pad: "items-start" },
   { id: "b", label: "Off", mark: "#ff2791", type: "font-mono text-xs uppercase", bg: "bg-neutral-100", pad: "items-center" },
-  { id: "c", label: "Off", mark: "#111111", type: "font-serif text-sm italic", bg: "bg-bs-yellow/40", pad: "items-end" },
+  { id: "c", label: "Off", mark: "#111111", type: "font-display font-medium text-sm italic", bg: "bg-bs-yellow/40", pad: "items-end" },
   { id: "d", label: "Off", mark: "#737373", type: "font-mono text-base", bg: "bg-white", pad: "items-center justify-between" },
 ] as const;
 
 export default function ChapterWhy() {
   const { reducedMotion } = useReducedMotion();
   const [aligned, setAligned] = useState(false);
-
-  useEffect(() => {
-    if (reducedMotion) setAligned(true);
-  }, [reducedMotion]);
+  if (reducedMotion && !aligned) {
+    setAligned(true);
+  }
 
   // Auto-align on view for reduced motion / as progressive enhancement via toggle on desktop
   return (
@@ -30,7 +29,7 @@ export default function ChapterWhy() {
           <p className="mb-5 font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-500">
             02 · Why guidelines
           </p>
-          <h2 className="font-serif text-3xl leading-snug tracking-tight text-black md:text-5xl">
+          <h2 className="font-display font-medium text-3xl leading-snug tracking-tight text-black md:text-5xl">
             Consistency shouldn&apos;t rely on memory.
           </h2>
           <p className="mt-5 max-w-xl font-mono text-sm leading-relaxed text-neutral-600 md:text-base">

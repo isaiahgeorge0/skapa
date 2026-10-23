@@ -5,7 +5,7 @@ type ProjectTileProps = {
   headline: string;
   italic?: string;
   label: string;
-  /** Primary fill for the tile — pink, yellow, or blue */
+  /** Primary fill for the tile. Pink, yellow, or blue. */
   accent?: "pink" | "yellow" | "blue";
   className?: string;
 };
@@ -32,7 +32,7 @@ export default function ProjectTile({
     <div
       className={`${bg} ${text} flex min-h-[280px] flex-col justify-end p-8 md:min-h-[340px] md:p-10 ${className}`}
     >
-      <h2 className="font-serif text-4xl leading-[1.05] tracking-tight md:text-5xl">
+      <h2 className="font-display font-medium text-4xl leading-[1.05] tracking-tight md:text-5xl">
         {headline}
         {italic ? (
           <>

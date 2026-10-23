@@ -12,6 +12,15 @@ export default function GlobalSearch() {
   const [groups, setGroups] = useState<ResultGroup[]>([]);
   const [loading, setLoading] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [wasOpen, setWasOpen] = useState(false);
+  if (open !== wasOpen) {
+    setWasOpen(open);
+    if (!open) {
+      setQuery("");
+      setGroups([]);
+      setActiveIndex(0);
+    }
+  }
   const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
   const supabase = createClient();
@@ -31,13 +40,9 @@ export default function GlobalSearch() {
   }, []);
 
   useEffect(() => {
-    if (open) {
-      setTimeout(() => inputRef.current?.focus(), 10);
-    } else {
-      setQuery("");
-      setGroups([]);
-      setActiveIndex(0);
-    }
+    if (!open) return;
+    const id = window.setTimeout(() => inputRef.current?.focus(), 10);
+    return () => window.clearTimeout(id);
   }, [open]);
 
   const runSearch = useCallback(

@@ -76,7 +76,7 @@ function HeroCopy() {
       <p className="mb-5 font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-500">
         Brand guidelines · 01
       </p>
-      <h1 className="font-serif text-[2.2rem] leading-[1.08] tracking-tight text-black sm:text-[2.55rem] md:text-5xl lg:text-[3.6rem]">
+      <h1 className="font-display font-medium text-[2.2rem] leading-[1.08] tracking-tight text-black sm:text-[2.55rem] md:text-5xl lg:text-[3.6rem]">
         A brand shouldn&apos;t change
         <br />
         depending on who&apos;s using it.
@@ -225,7 +225,7 @@ function ProgressCard({ subject }: { subject: "logo" | "colour" | "type" }) {
         <div className="grid grid-cols-[1.05fr_0.95fr] gap-2 p-2.5">
           <div className="pl-1 pt-0.5">
             <div className="mb-2 h-1 w-6 bg-bs-pink" />
-            <p className="font-serif text-[1.35rem] leading-none tracking-tight text-black">
+            <p className="font-display font-medium text-[1.35rem] leading-none tracking-tight text-black">
               Logo
             </p>
             <p className="mt-1 font-mono text-[8px] uppercase tracking-[0.14em] text-neutral-500">
@@ -262,7 +262,7 @@ function ProgressCard({ subject }: { subject: "logo" | "colour" | "type" }) {
           />
           <div className="relative">
             <div className="mb-2 h-1 w-8 bg-black" />
-            <p className="font-serif text-lg tracking-wide text-black">Colour</p>
+            <p className="font-display font-medium text-lg tracking-wide text-black">Colour</p>
             <p className="mt-1 font-mono text-[8px] uppercase tracking-[0.14em] text-bs-purple">
               Primary · support
             </p>
@@ -290,7 +290,7 @@ function ProgressCard({ subject }: { subject: "logo" | "colour" | "type" }) {
         <div className="grid grid-cols-[1.05fr_0.95fr] gap-2 p-2.5">
           <div>
             <div className="mb-2 h-1 w-8 bg-bs-purple" />
-            <p className="font-serif text-xl tracking-tight text-black">Type</p>
+            <p className="font-display font-medium text-xl tracking-tight text-black">Type</p>
             <p className="mt-1 font-mono text-[8px] leading-snug text-neutral-500">
               Serif display. Mono notes.
             </p>
@@ -305,7 +305,7 @@ function ProgressCard({ subject }: { subject: "logo" | "colour" | "type" }) {
               aria-hidden="true"
               className="pointer-events-none absolute inset-1.5 border border-dashed border-bs-purple/40"
             />
-            <p className="font-serif text-3xl leading-none text-bs-purple">Aa</p>
+            <p className="font-display font-medium tracking-tight text-3xl leading-none text-bs-purple">Aa</p>
             <p className="mt-1.5 font-mono text-[7px] uppercase tracking-[0.12em] text-bs-purple">
               Approved
             </p>
@@ -409,7 +409,7 @@ function ManualPage({
       <div className="grid min-h-0 flex-1 grid-cols-[1.1fr_0.9fr] gap-4 p-4 md:gap-6 md:p-6">
         <div>
           <div className={`mb-4 h-1 w-10 ${accentBar}`} />
-          <p className="font-serif text-2xl tracking-tight text-black md:text-3xl">
+          <p className="font-display font-medium text-2xl tracking-tight text-black md:text-3xl">
             {title}
           </p>
           <p className="mt-3 max-w-[18ch] font-mono text-[11px] leading-relaxed text-neutral-500 md:text-xs">

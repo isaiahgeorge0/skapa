@@ -91,7 +91,7 @@ function ReductionStage({ progress }: { progress: MotionValue<number> }) {
             03 · The edit
           </motion.p>
           <motion.h2
-            className="font-serif text-3xl leading-snug tracking-tight md:text-5xl"
+            className="font-display font-medium text-3xl leading-snug tracking-tight md:text-5xl"
             style={{ color: copyColor }}
           >
             Good logo design is often about what you remove.
@@ -191,7 +191,7 @@ function StaticReduction() {
           <p className="mb-5 font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-500">
             03 · The edit
           </p>
-          <h2 className="font-serif text-3xl leading-snug tracking-tight text-black md:text-5xl">
+          <h2 className="font-display font-medium text-3xl leading-snug tracking-tight text-black md:text-5xl">
             Good logo design is often about what you remove.
           </h2>
           <p className="mt-5 max-w-xl font-mono text-sm leading-relaxed text-neutral-600 md:text-base">

@@ -1,13 +1,14 @@
 "use client";
 
 import { motion, useScroll, useTransform } from "motion/react";
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useRef, type ReactNode } from "react";
+import { useReducedMotion } from "@/lib/use-reduced-motion";
 
 type ParallaxImageProps = {
   children: ReactNode;
   className?: string;
   // Optional override for the scroll-tracking range. Defaults to the
-  // original ["start end", "end start"] behavior — untouched, so any
+  // original ["start end", "end start"] behavior, so any
   // existing usage (e.g. the desktop hero) is completely unaffected
   // unless it explicitly opts into a different range.
   // Motion accepts extended offset strings (e.g. "end -30%"); keep prop ergonomic.
@@ -20,15 +21,7 @@ export default function ParallaxImage({
   offset = ["start end", "end start"],
 }: ParallaxImageProps) {
   const ref = useRef<HTMLDivElement>(null);
-  const [reducedMotion, setReducedMotion] = useState(false);
-
-  useEffect(() => {
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    setReducedMotion(mq.matches);
-    const sync = () => setReducedMotion(mq.matches);
-    mq.addEventListener("change", sync);
-    return () => mq.removeEventListener("change", sync);
-  }, []);
+  const { reducedMotion } = useReducedMotion();
 
   const { scrollYProgress } = useScroll({
     target: ref,

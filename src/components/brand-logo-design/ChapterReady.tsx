@@ -26,7 +26,7 @@ export default function ChapterReady() {
           <p className="mb-5 font-mono text-[11px] uppercase tracking-[0.2em] text-bs-yellow">
             READY TO START?
           </p>
-          <h2 className="max-w-3xl font-serif text-4xl leading-[1.05] tracking-tight text-bs-offwhite md:text-6xl">
+          <h2 className="max-w-3xl font-display font-medium text-4xl leading-[1.05] tracking-tight text-bs-offwhite md:text-6xl">
             Reduce the noise.
             <br />
             Keep the mark.

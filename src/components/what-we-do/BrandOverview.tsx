@@ -29,7 +29,7 @@ function Hero() {
         <p className="mb-5 font-mono text-[11px] uppercase tracking-[0.2em] text-bs-yellow">
           Brand
         </p>
-        <h1 className="max-w-[16ch] font-serif text-[2.35rem] leading-[1.06] tracking-tight md:text-6xl lg:text-[4rem]">
+        <h1 className="max-w-[16ch] font-display font-medium text-[2.35rem] leading-[1.06] tracking-tight md:text-6xl lg:text-[4rem]">
           Build a brand people know is yours.
         </h1>
         <p className="mt-6 max-w-[42ch] font-mono text-sm leading-relaxed text-bs-offwhite/85 md:text-base">
@@ -60,7 +60,7 @@ function System() {
         <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-500">
           The brand system
         </p>
-        <h2 className="mt-4 max-w-[18ch] font-serif text-3xl tracking-tight md:text-5xl">
+        <h2 className="mt-4 max-w-[18ch] font-display font-medium text-3xl tracking-tight md:text-5xl">
           Think, define, create, refine, systemise.
         </h2>
         <p className="mt-5 max-w-[46ch] font-mono text-sm leading-relaxed text-neutral-600 md:text-base">
@@ -81,7 +81,7 @@ function System() {
                 </span>
                 <SystemMark index={index} />
                 <span>
-                  <span className="block font-serif text-2xl tracking-tight text-black md:text-3xl">
+                  <span className="block font-display font-medium text-2xl tracking-tight text-black md:text-3xl">
                     {item.title}
                   </span>
                   <span className="mt-2 block max-w-[42ch] font-mono text-sm leading-relaxed text-neutral-600">
@@ -123,7 +123,7 @@ function SystemMark({ index }: { index: number }) {
     return (
       <span
         aria-hidden="true"
-        className="hidden font-serif text-lg italic text-neutral-400 md:block"
+        className="hidden font-display font-medium text-lg italic text-neutral-400 md:block"
       >
         was → is
       </span>
@@ -153,7 +153,7 @@ function Choose() {
         <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-500">
           Help me choose
         </p>
-        <h2 className="mt-4 max-w-[16ch] font-serif text-3xl tracking-tight md:text-5xl">
+        <h2 className="mt-4 max-w-[16ch] font-display font-medium text-3xl tracking-tight md:text-5xl">
           Start from where the brand is now.
         </h2>
         <ul className="mt-12 divide-y divide-black/10 border-y border-black/10">
@@ -163,7 +163,7 @@ function Choose() {
                 href={item.href}
                 className="group flex flex-col gap-3 py-6 outline-none transition-colors md:flex-row md:items-baseline md:justify-between md:gap-10 md:py-7 focus-visible:bg-black/[0.03]"
               >
-                <p className="max-w-[38ch] font-serif text-xl leading-snug tracking-tight text-black md:text-2xl">
+                <p className="max-w-[38ch] font-display font-medium text-xl leading-snug tracking-tight text-black md:text-2xl">
                   {item.need}
                 </p>
                 <p className="shrink-0 font-mono text-[12px] uppercase tracking-[0.14em] text-bs-purple">
@@ -192,7 +192,7 @@ function Connected() {
           <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-500">
             Connected, not packaged
           </p>
-          <h2 className="mt-4 font-serif text-3xl tracking-tight md:text-4xl">
+          <h2 className="mt-4 font-display font-medium text-3xl tracking-tight md:text-4xl">
             Use what you need. Keep the thinking joined up.
           </h2>
         </div>
@@ -225,7 +225,7 @@ function Close() {
         <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-bs-yellow">
           Next
         </p>
-        <h2 className="mt-4 max-w-[16ch] font-serif text-4xl tracking-tight md:text-6xl">
+        <h2 className="mt-4 max-w-[16ch] font-display font-medium text-4xl tracking-tight md:text-6xl">
           Not sure where to start?
         </h2>
         <p className="mt-6 max-w-[36ch] font-mono text-sm leading-relaxed text-bs-offwhite/80 md:text-base">

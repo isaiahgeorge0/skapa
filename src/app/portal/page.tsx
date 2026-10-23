@@ -80,7 +80,7 @@ export default async function PortalPage() {
   if (!profile?.client_id) {
     return (
       <div className="mx-auto max-w-3xl px-5 py-16 sm:px-8 md:px-10">
-        <h1 className="font-serif text-3xl tracking-tight text-black">
+        <h1 className="font-display font-medium text-3xl tracking-tight text-black">
           Almost there.
         </h1>
         <p className="mt-3 text-neutral-500">
@@ -231,10 +231,10 @@ export default async function PortalPage() {
   return (
     <div className="mx-auto max-w-5xl px-5 py-10 sm:px-8 md:px-10 md:py-14">
       <header className="mb-8 md:mb-12">
-        <h1 className="text-balance font-serif text-3xl leading-[1.05] tracking-tight text-black md:text-4xl">
+        <h1 className="text-balance font-display font-medium text-3xl leading-[1.05] tracking-tight text-black md:text-4xl">
           Welcome, {greetingName}.
         </h1>
-        <p className="mt-3 max-w-xl font-serif text-xl italic text-neutral-500">
+        <p className="mt-3 max-w-xl font-display font-medium tracking-tight text-xl italic text-neutral-500">
           Your projects, in one place.
         </p>
       </header>
@@ -281,7 +281,7 @@ export default async function PortalPage() {
                       className="surface-raised group block p-6 transition-shadow hover:shadow-[0_2px_4px_rgba(10,10,10,0.04),0_12px_28px_rgba(10,10,10,0.08)] sm:p-7"
                     >
                       <div className="mb-4 flex items-start justify-between gap-3">
-                        <h2 className="font-serif text-2xl tracking-tight text-black transition-colors group-hover:text-black">
+                        <h2 className="font-display font-medium text-2xl tracking-tight text-black transition-colors group-hover:text-black">
                           {p.name}
                         </h2>
                         <span className="shrink-0 font-mono text-[11px] text-neutral-400">
@@ -356,7 +356,7 @@ export default async function PortalPage() {
                           className="flex items-center justify-between gap-4 py-3 first:pt-0"
                         >
                           <div className="min-w-0">
-                            <p className="truncate font-serif text-lg text-black">
+                            <p className="truncate font-display font-medium text-lg text-black">
                               {documentTypeLabel(d.type)}
                             </p>
                             <p className="mt-0.5 font-mono text-xs text-neutral-400">

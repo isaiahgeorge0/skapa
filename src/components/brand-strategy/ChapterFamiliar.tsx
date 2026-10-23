@@ -61,7 +61,7 @@ function ProblemRow({
         />
       </div>
       <blockquote>
-        <p className="max-w-4xl font-serif text-3xl leading-snug tracking-tight text-black md:text-5xl">
+        <p className="max-w-4xl font-display font-medium text-3xl leading-snug tracking-tight text-black md:text-5xl">
           “{problem.short}”
         </p>
       </blockquote>
@@ -84,7 +84,7 @@ export default function ChapterFamiliar() {
         <p className="mb-5 font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-500">
           02 · Sound familiar?
         </p>
-        <h2 className="max-w-3xl font-serif text-3xl leading-snug tracking-tight text-black md:text-5xl">
+        <h2 className="max-w-3xl font-display font-medium text-3xl leading-snug tracking-tight text-black md:text-5xl">
           A brand problem doesn’t always look like a brand problem.
         </h2>
 

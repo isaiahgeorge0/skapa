@@ -108,7 +108,7 @@ export default function MessagesPanel({
     closeDeleteModal();
   }
 
-  // Scroll only within the messages list — never the page.
+  // Scroll only within the messages list. Never the page.
   useEffect(() => {
     const list = listRef.current;
     if (!list) return;
@@ -212,7 +212,7 @@ export default function MessagesPanel({
       >
         {messages.length === 0 ? (
           <div className="py-6 text-center">
-            <p className="font-serif text-base text-black">
+            <p className="font-display font-medium text-base text-black">
               {viewerRole === "client"
                 ? "The thread is quiet for now."
                 : "No messages yet."}
@@ -226,7 +226,7 @@ export default function MessagesPanel({
         ) : (
           messages.map((m) => {
             const fromStudio = m.sender_role === "admin";
-            // Studio on the left, client on the right — stable regardless of viewer.
+            // Studio on the left, client on the right. Stable regardless of viewer.
             const alignEnd = !fromStudio;
             const name = fromStudio ? studioName : clientName;
             const label = fromStudio

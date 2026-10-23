@@ -359,7 +359,7 @@ export default function DocumentSignView({
           <p className="font-mono text-[11px] uppercase tracking-widest text-neutral-400">
             {isMyTurn ? "Your turn to sign" : "Document review"}
           </p>
-          <p className="font-serif text-lg text-black">{documentType}</p>
+          <p className="font-display font-medium text-lg text-black">{documentType}</p>
         </div>
         <button
           type="button"
@@ -507,7 +507,7 @@ export default function DocumentSignView({
       {activeField && (
         <div className="fixed inset-0 z-[110] flex items-end justify-center bg-black/40 p-4 sm:items-center">
           <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-lg">
-            <h3 className="mb-4 font-serif text-2xl text-black">
+            <h3 className="mb-4 font-display font-medium tracking-tight text-2xl text-black">
               {fieldTypeLabel(activeField.field_type)}
             </h3>
 

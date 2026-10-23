@@ -77,7 +77,7 @@ export default function ChapterEvolve() {
         <p className="mb-5 font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-500">
           07 · Evolve or transform
         </p>
-        <h2 className="max-w-3xl font-serif text-3xl leading-snug tracking-tight text-black md:text-5xl">
+        <h2 className="max-w-3xl font-display font-medium text-3xl leading-snug tracking-tight text-black md:text-5xl">
           Not every brand needs starting again.
         </h2>
         <p className="mt-5 max-w-2xl font-mono text-sm leading-relaxed text-neutral-600 md:text-base">
@@ -125,7 +125,7 @@ export default function ChapterEvolve() {
                   >
                     {String(index + 1).padStart(2, "0")}
                   </p>
-                  <h3 className="mt-4 font-serif text-3xl tracking-tight text-black">
+                  <h3 className="mt-4 font-display font-medium text-3xl tracking-tight text-black">
                     {path.label}
                   </h3>
                   <p className="mt-4 max-w-[30ch] font-mono text-sm leading-relaxed text-neutral-600">
@@ -176,7 +176,7 @@ export default function ChapterEvolve() {
           </div>
         </div>
 
-        <p className="mt-10 max-w-2xl font-serif text-2xl leading-snug text-black md:text-3xl">
+        <p className="mt-10 max-w-2xl font-display font-medium tracking-tight text-2xl leading-snug text-black md:text-3xl">
           We&apos;ll help work out which one you actually need.
         </p>
       </div>

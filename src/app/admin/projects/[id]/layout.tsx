@@ -30,7 +30,7 @@ export default async function ProjectLayout({
             <p className="mb-2 font-mono text-xs uppercase tracking-widest text-neutral-500">
               Project
             </p>
-            <h1 className="font-serif text-4xl text-black">{project.name}</h1>
+            <h1 className="font-display font-medium tracking-tight text-4xl text-black">{project.name}</h1>
           </div>
           <div className="flex flex-wrap items-start gap-3">
             <ProjectArchiveControl

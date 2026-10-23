@@ -3,6 +3,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { logout } from "@/app/login/actions";
+import { SkapaSignature } from "@/components/brand/Logo";
 
 type Project = { id: string; name: string };
 
@@ -21,7 +22,7 @@ export default function PortalSidebar({
       <Link
         href="/portal"
         onClick={() => setMenuOpen(false)}
-        className={`mb-6 flex items-center gap-2.5 font-serif text-lg transition-colors md:mb-8 ${
+        className={`mb-6 flex items-center gap-2.5 font-display font-medium text-lg transition-colors md:mb-8 ${
           pathname === "/portal" ? "text-black" : "text-neutral-400 hover:text-black"
         }`}
       >
@@ -44,7 +45,7 @@ export default function PortalSidebar({
                 key={p.id}
                 href={href}
                 onClick={() => setMenuOpen(false)}
-                className={`flex items-center gap-2.5 truncate py-1.5 font-serif text-base transition-colors ${
+                className={`flex items-center gap-2.5 truncate py-1.5 font-display font-medium text-base transition-colors ${
                   active ? "text-black" : "text-neutral-500 hover:text-black"
                 }`}
               >
@@ -78,8 +79,8 @@ export default function PortalSidebar({
     <>
       {/* Mobile top bar */}
       <header className="sticky top-0 z-40 flex items-center justify-between border-b border-neutral-200 bg-white px-5 py-4 md:hidden">
-        <Link href="/portal" className="font-serif text-lg text-black">
-          skapa <span className="italic text-brand-pink">Creative</span>
+        <Link href="/portal" aria-label="Skapa Creative, portal" className="inline-flex">
+          <SkapaSignature tone="ink" alt="" className="h-7" />
         </Link>
         <button
           type="button"
@@ -102,8 +103,8 @@ export default function PortalSidebar({
       {/* Desktop sidebar */}
       <aside className="sticky top-0 hidden h-screen w-60 shrink-0 flex-col justify-between border-r border-black/[0.04] bg-white px-5 py-8 md:flex lg:w-64">
         <div>
-          <Link href="/portal" className="mb-1 block font-serif text-xl text-black">
-            skapa <span className="italic text-brand-pink">Creative</span>
+          <Link href="/portal" aria-label="Skapa Creative, portal" className="mb-1 inline-flex">
+            <SkapaSignature tone="ink" alt="" className="h-7" />
           </Link>
           <p className="mb-10 font-mono text-[11px] text-neutral-400">Client portal</p>
           {nav}

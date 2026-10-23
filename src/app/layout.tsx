@@ -1,19 +1,17 @@
 import type { Metadata } from "next";
-import { IBM_Plex_Mono, Newsreader } from "next/font/google";
+import { IBM_Plex_Mono, IBM_Plex_Sans } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import JsonLd from "@/components/JsonLd";
-import { SITE_NAME, SITE_URL, defaultDescription } from "@/lib/seo";
+import { OG_IMAGE_PATH, SITE_NAME, SITE_URL, defaultDescription } from "@/lib/seo";
 import "./globals.css";
 
-// PLACEHOLDER FONTS. Swap when licensed brand typefaces are available.
-// Deck substitutes: Newsreader ≈ brand serif wordmark/display;
-// IBM Plex Mono ≈ brand mono for body, nav, and labels.
-// Exposed to CSS/Tailwind as --font-serif and --font-mono (via globals.css @theme).
-const newsreader = Newsreader({
-  variable: "--font-newsreader",
+// IBM Plex Sans for headings and body. IBM Plex Mono for labels.
+// Exposed to CSS as --font-display and --font-mono (via globals.css @theme).
+const ibmPlexSans = IBM_Plex_Sans({
+  variable: "--font-ibm-plex-sans",
   subsets: ["latin"],
+  weight: ["400", "500", "600"],
   style: ["normal", "italic"],
-  weight: ["400"],
 });
 
 const ibmPlexMono = IBM_Plex_Mono({
@@ -33,9 +31,13 @@ export const metadata: Metadata = {
     siteName: SITE_NAME,
     locale: "en_GB",
     type: "website",
+    images: OG_IMAGE_PATH
+      ? [{ url: OG_IMAGE_PATH, width: 1200, height: 630, alt: SITE_NAME }]
+      : undefined,
   },
   twitter: {
     card: "summary_large_image",
+    images: OG_IMAGE_PATH ? [OG_IMAGE_PATH] : undefined,
   },
 };
 
@@ -43,9 +45,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en-GB"
-      className={`${newsreader.variable} ${ibmPlexMono.variable} h-full antialiased`}
+      className={`${ibmPlexSans.variable} ${ibmPlexMono.variable} h-full antialiased`}
     >
-      <body className="flex min-h-full flex-col bg-white text-black font-mono">
+      <body className="flex min-h-full flex-col bg-white font-display text-black">
         <JsonLd />
         {children}
         {/* Vercel Web Analytics: cookieless, anonymous hashes. Not Speed Insights. */}

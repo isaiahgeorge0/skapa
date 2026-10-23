@@ -47,7 +47,7 @@
   --color-bs-yellow: var(--brand-yellow);
   --color-bs-offwhite: var(--brand-cream);
   /* Public theme tokens. next/font vars set in layout.tsx */
-  --font-serif: var(--font-newsreader), ui-serif, Georgia, serif;
+  --font-display: var(--font-ibm-plex-sans), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-ibm-plex-mono), ui-monospace, monospace;
 }
 

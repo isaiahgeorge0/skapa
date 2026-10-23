@@ -171,7 +171,7 @@ function StrategyVisual({
           Expression
         </p>
         <p
-          className={`font-serif italic leading-none ${
+          className={`font-display font-medium italic leading-none ${
             overlay ? "text-4xl" : "text-5xl md:text-6xl"
           }`}
           style={{ color: accent }}
@@ -193,12 +193,12 @@ function StrategyVisual({
         overlay ? "min-h-[340px] py-5 pr-5 pl-[18%]" : "min-h-[260px] p-6"
       }`}
     >
-      <p className="font-serif text-2xl text-black/20 line-through md:text-3xl">
+      <p className="font-display font-medium tracking-tight text-2xl text-black/20 line-through md:text-3xl">
         Everything
       </p>
-      <p className="font-serif text-2xl text-black/35 md:text-3xl">Most things</p>
+      <p className="font-display font-medium tracking-tight text-2xl text-black/35 md:text-3xl">Most things</p>
       <p
-        className={`font-serif ${overlay ? "text-3xl" : "text-4xl"}`}
+        className={`font-display font-medium ${overlay ? "text-3xl" : "text-4xl"}`}
         style={{ color: accent }}
       >
         What matters
@@ -272,7 +272,7 @@ function StrategyTab({
       )}
       <span className="relative min-w-0 flex-1">
         <span
-          className={`inline-block origin-left font-serif tracking-tight transition-[color,transform,opacity] duration-300 ease-out ${
+          className={`inline-block origin-left font-display font-medium tracking-tight transition-[color,transform,opacity] duration-300 ease-out ${
             compact
               ? // Shared base size; scale creates the inactive→active grow
                 `text-[1.15rem] leading-none ${
@@ -300,7 +300,7 @@ function StrategyTab({
           />
         )}
       </span>
-      {/* Desktop only — mobile relies on label colour / rule / scale */}
+      {/* Desktop only. Mobile relies on label colour, rule and scale. */}
       {!compact && (
         <span
           className="h-2 w-2 shrink-0 rounded-full border transition-all duration-300"
@@ -367,7 +367,7 @@ export default function ChapterStrategy() {
         <p className="mb-5 font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-500">
           03 · Build the strategy
         </p>
-        <h2 className="max-w-3xl font-serif text-3xl leading-snug tracking-tight text-black md:text-5xl">
+        <h2 className="max-w-3xl font-display font-medium text-3xl leading-snug tracking-tight text-black md:text-5xl">
           So what does brand strategy actually mean?
         </h2>
         <p className="mt-5 max-w-2xl font-mono text-sm leading-relaxed text-neutral-600 md:text-base">
@@ -375,7 +375,7 @@ export default function ChapterStrategy() {
           show up, before design begins.
         </p>
 
-        {/* ——— Mobile: one layered composition ——— */}
+        {/* Mobile: one layered composition */}
         <div className="mt-12 md:hidden">
           <p className="mb-4 font-mono text-[11px] font-medium uppercase tracking-[0.16em] text-black">
             Tap a focus to explore
@@ -455,14 +455,14 @@ export default function ChapterStrategy() {
               animate={{ opacity: 1, y: 0 }}
               exit={reducedMotion ? undefined : { opacity: 0, y: -4 }}
               transition={{ duration: 0.22, ease: "easeOut" }}
-              className="mt-5 max-w-[34ch] font-serif text-lg leading-snug text-black"
+              className="mt-5 max-w-[34ch] font-display font-medium text-lg leading-snug text-black"
             >
               {active.body}
             </motion.p>
           </AnimatePresence>
         </div>
 
-        {/* ——— Desktop: side-by-side (unchanged concept) ——— */}
+        {/* Desktop: side-by-side (unchanged concept) */}
         <div className="mt-16 hidden md:grid md:grid-cols-12 md:gap-8">
           <div
             role="tablist"
@@ -506,7 +506,7 @@ export default function ChapterStrategy() {
                 <StrategyVisual kind={active.visual} accent={active.accent} />
                 <p
                   data-strategy-body
-                  className="mt-6 font-serif text-3xl leading-snug text-black"
+                  className="mt-6 font-display font-medium tracking-tight text-3xl leading-snug text-black"
                 >
                   {active.body}
                 </p>
@@ -564,7 +564,7 @@ export default function ChapterStrategy() {
                   <p className="font-mono text-[10px] tracking-[0.16em] text-neutral-400">
                     {String(index + 1).padStart(2, "0")}
                   </p>
-                  <h3 className="mt-2 font-serif text-xl text-black">
+                  <h3 className="mt-2 font-display font-medium tracking-tight text-xl text-black">
                     {stage.name}
                   </h3>
                   <p className="mt-2 font-mono text-xs leading-relaxed text-neutral-600">

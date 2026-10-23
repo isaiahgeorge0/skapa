@@ -17,7 +17,7 @@ export default function ChapterResult() {
           <p className="mb-5 font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-500">
             The result
           </p>
-          <h2 className="font-serif text-3xl leading-snug tracking-tight text-black md:text-5xl">
+          <h2 className="font-display font-medium text-3xl leading-snug tracking-tight text-black md:text-5xl">
             Your brand, without the guesswork.
           </h2>
         </div>
@@ -43,7 +43,7 @@ export default function ChapterResult() {
             </div>
             <div className="md:col-span-2">
               <div className="mb-3 h-1 w-10 bg-bs-purple" />
-              <p className="font-serif text-2xl tracking-tight text-black md:text-3xl">
+              <p className="font-display font-medium text-2xl tracking-tight text-black md:text-3xl">
                 System ready
               </p>
               <ul className="mt-5 space-y-2 font-mono text-xs uppercase tracking-[0.14em] text-neutral-500">

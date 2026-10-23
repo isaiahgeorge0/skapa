@@ -1,7 +1,8 @@
 "use client";
 import Image from "next/image";
 import { motion, useScroll, useTransform } from "motion/react";
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
+import { useReducedMotion } from "@/lib/use-reduced-motion";
 
 const SERVICES = [
   {
@@ -39,15 +40,7 @@ export default function ConvergingCollage() {
 // ── Desktop: scroll-converge grid, unchanged from before ──────────────
 function DesktopCollage() {
   const trackRef = useRef<HTMLDivElement>(null);
-  const [reducedMotion, setReducedMotion] = useState(false);
-
-  useEffect(() => {
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    setReducedMotion(mq.matches);
-    const sync = () => setReducedMotion(mq.matches);
-    mq.addEventListener("change", sync);
-    return () => mq.removeEventListener("change", sync);
-  }, []);
+  const { reducedMotion } = useReducedMotion();
 
   const { scrollYProgress } = useScroll({
     target: trackRef,
@@ -80,7 +73,7 @@ function DesktopCollage() {
               sizes="33vw"
             />
           </div>
-          <p className="mt-4 font-serif text-xl text-black">{service.label}</p>
+          <p className="mt-4 font-display font-medium tracking-tight text-xl text-black">{service.label}</p>
           <p className="mt-1 font-mono text-sm leading-relaxed text-neutral-500">
             {service.tagline}
           </p>
@@ -126,7 +119,7 @@ function MobileFoldingCards() {
               />
             </div>
             <div className="p-5">
-              <p className="font-serif text-xl text-black">{service.label}</p>
+              <p className="font-display font-medium tracking-tight text-xl text-black">{service.label}</p>
               <p className="mt-1 font-mono text-sm leading-relaxed text-neutral-500">
                 {service.tagline}
               </p>

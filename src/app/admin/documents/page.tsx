@@ -27,7 +27,7 @@ export default async function AdminDocumentsPage() {
             <p className="mb-2 font-mono text-xs uppercase tracking-widest text-neutral-500">
               Admin
             </p>
-            <h1 className="font-serif text-4xl text-black">Documents</h1>
+            <h1 className="font-display font-medium tracking-tight text-4xl text-black">Documents</h1>
           </div>
           <p className="font-mono text-xs text-neutral-500">
             {documents?.length ?? 0} total

@@ -99,7 +99,7 @@ function DesktopDirectory({
               <p className={`font-mono text-[11px] uppercase tracking-[0.22em] ${tone.muted}`}>
                 {group.number}
               </p>
-              <h2 className="mt-5 font-serif text-4xl leading-none tracking-tight lg:text-5xl">
+              <h2 className="mt-5 font-display font-medium text-4xl leading-none tracking-tight lg:text-5xl">
                 {group.name}
               </h2>
               <p
@@ -187,7 +187,7 @@ function MobileDirectory({
           <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-500">
             What we do
           </p>
-          <p className="mt-4 max-w-[14ch] font-serif text-[2.15rem] leading-[1.08] tracking-tight text-black">
+          <p className="mt-4 max-w-[14ch] font-display font-medium text-[2.15rem] leading-[1.08] tracking-tight text-black">
             Four disciplines. One studio.
           </p>
         </div>
@@ -210,7 +210,7 @@ function MobileDirectory({
                   <span className={`font-mono text-[11px] uppercase tracking-[0.2em] ${tone.muted}`}>
                     {group.number}
                   </span>
-                  <span className="font-serif text-4xl leading-none tracking-tight">
+                  <span className="font-display font-medium text-4xl leading-none tracking-tight">
                     {group.name}
                   </span>
                 </span>

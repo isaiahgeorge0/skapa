@@ -211,7 +211,7 @@ export default function TaskDetailModal({
         <div>
           <div className="flex items-start justify-between gap-4">
             <h2
-              className={`font-serif text-2xl leading-tight tracking-tight ${
+              className={`font-display font-medium text-2xl leading-tight tracking-tight ${
                 task.is_complete ? "text-neutral-400 line-through" : "text-black"
               }`}
             >
@@ -501,7 +501,7 @@ export function TaskFieldsEditor({
           value={description}
           onChange={(e) => onDescriptionChange(e.target.value)}
           rows={4}
-          placeholder="Optional — context, links, what done looks like."
+          placeholder="Optional. Context, links, what done looks like."
           className="w-full resize-y border border-neutral-300 px-3 py-2 text-sm"
         />
       </div>

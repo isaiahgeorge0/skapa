@@ -74,7 +74,7 @@ export default function ChapterForYou() {
         <p className="mb-5 font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-500">
           05 · Is it for you?
         </p>
-        <h2 className="max-w-3xl font-serif text-3xl leading-snug tracking-tight text-black md:text-5xl">
+        <h2 className="max-w-3xl font-display font-medium text-3xl leading-snug tracking-tight text-black md:text-5xl">
           Built for moments when the brand needs clearer thinking.
         </h2>
 
@@ -106,7 +106,7 @@ export default function ChapterForYou() {
                         }`}
                       />
                       <span
-                        className={`font-serif text-2xl tracking-tight transition-transform duration-200 md:text-3xl ${
+                        className={`font-display font-medium text-2xl tracking-tight transition-transform duration-200 md:text-3xl ${
                           open
                             ? "translate-x-1 text-black"
                             : "text-neutral-700 group-hover:translate-x-1 group-hover:text-black"
@@ -148,7 +148,7 @@ export default function ChapterForYou() {
           <p className="mb-6 font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-500">
             FAQs
           </p>
-          <h3 className="font-serif text-2xl text-black md:text-3xl">
+          <h3 className="font-display font-medium tracking-tight text-2xl text-black md:text-3xl">
             Questions worth answering early.
           </h3>
           <div className="mt-10 max-w-3xl">
@@ -157,7 +157,7 @@ export default function ChapterForYou() {
                 key={faq.question}
                 className="group border-t border-black/10 py-5 last:border-b"
               >
-                <summary className="cursor-pointer list-none font-serif text-xl text-black outline-none marker:content-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2 md:text-2xl [&::-webkit-details-marker]:hidden">
+                <summary className="cursor-pointer list-none font-display font-medium tracking-tight text-xl text-black outline-none marker:content-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2 md:text-2xl [&::-webkit-details-marker]:hidden">
                   <span className="flex items-start justify-between gap-6">
                     <span className="transition-colors group-open:text-bs-purple">
                       {faq.question}
@@ -185,7 +185,7 @@ export default function ChapterForYou() {
           <ul className="grid gap-8 md:grid-cols-3 md:gap-10">
             {RELATED.map((service) => (
               <li key={service.title}>
-                <h3 className="font-serif text-2xl text-black">{service.title}</h3>
+                <h3 className="font-display font-medium tracking-tight text-2xl text-black">{service.title}</h3>
                 <p className="mt-3 font-mono text-sm leading-relaxed text-neutral-600">
                   {service.body}
                 </p>

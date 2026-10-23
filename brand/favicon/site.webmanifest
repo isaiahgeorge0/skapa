@@ -1,0 +1,25 @@
+{
+  "name": "Skapa Creative",
+  "short_name": "Skapa",
+  "icons": [
+    {
+      "src": "/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/maskable-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "theme_color": "#4B4AE4",
+  "background_color": "#EFEEEA",
+  "display": "standalone"
+}

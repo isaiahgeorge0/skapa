@@ -62,7 +62,7 @@ export default function ChapterStart() {
           <div className="absolute top-[12%] left-[8%] hidden h-[18%] w-[12%] bg-bs-offwhite/15 md:block" />
           <div className="absolute inset-x-[10%] top-[42%] hidden h-px bg-bs-offwhite/20 md:block" />
           <div className="absolute inset-y-[18%] left-[48%] hidden w-px bg-bs-offwhite/15 md:block" />
-          <div className="absolute right-[38%] bottom-[22%] font-serif text-[18vw] leading-none text-bs-offwhite/10 select-none md:text-[10vw]">
+          <div className="absolute right-[38%] bottom-[22%] font-display font-medium text-[18vw] leading-none text-bs-offwhite/10 select-none md:text-[10vw]">
             B
           </div>
         </div>
@@ -71,7 +71,7 @@ export default function ChapterStart() {
           <p className="mb-5 font-mono text-[11px] uppercase tracking-[0.2em] text-bs-yellow">
             06 · Start somewhere
           </p>
-          <h2 className="max-w-3xl font-serif text-4xl leading-snug tracking-tight text-bs-offwhite md:text-6xl">
+          <h2 className="max-w-3xl font-display font-medium text-4xl leading-snug tracking-tight text-bs-offwhite md:text-6xl">
             Know something needs to change, but not sure what yet?
           </h2>
           <div className="mt-10">

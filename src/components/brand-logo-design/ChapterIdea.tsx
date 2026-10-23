@@ -1,9 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useRef, type ReactNode } from "react";
 import {
   motion,
-  useMotionValueEvent,
   useScroll,
   useTransform,
   type MotionValue,
@@ -26,7 +25,7 @@ type Exploration = {
   wave: Wave;
   /** Desktop placement */
   desk: string;
-  /** Mobile placement — deliberately recomposed, not a shrink */
+  /** Mobile placement. Deliberately recomposed, not a shrink. */
   mob: string;
   deskSize: string;
   mobSize: string;
@@ -132,7 +131,7 @@ const EXPLORATIONS: Exploration[] = [
   },
 ];
 
-/** Exit windows per wave — short overall track. */
+/** Exit windows per wave. Short overall track. */
 const WAVE_EXIT: Record<Wave, [number, number, number]> = {
   1: [0.12, 0.28, 0.4],
   2: [0.32, 0.48, 0.62],
@@ -180,7 +179,7 @@ export default function ChapterIdea() {
             <ResolvedHeroMark progress={scrollYProgress} desktop />
           </div>
 
-          {/* Mobile exploration field — recomposed, not shrunk */}
+          {/* Mobile exploration field. Recomposed, not shrunk. */}
           <div
             aria-hidden="true"
             className="pointer-events-none absolute inset-0 md:hidden"
@@ -197,7 +196,7 @@ export default function ChapterIdea() {
             <ResolvedHeroMark progress={scrollYProgress} desktop={false} />
           </div>
 
-          {/* Stable copy — animation belongs to the marks */}
+          {/* Stable copy. Animation belongs to the marks. */}
           <div
             className={`relative z-20 flex h-full flex-col px-8 pb-10 sm:px-10 md:px-12 md:pb-14 lg:pr-28 ${MOBILE_STAGE_TOP}`}
           >
@@ -210,7 +209,7 @@ export default function ChapterIdea() {
               <p className="mb-5 font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-500">
                 Logo design · 01
               </p>
-              <h1 className="font-serif text-[2.25rem] leading-[1.08] tracking-tight text-black sm:text-[2.6rem] md:text-6xl lg:text-[4rem]">
+              <h1 className="font-display font-medium text-[2.25rem] leading-[1.08] tracking-tight text-black sm:text-[2.6rem] md:text-6xl lg:text-[4rem]">
                 A logo should be simple.
                 <br />
                 Getting there isn&apos;t.
@@ -263,7 +262,7 @@ function StaticHero() {
             <p className="mb-5 font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-500">
               Logo design · 01
             </p>
-            <h1 className="font-serif text-[2.25rem] leading-[1.08] tracking-tight text-black sm:text-[2.6rem] md:text-6xl lg:text-[4rem]">
+            <h1 className="font-display font-medium text-[2.25rem] leading-[1.08] tracking-tight text-black sm:text-[2.6rem] md:text-6xl lg:text-[4rem]">
               A logo should be simple.
               <br />
               Getting there isn&apos;t.
@@ -358,27 +357,15 @@ function ResolvedHeroMark({
   );
 }
 
+function labelForProgress(value: number): string {
+  if (value < 0.28) return "Many possibilities";
+  if (value < 0.62) return "Fewer strong ideas";
+  return "One resolved mark";
+}
+
 function ProgressCue({ progress }: { progress: MotionValue<number> }) {
-  const [label, setLabel] = useState("Many possibilities");
   const opacity = useTransform(progress, [0, 0.05, 0.92, 1], [0.7, 0.7, 0.7, 0]);
-
-  useMotionValueEvent(progress, "change", (v) => {
-    const next =
-      v < 0.28
-        ? "Many possibilities"
-        : v < 0.62
-          ? "Fewer strong ideas"
-          : "One resolved mark";
-    setLabel((current) => (current === next ? current : next));
-  });
-
-  useEffect(() => {
-    // Sync initial label if page loads mid-scroll
-    const v = progress.get();
-    if (v < 0.28) setLabel("Many possibilities");
-    else if (v < 0.62) setLabel("Fewer strong ideas");
-    else setLabel("One resolved mark");
-  }, [progress]);
+  const label = useTransform(progress, labelForProgress);
 
   return (
     <motion.p

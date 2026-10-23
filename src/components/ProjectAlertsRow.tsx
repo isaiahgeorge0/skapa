@@ -12,7 +12,7 @@ export default function ProjectAlertsRow({
         <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-neutral-400">
           Needs attention
         </p>
-        <p className="mt-2 font-serif text-lg text-black">All quiet on this project.</p>
+        <p className="mt-2 font-display font-medium text-lg text-black">All quiet on this project.</p>
         <p className="mt-1 text-sm text-neutral-500">
           Requests, unviewed documents and approaching targets will show here.
         </p>
@@ -34,7 +34,7 @@ export default function ProjectAlertsRow({
               href={alert.href}
               className="flex items-baseline justify-between gap-4 px-6 py-4 transition-colors hover:bg-black/[0.02] md:px-7"
             >
-              <span className="font-serif text-base text-black">{alert.text}</span>
+              <span className="font-display font-medium text-base text-black">{alert.text}</span>
               <span className="shrink-0 font-mono text-[11px] uppercase tracking-[0.14em] text-neutral-500">
                 Open →
               </span>

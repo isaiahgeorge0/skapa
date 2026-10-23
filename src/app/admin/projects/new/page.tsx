@@ -20,7 +20,7 @@ export default async function NewProjectPage({
         <p className="mb-2 font-mono text-xs uppercase tracking-widest text-neutral-500">
           Admin
         </p>
-        <h1 className="mb-10 font-serif text-4xl text-black">New Project</h1>
+        <h1 className="mb-10 font-display font-medium tracking-tight text-4xl text-black">New Project</h1>
         <NewProjectForm
           clients={clients ?? []}
           preselectedClientId={preselectedClientId}

@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { SITE_URL } from "@/lib/seo";
+import { caseStudies } from "@/lib/work";
 
 const INDEXABLE_PATHS = [
   "/",
@@ -12,6 +13,7 @@ const INDEXABLE_PATHS = [
   "/what-we-do/brand/logo-design",
   "/what-we-do/brand/brand-guidelines",
   "/work",
+  ...caseStudies.map((study) => `/work/${study.slug}`),
   "/contact",
 ] as const;
 

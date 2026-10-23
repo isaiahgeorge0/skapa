@@ -173,7 +173,7 @@ export default function ChapterForm() {
           <p className="mb-5 font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-500">
             02 · Give it form
           </p>
-          <h2 className="max-w-3xl font-serif text-3xl leading-snug tracking-tight text-black md:text-5xl">
+          <h2 className="max-w-3xl font-display font-medium text-3xl leading-snug tracking-tight text-black md:text-5xl">
             Exploration becomes a mark you can recognise.
           </h2>
           <p className="mt-6 max-w-2xl font-mono text-sm leading-relaxed text-neutral-600 md:text-base">
@@ -214,7 +214,7 @@ export default function ChapterForm() {
             <p className="mb-4 font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-500">
               02 · Give it form
             </p>
-            <h2 className="max-w-2xl font-serif text-3xl leading-snug tracking-tight text-black md:text-4xl lg:text-5xl">
+            <h2 className="max-w-2xl font-display font-medium text-3xl leading-snug tracking-tight text-black md:text-4xl lg:text-5xl">
               From loose marks to a form that can hold meaning.
             </h2>
 
@@ -226,7 +226,7 @@ export default function ChapterForm() {
               style={{ opacity: copyOpacity, y: copyY }}
               className="mx-auto mt-12 max-w-xl text-center"
             >
-              <p className="font-serif text-2xl leading-snug text-black md:text-3xl">
+              <p className="font-display font-medium tracking-tight text-2xl leading-snug text-black md:text-3xl">
                 A logo matters.{" "}
                 <span className="text-neutral-500">
                   But a logo alone isn&apos;t an identity.
@@ -254,7 +254,7 @@ export default function ChapterForm() {
               <p className="mb-3 font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-500">
                 02 · Give it form
               </p>
-              <h2 className="max-w-[16ch] font-serif text-[1.85rem] leading-snug tracking-tight text-black">
+              <h2 className="max-w-[16ch] font-display font-medium text-[1.85rem] leading-snug tracking-tight text-black">
                 From loose marks to a form that can hold meaning.
               </h2>
             </MobileLayer>
@@ -276,7 +276,7 @@ export default function ChapterForm() {
               y={mobileCopyY}
               className="absolute inset-x-0 top-[52%] z-20 px-6"
             >
-              <p className="font-serif text-[1.45rem] leading-snug text-black">
+              <p className="font-display font-medium text-[1.45rem] leading-snug text-black">
                 A logo matters.{" "}
                 <span className="text-neutral-500">
                   But a logo alone isn&apos;t an identity.

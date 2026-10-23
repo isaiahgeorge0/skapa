@@ -80,7 +80,7 @@ function SpecimenSystem({ pressure }: { pressure: MotionValue<number> }) {
       />
       <motion.p
         style={{ y: typeShift }}
-        className="absolute top-[30%] left-[10%] font-serif text-3xl tracking-tight text-neutral-800/40 md:left-[12%] md:text-5xl"
+        className="absolute top-[30%] left-[10%] font-display font-medium text-3xl tracking-tight text-neutral-800/40 md:left-[12%] md:text-5xl"
       >
         Aa
       </motion.p>
@@ -156,7 +156,7 @@ export default function ChapterChange() {
           <p className="mb-5 font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-500">
             Rebranding · 01
           </p>
-          <h1 className="max-w-3xl font-serif text-4xl leading-[1.05] tracking-tight text-black md:text-6xl">
+          <h1 className="max-w-3xl font-display font-medium text-4xl leading-[1.05] tracking-tight text-black md:text-6xl">
             Your business changed. Did your brand?
           </h1>
           <p className="mt-6 max-w-xl font-mono text-sm leading-relaxed text-neutral-600 md:text-base">
@@ -210,7 +210,7 @@ export default function ChapterChange() {
                 <p className="mb-4 font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-500 md:mb-5">
                   Rebranding · 01
                 </p>
-                <h1 className="font-serif text-[2.2rem] leading-[1.08] tracking-tight text-black sm:text-5xl md:text-6xl lg:text-[4rem]">
+                <h1 className="font-display font-medium text-[2.2rem] leading-[1.08] tracking-tight text-black sm:text-5xl md:text-6xl lg:text-[4rem]">
                   Your business changed.
                   <br />
                   Did your brand?
@@ -240,7 +240,7 @@ export default function ChapterChange() {
                 <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-500">
                   The pressure
                 </p>
-                <p className="mt-4 font-serif text-[1.65rem] leading-snug tracking-tight text-black md:mt-5 md:text-4xl">
+                <p className="mt-4 font-display font-medium text-[1.65rem] leading-snug tracking-tight text-black md:mt-5 md:text-4xl">
                   The business has outgrown the system.
                 </p>
                 <p className="mt-5 max-w-md font-mono text-sm leading-relaxed text-neutral-600">

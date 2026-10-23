@@ -45,7 +45,7 @@ export default function TasksChecklist({
   currentPhase: string;
   initialTasks: ProjectTask[];
   canManage?: boolean;
-  /** Deep-link (?task=) — opens this task's modal on mount, whatever its phase. */
+  /** Deep-link (?task=). Opens this task's modal on mount, whatever its phase. */
   openTaskId?: string;
   projectName?: string | null;
   clientName?: string | null;
@@ -357,7 +357,7 @@ export default function TasksChecklist({
       <div>
         {portalTasks.length === 0 ? (
           <div className="surface-raised-soft px-6 py-6 md:px-7 md:py-7">
-            <p className="font-serif text-lg text-black">No checklist items yet.</p>
+            <p className="font-display font-medium text-lg text-black">No checklist items yet.</p>
             <p className="mt-2 max-w-prose text-sm leading-relaxed text-neutral-500">
               As this phase gets going, we&apos;ll add clear actions here so you can
               see what&apos;s needed from you, and what we&apos;re working through.

@@ -53,7 +53,7 @@ Brand Strategy and Brand Identity should feel like siblings:
 
 Set in `src/app/layout.tsx` + `globals.css`:
 
-- Display / headlines: `font-serif` → Newsreader
+- Display / headlines: `font-display` → IBM Plex Sans, `font-medium`, `tracking-tight`
 - Labels / body / UI: `font-mono` → IBM Plex Mono
 
 ### Patterns (both pages)
@@ -63,7 +63,7 @@ Set in `src/app/layout.tsx` + `globals.css`:
 | Eyebrow / chapter label | `font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-500` |
 | Micro nav / badges | `font-mono text-[10px]` with tracking `0.14em`–`0.18em` |
 | Body | `font-mono text-sm leading-relaxed` → `md:text-base` |
-| H1 hero | Serif, mobile ~`2.15rem`–`2.4rem`, desktop `md:text-6xl` / `lg:text-[4rem]`–`4.1rem` |
+| H1 hero | IBM Plex Sans, mobile ~`2.15rem`–`2.4rem`, desktop `md:text-6xl` / `lg:text-[4rem]`–`4.1rem` |
 | H2 section | Often `text-3xl md:text-5xl` (final CTA can be larger) |
 
 Do not shrink headlines to “fix” mobile spacing. Fix inset/clearance instead.
@@ -310,7 +310,7 @@ Checklist per state:
 | BrandStrategyButton / IdentityButton | Same language, duplicated on purpose. A shared `CapabilityButton` is optional later. |
 | Final CTA colour-field parallax | Reuse mechanics; restage art direction. |
 
-### Page-specific — do not reuse blindly
+### Page-specific. Do not reuse blindly
 
 | Item | Why |
 |---|---|
@@ -342,7 +342,7 @@ Examples of good metaphor briefs:
 
 - Strategy: “Better questions before better design.”
 - Identity: “Loose decisions become a recognisable system.”
-- Rebranding: invent its own (e.g. transition, before/after, continuity) — do not paste Identity’s construction diagram.
+- Rebranding: invent its own (e.g. transition, before/after, continuity). Do not paste Identity’s construction diagram.
 
 ---
 
@@ -357,7 +357,7 @@ Inherits automatically:
 - Canonical: `https://skapa.uk{path}`
 - Open Graph title / description / url / siteName / locale / type
 - Twitter `summary_large_image` + title / description
-- **OG + Twitter image:** `OG_IMAGE_PATH = "/og.jpg"` → absolute `https://skapa.uk/og.jpg` via root `metadataBase`
+- **OG + Twitter image:** `OG_IMAGE_PATH = "/og.png"` → absolute `https://skapa.uk/og.png` via root `metadataBase`
 
 Future capability pages only need a correct `pageMetadata(...)` call. Do not invent a second metadata system.
 
@@ -397,7 +397,7 @@ Future capability pages only need a correct `pageMetadata(...)` call. Do not inv
 | Light text on yellow | Single foreground colour across moving fields | Geometry + delayed colour flip; protect copy zone |
 | Horizontal sequence ends early | `%` travel / unmeasured overflow | Measure strip; dynamic track height |
 | Desktop broken by mobile fix | Shared layout mutated | Split mobile/desktop trees when needed |
-| Social preview has no image | `OG_IMAGE_PATH` unset | Global `/og.jpg` via `pageMetadata` |
+| Social preview has no image | `OG_IMAGE_PATH` unset | Global `/og.png` via `pageMetadata` |
 
 ---
 
@@ -431,12 +431,12 @@ Future capability pages only need a correct `pageMetadata(...)` call. Do not inv
 
 - [ ] Production build passes
 - [ ] Desktop unchanged after mobile fixes
-- [ ] OG/Twitter image resolves (`/og.jpg`)
+- [ ] OG/Twitter image resolves (`/og.png`)
 - [ ] No new cookie banner unless a non-cookieless tracker is introduced
 
 ---
 
-## Appendix A — File map
+## Appendix A. File map
 
 ### Brand Strategy
 
@@ -452,14 +452,14 @@ Future capability pages only need a correct `pageMetadata(...)` call. Do not inv
 
 ### Shared globals / SEO
 
-- `src/app/globals.css` — palette, chrome vars, chapter utilities
-- `src/lib/seo.ts` — `pageMetadata`, `OG_IMAGE_PATH`
-- `public/og.jpg` — 1200×630 social image
+- `src/app/globals.css`: palette, chrome vars, chapter utilities
+- `src/lib/seo.ts`: `pageMetadata`, `OG_IMAGE_PATH`
+- `public/og.png`: 1200 by 630 social image
 - `src/app/sitemap.ts`
 
 ---
 
-## Appendix B — Inconsistencies worth knowing (not auto-bugs)
+## Appendix B. Inconsistencies worth knowing (not auto-bugs)
 
 | Topic | Strategy | Identity | Reading |
 |---|---|---|---|

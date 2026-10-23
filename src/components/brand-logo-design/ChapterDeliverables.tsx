@@ -98,7 +98,7 @@ export default function ChapterDeliverables() {
           <p className="mb-5 font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-500">
             06 · The finished system
           </p>
-          <h2 className="font-serif text-3xl leading-snug tracking-tight text-black md:text-5xl">
+          <h2 className="font-display font-medium text-3xl leading-snug tracking-tight text-black md:text-5xl">
             Everything you need to actually use it.
           </h2>
         </div>
@@ -110,7 +110,7 @@ export default function ChapterDeliverables() {
               className="grid items-center gap-6 py-8 md:grid-cols-12 md:gap-8"
             >
               <div className="md:col-span-5">
-                <h3 className="font-serif text-2xl tracking-tight text-black md:text-3xl">
+                <h3 className="font-display font-medium text-2xl tracking-tight text-black md:text-3xl">
                   {item.title}
                 </h3>
                 <p className="mt-2 font-mono text-sm leading-relaxed text-neutral-600">

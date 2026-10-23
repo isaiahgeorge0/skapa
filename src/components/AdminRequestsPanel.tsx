@@ -200,7 +200,7 @@ export default function AdminRequestsPanel({
                 />
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-baseline justify-between gap-2">
-                    <p className="font-serif text-xl text-black">{request.title}</p>
+                    <p className="font-display font-medium tracking-tight text-xl text-black">{request.title}</p>
                     <div className="flex flex-wrap items-center gap-3">
                       <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-neutral-400">
                         {new Date(request.created_at).toLocaleDateString("en-GB", {

@@ -22,7 +22,7 @@ export default function ProjectLinksList({
             className="group flex min-h-11 items-start justify-between gap-4 py-3"
           >
             <span className="min-w-0">
-              <span className="block break-words font-serif text-base leading-snug text-black group-hover:underline group-hover:decoration-dotted group-hover:underline-offset-4">
+              <span className="block break-words font-display font-medium text-base leading-snug text-black group-hover:underline group-hover:decoration-dotted group-hover:underline-offset-4">
                 {link.title}
               </span>
               <span className="mt-1 block truncate font-mono text-[11px] text-neutral-500">

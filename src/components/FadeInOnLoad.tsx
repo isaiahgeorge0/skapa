@@ -9,6 +9,7 @@ import {
   type HTMLAttributes,
   type CSSProperties,
 } from "react";
+import { useReducedMotion } from "@/lib/use-reduced-motion";
 
 type FadeInOnLoadProps = {
   children: ReactNode;
@@ -23,15 +24,8 @@ export default function FadeInOnLoad({
   children,
   className = "",
 }: FadeInOnLoadProps) {
-  const [reducedMotion, setReducedMotion] = useState(false);
-  const [ready, setReady] = useState(false);
+  const { reducedMotion, ready } = useReducedMotion();
   const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    setReducedMotion(mq.matches);
-    setReady(true);
-  }, []);
 
   useEffect(() => {
     if (!ready) return;

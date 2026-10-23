@@ -86,7 +86,7 @@ function HeroCopy() {
         Mobile: composed line breaks, no max-width wrap fighting the breaks.
         Desktop: existing two-line editorial set.
       */}
-      <h1 className="font-serif tracking-tight text-bs-offwhite">
+      <h1 className="font-display font-medium tracking-tight text-bs-offwhite">
         <span className="block text-[2.4rem] leading-[1.08] sm:text-[2.75rem] md:hidden">
           Before your brand
           <br />
@@ -133,7 +133,7 @@ function HeroColourFields() {
     <>
       <div className="absolute inset-0 bg-bs-purple" />
       {/*
-        Mobile: short top-edge blade — colour as a frame above the type,
+        Mobile: short top-edge blade. Colour as a frame above the type,
         not a column the headline has to dodge.
         Desktop: original asymmetric field.
       */}
@@ -167,7 +167,7 @@ function QuestionLabel({
   );
 }
 
-/** Q1 — purple-led: editorial type + sliding rule + left colour bar */
+/** Q1, purple-led: editorial type + sliding rule + left colour bar */
 function QuestionOne({
   ruleScale,
 }: {
@@ -194,7 +194,7 @@ function QuestionOne({
       ) : (
         rule
       )}
-      <p className="mt-6 font-serif text-3xl leading-[1.08] tracking-tight text-black sm:text-4xl md:text-5xl lg:text-6xl">
+      <p className="mt-6 font-display font-medium text-3xl leading-[1.08] tracking-tight text-black sm:text-4xl md:text-5xl lg:text-6xl">
         Who are you actually{" "}
         <span className="text-bs-purple">for?</span>
       </p>
@@ -202,12 +202,12 @@ function QuestionOne({
   );
 }
 
-/** Q2 — pink-led: right-aligned, accent phrase on a pink field */
+/** Q2, pink-led: right-aligned, accent phrase on a pink field */
 function QuestionTwo() {
   return (
     <div className="ml-auto w-full max-w-3xl text-right">
       <QuestionLabel index="02" label="Difference" className="text-bs-pink" />
-      <p className="mt-6 font-serif text-3xl leading-[1.08] tracking-tight text-black sm:text-4xl md:text-5xl lg:text-6xl">
+      <p className="mt-6 font-display font-medium text-3xl leading-[1.08] tracking-tight text-black sm:text-4xl md:text-5xl lg:text-6xl">
         Why should anyone
         <br />
         <span className="mt-3 inline-block bg-bs-pink px-3 py-1 text-bs-offwhite md:mt-4 md:px-4">
@@ -218,7 +218,7 @@ function QuestionTwo() {
   );
 }
 
-/** Q3 — pale yellow field + dark type, pink detail on the key word */
+/** Q3, pale yellow field + dark type, pink detail on the key word */
 function QuestionThree() {
   return (
     <div className="relative w-full max-w-3xl">
@@ -227,7 +227,7 @@ function QuestionThree() {
         aria-hidden="true"
       />
       <QuestionLabel index="03" label="Position" className="text-bs-pink" />
-      <p className="mt-6 font-serif text-3xl leading-[1.08] tracking-tight text-black sm:text-4xl md:text-5xl lg:text-6xl">
+      <p className="mt-6 font-display font-medium text-3xl leading-[1.08] tracking-tight text-black sm:text-4xl md:text-5xl lg:text-6xl">
         What do you want to be{" "}
         <span className="underline decoration-bs-pink decoration-2 underline-offset-[0.18em]">
           known for?
@@ -243,7 +243,7 @@ function ResolveCopy() {
       <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-bs-purple">
         Brand Strategy
       </p>
-      <p className="mt-6 font-serif text-4xl leading-snug tracking-tight text-black md:text-5xl lg:text-6xl">
+      <p className="mt-6 font-display font-medium text-4xl leading-snug tracking-tight text-black md:text-5xl lg:text-6xl">
         Good design starts with{" "}
         <span className="text-bs-purple">better questions.</span>
       </p>
@@ -381,7 +381,7 @@ export default function ChapterClarity() {
             </StageCopy>
           </div>
 
-          {/* Hero colour curtain — moves slowly; contains no question copy */}
+          {/* Hero colour curtain. Moves slowly. Contains no question copy. */}
           <motion.div
             style={{ y: heroCurtainY }}
             className="absolute inset-0 z-20 will-change-transform"
@@ -391,7 +391,7 @@ export default function ChapterClarity() {
           </motion.div>
 
           {/*
-            Hero foreground — held fully visible at load, then leaves faster
+            Hero foreground. Held fully visible at load, then leaves faster.
             than the curtain so the parallax handoff can begin.
             Mobile: copy sits in the lower field so pink can own the top edge.
           */}

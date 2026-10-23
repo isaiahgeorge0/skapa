@@ -72,7 +72,7 @@ const RELATED = [
 
 export default function ChapterImagine() {
   const { reducedMotion } = useReducedMotion();
-  // Hover preview vs click/keyboard pin — so desktop hover never fights click.
+  // Hover preview vs click/keyboard pin, so desktop hover never fights click.
   const [hoveredFaq, setHoveredFaq] = useState<number | null>(null);
   const [pinnedFaq, setPinnedFaq] = useState<number | null>(null);
   const heroRef = useRef<HTMLDivElement>(null);
@@ -159,7 +159,7 @@ export default function ChapterImagine() {
           <p className="mb-5 font-mono text-[11px] uppercase tracking-[0.2em] text-bs-yellow">
             07 · Now imagine yours
           </p>
-          <h2 className="max-w-3xl font-serif text-4xl leading-snug tracking-tight text-bs-offwhite md:text-6xl">
+          <h2 className="max-w-3xl font-display font-medium text-4xl leading-snug tracking-tight text-bs-offwhite md:text-6xl">
             Yours shouldn&apos;t look like ours.
           </h2>
           {/* Body stays on purple; CTAs may sit near yellow and use high-contrast treatments */}
@@ -186,7 +186,7 @@ export default function ChapterImagine() {
           <p className="mb-5 font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-500">
             What you get
           </p>
-          <h3 className="max-w-2xl font-serif text-3xl leading-snug text-black md:text-4xl">
+          <h3 className="max-w-2xl font-display font-medium tracking-tight text-3xl leading-snug text-black md:text-4xl">
             A complete visual identity system, not a logo file and a hope.
           </h3>
           <ul className="mt-10 grid gap-6 sm:grid-cols-2">
@@ -251,7 +251,7 @@ export default function ChapterImagine() {
                         className="relative z-10 flex w-full items-start justify-between gap-6 px-0 py-6 text-left outline-none transition-colors duration-300 focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2 md:px-5"
                         style={{ color: open ? accent.fg : "#111111" }}
                       >
-                        <span className="font-serif text-xl md:text-2xl">
+                        <span className="font-display font-medium tracking-tight text-xl md:text-2xl">
                           {faq.q}
                         </span>
                         <span
@@ -296,7 +296,7 @@ export default function ChapterImagine() {
                 <li key={item.title} className="border border-black/10 p-6">
                   {item.href ? (
                     <Link href={item.href} className="group block outline-none">
-                      <h3 className="font-serif text-2xl text-black transition-colors group-hover:text-bs-purple">
+                      <h3 className="font-display font-medium tracking-tight text-2xl text-black transition-colors group-hover:text-bs-purple">
                         {item.title}
                       </h3>
                       <p className="mt-3 font-mono text-sm leading-relaxed text-neutral-600">
@@ -308,7 +308,7 @@ export default function ChapterImagine() {
                     </Link>
                   ) : (
                     <div>
-                      <h3 className="font-serif text-2xl text-black">
+                      <h3 className="font-display font-medium tracking-tight text-2xl text-black">
                         {item.title}
                       </h3>
                       <p className="mt-3 font-mono text-sm leading-relaxed text-neutral-600">

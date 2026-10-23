@@ -10,6 +10,7 @@ import {
   type HTMLAttributes,
   type CSSProperties,
 } from "react";
+import { useReducedMotion } from "@/lib/use-reduced-motion";
 
 type RevealProps = {
   children: ReactNode;
@@ -18,18 +19,8 @@ type RevealProps = {
 
 export default function Reveal({ children, className = "" }: RevealProps) {
   const ref = useRef<HTMLDivElement>(null);
-  const [reducedMotion, setReducedMotion] = useState(false);
-  const [ready, setReady] = useState(false);
+  const { reducedMotion, ready } = useReducedMotion();
   const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const sync = () => setReducedMotion(mq.matches);
-    sync();
-    setReady(true);
-    mq.addEventListener("change", sync);
-    return () => mq.removeEventListener("change", sync);
-  }, []);
 
   useEffect(() => {
     if (!ready || reducedMotion) return;

@@ -68,11 +68,11 @@ function PairLabel({
       style={{ opacity, x }}
       className="absolute hidden items-center gap-4 md:flex"
     >
-      <span className="font-serif text-2xl tracking-tight text-neutral-500">
+      <span className="font-display font-medium text-2xl tracking-tight text-neutral-500">
         {pair.was}
       </span>
       <span className="h-px w-12 bg-bs-purple/35" aria-hidden="true" />
-      <span className="font-serif text-2xl tracking-tight text-black">
+      <span className="font-display font-medium text-2xl tracking-tight text-black">
         {pair.now}
       </span>
     </motion.div>
@@ -132,7 +132,7 @@ function DesktopDistanceField({
           <div className="mb-3 font-mono text-[10px] uppercase tracking-[0.18em] text-neutral-400">
             WHO YOU WERE
           </div>
-          <div className="font-serif text-[clamp(2rem,4vw,4rem)] leading-none tracking-tight text-neutral-500">
+          <div className="font-display font-medium text-[clamp(2rem,4vw,4rem)] leading-none tracking-tight text-neutral-500">
             Earlier
           </div>
         </motion.div>
@@ -144,7 +144,7 @@ function DesktopDistanceField({
           <div className="mb-3 font-mono text-[10px] uppercase tracking-[0.18em] text-bs-purple">
             WHO YOU ARE NOW
           </div>
-          <div className="font-serif text-[clamp(2rem,4vw,4rem)] leading-none tracking-tight text-black">
+          <div className="font-display font-medium text-[clamp(2rem,4vw,4rem)] leading-none tracking-tight text-black">
             Today
           </div>
         </motion.div>
@@ -203,7 +203,7 @@ function MobilePairRow({
       style={{ opacity, y }}
       className="grid grid-cols-[1fr_auto_1fr] items-baseline gap-3 border-t border-black/10 py-2.5"
     >
-      <span className="font-serif text-[1.15rem] leading-snug tracking-tight text-neutral-400">
+      <span className="font-display font-medium text-[1.15rem] leading-snug tracking-tight text-neutral-400">
         {pair.was}
       </span>
       <span
@@ -212,7 +212,7 @@ function MobilePairRow({
       >
         &rarr;
       </span>
-      <span className="text-right font-serif text-[1.15rem] leading-snug tracking-tight text-black/85">
+      <span className="text-right font-display font-medium text-[1.15rem] leading-snug tracking-tight text-black/85">
         {pair.now}
       </span>
     </motion.div>
@@ -257,7 +257,7 @@ function MobileGapSequence({
           <p className="mb-4 font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-500">
             02 · The gap
           </p>
-          <h2 className="font-serif text-[2.1rem] leading-[1.08] tracking-tight text-black">
+          <h2 className="font-display font-medium text-[2.1rem] leading-[1.08] tracking-tight text-black">
             Sometimes the brand stays still while the business moves on.
           </h2>
         </motion.div>
@@ -273,7 +273,7 @@ function MobileGapSequence({
           <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-neutral-400">
             WHO YOU WERE
           </p>
-          <p className="mt-2 font-serif text-[2rem] leading-none tracking-tight text-neutral-400">
+          <p className="mt-2 font-display font-medium text-[2rem] leading-none tracking-tight text-neutral-400">
             Earlier
           </p>
         </motion.div>
@@ -295,13 +295,13 @@ function MobileGapSequence({
           <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-bs-purple">
             WHO YOU ARE NOW
           </p>
-          <p className="mt-2 font-serif text-[2rem] leading-none tracking-tight text-bs-purple">
+          <p className="mt-2 font-display font-medium text-[2rem] leading-none tracking-tight text-bs-purple">
             Today
           </p>
         </motion.div>
       </motion.div>
 
-      {/* STATE 6: Conclusion — starts below chrome + pill with breathing room */}
+      {/* STATE 6: Conclusion. Starts below chrome + pill with breathing room. */}
       <Stage
         opacity={conclusionOp}
         className={`justify-start px-8 ${MOBILE_STAGE_TOP} sm:px-10`}
@@ -310,7 +310,7 @@ function MobileGapSequence({
           <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-bs-purple">
             The distance
           </p>
-          <p className="mt-4 font-serif text-[1.65rem] leading-snug tracking-tight text-black">
+          <p className="mt-4 font-display font-medium text-[1.65rem] leading-snug tracking-tight text-black">
             That distance is where rebranding begins.
           </p>
           <p className="mt-5 max-w-[18rem] font-mono text-sm leading-relaxed text-neutral-600">
@@ -346,7 +346,7 @@ export default function ChapterGap() {
           <p className="mb-5 font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-500">
             02 · The gap
           </p>
-          <h2 className="max-w-3xl font-serif text-3xl leading-snug tracking-tight text-black md:text-5xl">
+          <h2 className="max-w-3xl font-display font-medium text-3xl leading-snug tracking-tight text-black md:text-5xl">
             Sometimes the brand stays still while the business moves on.
           </h2>
           <p className="mt-6 max-w-2xl font-mono text-sm leading-relaxed text-neutral-600 md:text-base">
@@ -361,7 +361,7 @@ export default function ChapterGap() {
               </p>
               <ul className="mt-5 space-y-4">
                 {PAIRS.map((pair) => (
-                  <li key={pair.was} className="font-serif text-2xl tracking-tight text-neutral-500">
+                  <li key={pair.was} className="font-display font-medium text-2xl tracking-tight text-neutral-500">
                     {pair.was}
                   </li>
                 ))}
@@ -378,7 +378,7 @@ export default function ChapterGap() {
               </p>
               <ul className="mt-5 space-y-4">
                 {PAIRS.map((pair) => (
-                  <li key={pair.now} className="font-serif text-2xl tracking-tight text-black">
+                  <li key={pair.now} className="font-display font-medium text-2xl tracking-tight text-black">
                     {pair.now}
                   </li>
                 ))}
@@ -386,7 +386,7 @@ export default function ChapterGap() {
             </div>
           </div>
 
-          <p className="mt-14 max-w-xl font-serif text-2xl leading-snug tracking-tight text-black md:text-4xl">
+          <p className="mt-14 max-w-xl font-display font-medium text-2xl leading-snug tracking-tight text-black md:text-4xl">
             That distance is where <span className="text-bs-purple">rebranding</span>{" "}
             begins.
           </p>
@@ -418,7 +418,7 @@ export default function ChapterGap() {
                 <p className="mb-5 font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-500">
                   02 · The gap
                 </p>
-                <h2 className="font-serif text-6xl leading-[1.08] tracking-tight text-black">
+                <h2 className="font-display font-medium text-6xl leading-[1.08] tracking-tight text-black">
                   Sometimes the brand stays still while the business moves on.
                 </h2>
               </motion.div>
@@ -435,7 +435,7 @@ export default function ChapterGap() {
                 <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-bs-purple">
                   The distance
                 </p>
-                <p className="mt-5 font-serif text-5xl leading-snug tracking-tight text-black">
+                <p className="mt-5 font-display font-medium text-5xl leading-snug tracking-tight text-black">
                   That distance is where rebranding begins.
                 </p>
                 <p className="mt-5 max-w-md font-mono text-sm leading-relaxed text-neutral-600">

@@ -39,3 +39,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Client source files. Optimised copies live under public/images/work/.
+/_case-study-refs/
+/*-brand/
+/skapa-guideline-pages/

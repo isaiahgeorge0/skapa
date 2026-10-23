@@ -46,7 +46,7 @@ export default function ChapterDeliverables() {
           <p className="mb-5 font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-500">
             07 · What you get
           </p>
-          <h2 className="font-serif text-3xl leading-snug tracking-tight text-black md:text-5xl">
+          <h2 className="font-display font-medium text-3xl leading-snug tracking-tight text-black md:text-5xl">
             A reference built to be used.
           </h2>
         </div>
@@ -74,7 +74,7 @@ export default function ChapterDeliverables() {
                   <span className="font-mono text-[10px] tracking-[0.14em] text-neutral-400">
                     {String(index + 1).padStart(2, "0")}
                   </span>
-                  <h3 className="font-serif text-xl tracking-tight text-black md:text-3xl">
+                  <h3 className="font-display font-medium text-xl tracking-tight text-black md:text-3xl">
                     {item.title}
                   </h3>
                 </div>

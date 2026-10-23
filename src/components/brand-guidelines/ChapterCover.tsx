@@ -97,7 +97,7 @@ export default function ChapterCover() {
           <p className="mb-5 font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-500">
             03 · What they cover
           </p>
-          <h2 className="font-serif text-3xl leading-snug tracking-tight text-black md:text-5xl">
+          <h2 className="font-display font-medium text-3xl leading-snug tracking-tight text-black md:text-5xl">
             One place for the decisions that matter.
           </h2>
         </div>
@@ -159,7 +159,7 @@ export default function ChapterCover() {
                       }`}
                       aria-current={selected ? "true" : undefined}
                     >
-                      <span className="font-serif text-xl">{chapter.title}</span>
+                      <span className="font-display font-medium tracking-tight text-xl">{chapter.title}</span>
                       <span
                         className={`font-mono text-[10px] tracking-[0.14em] ${
                           selected ? chip.muted : "text-neutral-400"
@@ -205,7 +205,7 @@ function CoverPlate({
       <div className={`grid gap-6 p-5 sm:grid-cols-2 ${compact ? "sm:p-6" : "md:gap-8 md:p-8"}`}>
         <div>
           <div className={`mb-4 h-1 w-10 ${tone.bar}`} />
-          <h3 className="font-serif text-3xl tracking-tight text-black md:text-4xl">
+          <h3 className="font-display font-medium text-3xl tracking-tight text-black md:text-4xl">
             {current.title}
           </h3>
           <p className="mt-4 font-mono text-sm leading-relaxed text-neutral-600 md:text-base">
@@ -254,7 +254,7 @@ function ApplicationSample() {
         </div>
 
         <div className="max-w-[16ch] pt-6">
-          <p className="font-serif text-2xl leading-[1.05] tracking-tight sm:text-3xl">
+          <p className="font-display font-medium text-2xl leading-[1.05] tracking-tight sm:text-3xl">
             One system. Every touchpoint.
           </p>
           <p className="mt-3 font-mono text-[10px] leading-relaxed tracking-[0.04em] text-bs-offwhite/75">
@@ -297,7 +297,7 @@ function PlateVisual({
   if (id === "typography") {
     return (
       <div className="text-center">
-        <p className="font-serif text-4xl">Aa</p>
+        <p className="font-display font-medium tracking-tight text-4xl">Aa</p>
         <p className="mt-2 font-mono text-[10px] uppercase tracking-[0.16em] opacity-70">
           Hierarchy
         </p>
@@ -307,7 +307,7 @@ function PlateVisual({
 
   if (id === "voice") {
     return (
-      <p className="max-w-[14ch] text-center font-serif text-xl italic">
+      <p className="max-w-[14ch] text-center font-display font-medium tracking-tight text-xl italic">
         Clear. Confident. Human.
       </p>
     );

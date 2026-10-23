@@ -17,11 +17,11 @@ export default function PortalNowHero({ projectId, phase }: { projectId: string;
           </p>
           <h2
             id="portal-now-heading"
-            className="mt-2 font-serif text-3xl leading-[1.05] tracking-tight text-black sm:mt-3 sm:text-4xl md:text-5xl lg:text-[3.25rem]"
+            className="mt-2 font-display font-medium text-3xl leading-[1.05] tracking-tight text-black sm:mt-3 sm:text-4xl md:text-5xl lg:text-[3.25rem]"
           >
             {current.label}
           </h2>
-          <p className="mt-3 line-clamp-2 max-w-prose font-serif text-base italic leading-snug text-neutral-500 sm:mt-4 sm:line-clamp-none sm:text-lg md:text-xl">
+          <p className="mt-3 line-clamp-2 max-w-prose font-display font-medium tracking-tight text-base italic leading-snug text-neutral-500 sm:mt-4 sm:line-clamp-none sm:text-lg md:text-xl">
             {current.description}
           </p>
         </div>
@@ -32,7 +32,7 @@ export default function PortalNowHero({ projectId, phase }: { projectId: string;
               <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-neutral-400">
                 Progress
               </p>
-              <p className="mt-1 font-serif text-3xl tracking-tight text-black tabular-nums sm:mt-2 sm:text-4xl md:text-5xl">
+              <p className="mt-1 font-display font-medium text-3xl tracking-tight text-black tabular-nums sm:mt-2 sm:text-4xl md:text-5xl">
                 {percent}
                 <span className="text-xl text-neutral-400 sm:text-2xl md:text-3xl">%</span>
               </p>

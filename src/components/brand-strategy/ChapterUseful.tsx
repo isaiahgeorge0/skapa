@@ -27,7 +27,7 @@ function SlideFace({ slide }: { slide: (typeof SLIDES)[number] }) {
           </span>
         </div>
         <div>
-          <p className="font-serif text-4xl leading-none md:text-5xl">{slide.title}</p>
+          <p className="font-display font-medium tracking-tight text-4xl leading-none md:text-5xl">{slide.title}</p>
           <div className="mt-8 grid grid-cols-3 gap-px bg-bs-offwhite/25">
             {Array.from({ length: 9 }).map((_, i) => (
               <div
@@ -51,7 +51,7 @@ function SlideFace({ slide }: { slide: (typeof SLIDES)[number] }) {
           <span className="font-mono text-[10px] tracking-[0.18em]">{slide.number}</span>
           <span className="font-mono text-[10px] tracking-[0.14em]">skapa</span>
         </div>
-        <p className="mt-8 font-serif text-3xl text-black md:text-4xl">{slide.title}</p>
+        <p className="mt-8 font-display font-medium tracking-tight text-3xl text-black md:text-4xl">{slide.title}</p>
         <div className="relative mt-auto flex h-32 items-center justify-center">
           <div className="absolute h-28 w-28 rounded-full border-2 border-bs-purple" />
           <div className="absolute h-16 w-16 rounded-full bg-bs-purple" />
@@ -76,7 +76,7 @@ function SlideFace({ slide }: { slide: (typeof SLIDES)[number] }) {
             skapa
           </span>
         </div>
-        <p className="mt-8 font-serif text-3xl md:text-4xl">{slide.title}</p>
+        <p className="mt-8 font-display font-medium tracking-tight text-3xl md:text-4xl">{slide.title}</p>
         <div className="mt-auto flex items-end gap-2">
           {[0.45, 0.45, 0.45, 1, 0.45].map((h, i) => (
             <div
@@ -104,7 +104,7 @@ function SlideFace({ slide }: { slide: (typeof SLIDES)[number] }) {
           <span className="font-mono text-[10px] tracking-[0.14em]">skapa</span>
         </div>
         <div>
-          <p className="font-serif text-4xl leading-none md:text-5xl">{slide.title}</p>
+          <p className="font-display font-medium tracking-tight text-4xl leading-none md:text-5xl">{slide.title}</p>
           <div className="mt-6 h-px w-16 bg-bs-purple" />
           <p className="mt-4 max-w-[16ch] font-mono text-xs leading-relaxed">
             The promise that makes the offer matter.
@@ -127,7 +127,7 @@ function SlideFace({ slide }: { slide: (typeof SLIDES)[number] }) {
               skapa
             </span>
           </div>
-          <p className="font-serif text-5xl italic leading-[0.95] text-bs-pink md:text-6xl">
+          <p className="font-display font-medium tracking-tight text-5xl italic leading-[0.95] text-bs-pink md:text-6xl">
             {slide.title}
           </p>
           <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-neutral-500">
@@ -145,11 +145,11 @@ function SlideFace({ slide }: { slide: (typeof SLIDES)[number] }) {
           <span className="font-mono text-[10px] tracking-[0.18em]">{slide.number}</span>
           <span className="font-mono text-[10px] tracking-[0.14em]">skapa</span>
         </div>
-        <p className="mt-6 font-serif text-3xl text-black">{slide.title}</p>
+        <p className="mt-6 font-display font-medium tracking-tight text-3xl text-black">{slide.title}</p>
         <div className="mt-auto space-y-3">
-          <p className="font-serif text-sm text-black/25 line-through">Everything at once</p>
-          <p className="font-serif text-lg text-black/40">Supporting detail</p>
-          <p className="font-serif text-3xl text-bs-purple">What matters</p>
+          <p className="font-display font-medium text-sm text-black/25 line-through">Everything at once</p>
+          <p className="font-display font-medium text-lg text-black/40">Supporting detail</p>
+          <p className="font-display font-medium tracking-tight text-3xl text-bs-purple">What matters</p>
         </div>
         <p className="mt-4 font-mono text-[10px] uppercase tracking-[0.16em] text-neutral-500">
           {slide.note}
@@ -170,11 +170,11 @@ function SlideFace({ slide }: { slide: (typeof SLIDES)[number] }) {
           </span>
         </div>
         <div className="mt-8 h-px w-12 bg-bs-pink" />
-        <p className="mt-4 font-serif text-3xl text-black md:text-4xl">{slide.title}</p>
+        <p className="mt-4 font-display font-medium tracking-tight text-3xl text-black md:text-4xl">{slide.title}</p>
         <div className="mt-8 space-y-2">
-          <p className="font-serif text-2xl text-black">Clear.</p>
-          <p className="font-serif text-2xl italic text-neutral-500">Human.</p>
-          <p className="font-serif text-2xl text-bs-pink">Distinct.</p>
+          <p className="font-display font-medium tracking-tight text-2xl text-black">Clear.</p>
+          <p className="font-display font-medium tracking-tight text-2xl italic text-neutral-500">Human.</p>
+          <p className="font-display font-medium tracking-tight text-2xl text-bs-pink">Distinct.</p>
         </div>
         <p className="mt-auto font-mono text-[10px] uppercase tracking-[0.16em] text-neutral-500">
           {slide.note}
@@ -191,7 +191,7 @@ function SlideFace({ slide }: { slide: (typeof SLIDES)[number] }) {
           skapa
         </span>
       </div>
-      <p className="mt-8 font-serif text-3xl md:text-4xl">{slide.title}</p>
+      <p className="mt-8 font-display font-medium tracking-tight text-3xl md:text-4xl">{slide.title}</p>
       <div className="mt-auto grid grid-cols-2 gap-2">
         {["Colour", "Type", "Image", "Form"].map((item) => (
           <div
@@ -291,7 +291,7 @@ export default function ChapterUseful() {
   const { scrollYProgress } = useScroll({
     target: deckRef,
     // Align progress 0 with sticky engagement (~10–12vh), progress 1 with
-    // track release — keeps the sequence inside the visible deck section.
+    // track release. Keeps the sequence inside the visible deck section.
     offset: ["start 0.1", "end end"],
   });
   const { scrollYProgress: creativeProgress } = useScroll({
@@ -315,10 +315,10 @@ export default function ChapterUseful() {
         <p className="mb-5 font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-500">
           04 · Make it useful
         </p>
-        <h2 className="max-w-3xl font-serif text-3xl leading-snug tracking-tight text-black md:text-5xl">
+        <h2 className="max-w-3xl font-display font-medium text-3xl leading-snug tracking-tight text-black md:text-5xl">
           Strategy shouldn’t disappear into a presentation.
         </h2>
-        <p className="mt-5 max-w-2xl font-serif text-2xl italic leading-snug text-neutral-600 md:text-3xl">
+        <p className="mt-5 max-w-2xl font-display font-medium tracking-tight text-2xl italic leading-snug text-neutral-600 md:text-3xl">
           It should become something your business can actually use.
         </p>
 
@@ -343,7 +343,7 @@ export default function ChapterUseful() {
             </div>
           </div>
           <figcaption className="mt-5 flex flex-wrap items-end justify-between gap-4">
-            <p className="font-serif text-3xl italic text-black md:text-4xl">
+            <p className="font-display font-medium tracking-tight text-3xl italic text-black md:text-4xl">
               Clarity before creativity.
             </p>
             <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-neutral-500">
@@ -375,7 +375,7 @@ export default function ChapterUseful() {
         )}
 
         {/*
-          Layout spacing after the sticky interaction releases — not an
+          Layout spacing after the sticky interaction releases. Not an
           extension of the scroll track (avoids empty sticky dead space).
         */}
         <p className="mt-24 max-w-xl font-mono text-sm leading-relaxed text-neutral-500 md:mt-10">
@@ -408,7 +408,7 @@ export default function ChapterUseful() {
             <p className="mb-4 font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-500">
               Strategy → creative direction
             </p>
-            <h3 className="font-serif text-3xl leading-snug text-black md:text-4xl">
+            <h3 className="font-display font-medium tracking-tight text-3xl leading-snug text-black md:text-4xl">
               Strategy gives creativity something to respond to.
             </h3>
 
@@ -424,7 +424,7 @@ export default function ChapterUseful() {
                 (word) => (
                   <li
                     key={word}
-                    className="font-serif text-2xl text-neutral-500 md:text-3xl"
+                    className="font-display font-medium tracking-tight text-2xl text-neutral-500 md:text-3xl"
                   >
                     {word}
                   </li>
@@ -443,7 +443,7 @@ export default function ChapterUseful() {
               {["Colour", "Type", "Image", "Form"].map((word, i) => (
                 <li
                   key={word}
-                  className="font-serif text-2xl md:text-3xl"
+                  className="font-display font-medium tracking-tight text-2xl md:text-3xl"
                   style={{ color: ["#4b4ae4", "#ff2791", "#111111", "#111111"][i] }}
                 >
                   {word}

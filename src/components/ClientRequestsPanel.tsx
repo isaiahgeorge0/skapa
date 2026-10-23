@@ -48,7 +48,7 @@ export default function ClientRequestsPanel({
   return (
     <div className="space-y-8">
       <form onSubmit={onSubmit} className="surface-raised px-6 py-6 md:px-7 md:py-7">
-        <p className="font-serif text-xl tracking-tight text-black">
+        <p className="font-display font-medium text-xl tracking-tight text-black">
           Need something adding?
         </p>
         <p className="mt-2 max-w-prose font-mono text-sm leading-relaxed text-neutral-500">
@@ -102,7 +102,7 @@ export default function ClientRequestsPanel({
           {requests.map((request) => (
             <li key={request.id} className="py-4">
               <div className="flex flex-wrap items-baseline justify-between gap-2">
-                <p className="font-serif text-lg text-black">{request.title}</p>
+                <p className="font-display font-medium text-lg text-black">{request.title}</p>
                 <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-neutral-400">
                   {STATUS_LABELS[request.status] ?? request.status}
                 </span>

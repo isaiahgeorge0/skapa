@@ -17,7 +17,7 @@ export default function AboutPage() {
           <p className="mb-8 font-mono text-sm uppercase tracking-widest text-brand-blue">
             About
           </p>
-          <h1 className="font-serif text-5xl leading-[1.05] tracking-tight md:text-6xl">
+          <h1 className="font-display font-medium text-5xl leading-[1.05] tracking-tight md:text-6xl">
             Built to create, shape and{" "}
             <span className="italic text-brand-pink">grow brands.</span>
           </h1>
@@ -44,7 +44,7 @@ export default function AboutPage() {
 
       <div className="bg-brand-cream">
         <div className="site-container py-16 md:py-20">
-          <p className="max-w-2xl font-serif text-2xl leading-snug text-black md:text-3xl">
+          <p className="max-w-2xl font-display font-medium tracking-tight text-2xl leading-snug text-black md:text-3xl">
             One team. One conversation.{" "}
             <span className="italic text-brand-pink">One result you can rely on.</span>
           </p>

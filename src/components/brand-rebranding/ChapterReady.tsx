@@ -21,7 +21,7 @@ export default function ChapterReady() {
           <p className="mb-5 font-mono text-[11px] uppercase tracking-[0.2em] text-bs-yellow">
             READY FOR WHAT&apos;S NEXT?
           </p>
-          <h2 className="max-w-3xl font-serif text-4xl leading-[1.05] tracking-tight text-bs-offwhite md:text-6xl">
+          <h2 className="max-w-3xl font-display font-medium text-4xl leading-[1.05] tracking-tight text-bs-offwhite md:text-6xl">
             Make the brand match the ambition.
           </h2>
           <p className="mt-6 max-w-xl font-mono text-sm leading-relaxed text-bs-offwhite/85 md:text-base">

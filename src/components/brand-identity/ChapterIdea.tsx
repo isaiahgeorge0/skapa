@@ -61,7 +61,7 @@ function SketchField({ progress }: { progress: MotionValue<number> }) {
         <div className="absolute top-[30%] left-[40%] font-mono text-[10px] tracking-[0.16em] text-neutral-400 line-through">
           OPTION B
         </div>
-        <div className="absolute top-[58%] right-[28%] font-serif text-4xl text-neutral-300/80 line-through md:text-5xl">
+        <div className="absolute top-[58%] right-[28%] font-display font-medium tracking-tight text-4xl text-neutral-300/80 line-through md:text-5xl">
           sk
         </div>
         <div className="absolute bottom-[18%] left-[8%] font-mono text-[9px] uppercase tracking-[0.2em] text-neutral-400">
@@ -128,7 +128,7 @@ export default function ChapterIdea() {
           <p className="mb-5 font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-500">
             Brand Identity · 01
           </p>
-          <h1 className="max-w-3xl font-serif text-4xl leading-[1.05] tracking-tight text-black md:text-6xl">
+          <h1 className="max-w-3xl font-display font-medium text-4xl leading-[1.05] tracking-tight text-black md:text-6xl">
             Every identity starts somewhere unfinished.
           </h1>
           <p className="mt-6 max-w-xl font-mono text-sm leading-relaxed text-neutral-600 md:text-base">
@@ -168,7 +168,7 @@ export default function ChapterIdea() {
                 <p className="mb-4 font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-500 md:mb-5">
                   Brand Identity · 01
                 </p>
-                <h1 className="font-serif text-[2.15rem] leading-[1.08] tracking-tight text-black sm:text-5xl md:text-6xl lg:text-[4rem]">
+                <h1 className="font-display font-medium text-[2.15rem] leading-[1.08] tracking-tight text-black sm:text-5xl md:text-6xl lg:text-[4rem]">
                   Every identity starts somewhere unfinished.
                 </h1>
                 <p className="mt-5 max-w-xl font-mono text-sm leading-relaxed text-neutral-600 md:mt-6 md:text-base">
@@ -189,7 +189,7 @@ export default function ChapterIdea() {
                 <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-500">
                   The idea
                 </p>
-                <p className="mt-4 font-serif text-[1.65rem] leading-snug tracking-tight text-black md:mt-5 md:text-5xl">
+                <p className="mt-4 font-display font-medium text-[1.65rem] leading-snug tracking-tight text-black md:mt-5 md:text-5xl">
                   Before it&apos;s recognisable, it&apos;s just decisions waiting
                   to be made.
                 </p>

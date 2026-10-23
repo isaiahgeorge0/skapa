@@ -32,7 +32,7 @@ export default async function AdminProjectsPage() {
         <div className="mb-10 flex items-baseline justify-between">
           <div>
             <p className="mb-2 font-mono text-xs uppercase tracking-widest text-neutral-500">Admin</p>
-            <h1 className="font-serif text-4xl text-black">Projects</h1>
+            <h1 className="font-display font-medium tracking-tight text-4xl text-black">Projects</h1>
           </div>
           <Link href="/admin/projects/new" className="bg-black px-5 py-2.5 font-mono text-[11px] uppercase tracking-[0.14em] text-white transition-opacity hover:opacity-80">
             New project

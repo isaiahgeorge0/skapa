@@ -758,7 +758,7 @@ export default function DocumentFieldEditor({
       <aside className="lg:sticky lg:top-6 lg:max-h-[calc(100vh-3rem)] lg:overflow-y-auto">
         <div className="space-y-4 rounded-lg border border-neutral-200 bg-white p-4">
           <div>
-            <h2 className="mb-3 font-serif text-xl text-black">Add field</h2>
+            <h2 className="mb-3 font-display font-medium tracking-tight text-xl text-black">Add field</h2>
             <div className="space-y-2">
               {renderToolbarButton("signature", "Add signature field")}
               {renderToolbarButton("date", "Add date field")}
@@ -774,7 +774,7 @@ export default function DocumentFieldEditor({
 
           <div className="border-t border-neutral-100 pt-4">
             <div className="mb-3 flex items-center justify-between gap-2">
-              <h2 className="font-serif text-xl text-black">Placed fields</h2>
+              <h2 className="font-display font-medium tracking-tight text-xl text-black">Placed fields</h2>
               <span className="font-mono text-[10px] uppercase tracking-widest text-neutral-400">
                 {fields.length}
               </span>
@@ -880,7 +880,7 @@ export default function DocumentFieldEditor({
           </div>
 
           <div className="border-t border-neutral-100 pt-4">
-            <h2 className="mb-2 font-serif text-xl text-black">Signing order</h2>
+            <h2 className="mb-2 font-display font-medium tracking-tight text-xl text-black">Signing order</h2>
             <p className="mb-3 font-mono text-[11px] leading-relaxed text-neutral-500">
               Derived from field assignees. Supplier first by default; reorder before sending.
             </p>
@@ -939,7 +939,7 @@ export default function DocumentFieldEditor({
           </div>
 
           <div className="border-t border-neutral-100 pt-4">
-            <h2 className="mb-2 font-serif text-xl text-black">Copy fields</h2>
+            <h2 className="mb-2 font-display font-medium tracking-tight text-xl text-black">Copy fields</h2>
             <p className="mb-3 font-mono text-[11px] leading-relaxed text-neutral-500">
               Duplicate a field layout from another PDF. Replaces fields on this document.
             </p>

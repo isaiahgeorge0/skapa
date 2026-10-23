@@ -72,7 +72,7 @@ export default function PortalAttentionList({
 
   if (items.length === 0) {
     return (
-      <p className="border-t border-black/[0.06] px-4 py-4 font-serif text-lg italic text-neutral-500 sm:px-6">
+      <p className="border-t border-black/[0.06] px-4 py-4 font-display font-medium text-lg italic text-neutral-500 sm:px-6">
         You&apos;re all caught up.
       </p>
     );
@@ -92,7 +92,7 @@ export default function PortalAttentionList({
                 >
                   <span className="min-w-0">
                     <span className={`block ${typeLabelClass}`}>Signature</span>
-                    <span className="mt-1 block break-words font-serif text-base leading-snug text-black">
+                    <span className="mt-1 block break-words font-display font-medium text-base leading-snug text-black">
                       {signature.title}
                     </span>
                     {signature.project_name ? (
@@ -115,7 +115,7 @@ export default function PortalAttentionList({
               <button type="button" onClick={() => setOpenTask(task)} className={rowClass}>
                 <span className="min-w-0">
                   <span className={`block ${typeLabelClass}`}>Task</span>
-                  <span className="mt-1 block break-words font-serif text-base leading-snug text-black">
+                  <span className="mt-1 block break-words font-display font-medium text-base leading-snug text-black">
                     {task.title}
                   </span>
                   <span className="mt-1.5 flex flex-wrap items-center gap-1.5">

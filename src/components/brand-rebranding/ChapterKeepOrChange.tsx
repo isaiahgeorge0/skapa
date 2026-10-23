@@ -161,7 +161,7 @@ function MobileCard({
           {state.label}
         </span>
       </div>
-      <p className="mt-4 max-w-[22ch] font-serif text-[1.55rem] leading-snug tracking-tight text-black">
+      <p className="mt-4 max-w-[22ch] font-display font-medium text-[1.55rem] leading-snug tracking-tight text-black">
         {token.note}
       </p>
       <p className="mt-3 font-mono text-[13px] leading-relaxed text-neutral-600">
@@ -204,7 +204,7 @@ function MobileDeck({
             <p className="mb-4 font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-500">
               03 · Keep or change
             </p>
-            <h2 className="max-w-[16ch] font-serif text-[2rem] leading-[1.08] tracking-tight text-black">
+            <h2 className="max-w-[16ch] font-display font-medium text-[2rem] leading-[1.08] tracking-tight text-black">
               A rebrand doesn&apos;t mean throwing everything away.
             </h2>
           </motion.div>
@@ -321,7 +321,7 @@ export default function ChapterKeepOrChange() {
           <p className="mb-5 font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-500">
             03 · Keep or change
           </p>
-          <h2 className="max-w-3xl font-serif text-3xl leading-snug tracking-tight text-black md:text-5xl">
+          <h2 className="max-w-3xl font-display font-medium text-3xl leading-snug tracking-tight text-black md:text-5xl">
             A rebrand doesn&apos;t mean throwing everything away.
           </h2>
           <p className="mt-6 max-w-2xl font-mono text-sm leading-relaxed text-neutral-600 md:text-base">
@@ -370,7 +370,7 @@ export default function ChapterKeepOrChange() {
             <p className="mb-5 font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-500">
               03 · Keep or change
             </p>
-            <h2 className="font-serif text-5xl leading-snug tracking-tight text-black">
+            <h2 className="font-display font-medium text-5xl leading-snug tracking-tight text-black">
               A rebrand doesn&apos;t mean throwing everything away.
             </h2>
             <p className="mt-6 max-w-2xl font-mono text-base leading-relaxed text-neutral-600">
@@ -428,7 +428,7 @@ export default function ChapterKeepOrChange() {
                         </span>
                       </div>
                       <p
-                        className={`mt-6 max-w-[24ch] font-serif text-2xl leading-snug tracking-tight ${
+                        className={`mt-6 max-w-[24ch] font-display font-medium text-2xl leading-snug tracking-tight ${
                           active ? "text-bs-offwhite" : "text-black"
                         }`}
                       >
@@ -446,7 +446,7 @@ export default function ChapterKeepOrChange() {
                   <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-neutral-500">
                     Current decision
                   </p>
-                  <h3 className="mt-4 font-serif text-[2.55rem] leading-none tracking-tight text-black">
+                  <h3 className="mt-4 font-display font-medium text-[2.55rem] leading-none tracking-tight text-black">
                     {selectedToken.label}
                   </h3>
                   <div className="mt-5 flex flex-wrap gap-2">

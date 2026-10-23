@@ -74,7 +74,7 @@ export default function UpcomingTasksPanel({
           const content = (
             <>
               <p
-                className={`break-words font-serif text-base leading-snug ${
+                className={`break-words font-display font-medium text-base leading-snug ${
                   task.is_complete ? "text-neutral-400 line-through" : "text-black"
                 }`}
               >

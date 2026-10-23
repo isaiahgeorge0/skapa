@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { createAdminClient } from "@/lib/supabase/admin";
 import AcceptInviteForm from "@/components/AcceptInviteForm";
 import { noindexNofollow } from "@/lib/seo";
+import { SkapaSignature } from "@/components/brand/Logo";
 
 export const metadata: Metadata = {
   title: "Accept invite",
@@ -29,7 +30,7 @@ export default async function InvitePage({
     return (
       <div className="flex min-h-screen items-center justify-center px-6">
         <div className="max-w-sm text-center">
-          <h1 className="mb-3 font-serif text-2xl text-black">This invite isn&apos;t valid</h1>
+          <h1 className="mb-3 font-display font-medium tracking-tight text-2xl text-black">This invite isn&apos;t valid</h1>
           <p className="font-mono text-sm text-neutral-500">
             It may have already been used, revoked, or expired. Ask skapa to send a new one.
           </p>
@@ -41,8 +42,8 @@ export default async function InvitePage({
   return (
     <div className="flex min-h-screen items-center justify-center px-6">
       <div className="w-full max-w-sm">
-        <h1 className="mb-2 font-serif text-2xl text-black">
-          skapa <span className="italic text-brand-pink">Creative</span>
+        <h1 className="mb-2">
+          <SkapaSignature tone="ink" className="h-7" />
         </h1>
         <p className="mb-8 font-mono text-sm text-neutral-500">
           Set a password to access {client?.name ?? "your"} project portal as {invite!.email}.

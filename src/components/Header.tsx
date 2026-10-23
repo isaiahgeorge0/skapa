@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { SkapaSignature } from "@/components/brand/Logo";
 
 const links = [
   { href: "/", label: "Home" },
@@ -97,9 +98,9 @@ export default function Header() {
   return (
     <>
       {/*
-        Full header bar — owns --skapa-site-chrome-height.
+        Full header bar. Owns --skapa-site-chrome-height.
         Mobile: logo + menu control (no wrapped link row).
-        Desktop: logo + inline links; floating chrome takes over once scrolled.
+        Desktop: logo + inline links. Floating chrome takes over once scrolled.
       */}
       <header
         className={`sticky top-0 z-50 w-full border-b border-neutral-200 bg-white transition-opacity duration-300 ease-out ${
@@ -109,8 +110,8 @@ export default function Header() {
         aria-hidden={scrolled}
       >
         <div className="relative flex h-[var(--skapa-site-chrome-height)] site-container items-center justify-between gap-8">
-          <Link href="/" className="font-serif text-2xl tracking-tight text-black">
-            skapa <span className="italic text-brand-pink">Creative</span>
+          <Link href="/" aria-label="Skapa Creative, home" className="inline-flex">
+            <SkapaSignature tone="ink" alt="" className="h-8" />
           </Link>
 
           <nav aria-label="Primary" className="hidden md:block">
@@ -138,19 +139,20 @@ export default function Header() {
         </div>
       </header>
 
-      {/* Floating logo — scrolled state only */}
+      {/* Floating logo. Scrolled state only. */}
       <Link
         href="/"
         onClick={() => setMenuOpen(false)}
-        className={`fixed top-3 left-4 z-50 rounded-full bg-white/90 px-4 py-2 font-serif text-lg tracking-tight text-black shadow-sm backdrop-blur transition-opacity duration-300 ease-out md:top-3.5 md:left-6 ${
+        aria-label="Skapa Creative, home"
+        className={`fixed top-3 left-4 z-50 inline-flex rounded-full bg-white/90 px-4 py-2 shadow-sm backdrop-blur transition-opacity duration-300 ease-out md:top-3.5 md:left-6 ${
           scrolled ? "opacity-100" : "pointer-events-none opacity-0"
         }`}
         aria-hidden={!scrolled}
       >
-        skapa <span className="italic text-brand-pink">Creative</span>
+        <SkapaSignature tone="ink" alt="" className="h-6" />
       </Link>
 
-      {/* Floating menu — scrolled state (mobile menu lives in the header at top) */}
+      {/* Floating menu. Scrolled state. Mobile menu lives in the header at the top. */}
       <div
         className={`fixed top-3 right-4 z-50 transition-opacity duration-300 ease-out md:top-3.5 md:right-6 ${
           scrolled ? "opacity-100" : "pointer-events-none opacity-0"

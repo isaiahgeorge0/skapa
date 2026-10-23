@@ -4,6 +4,7 @@ import Link from "next/link";
 import { AnimatePresence, motion } from "motion/react";
 import type { SubmitLeadResult } from "@/lib/submit-lead-core";
 import { withTimeout } from "@/lib/with-timeout";
+import { SkapaSignature } from "@/components/brand/Logo";
 
 const SUBMIT_TIMEOUT_MS = 15_000;
 
@@ -67,7 +68,7 @@ const EMPTY: Answers = {
 export default function StartQuestionnaire({
   startedAt,
 }: {
-  /** Server-clock Date.now() from the page render — never generated in the browser. */
+  /** Server-clock Date.now() from the page render. Never generated in the browser. */
   startedAt: number;
 }) {
   const [stepIndex, setStepIndex] = useState(0);
@@ -76,7 +77,7 @@ export default function StartQuestionnaire({
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [done, setDone] = useState(false);
-  // Hidden decoy field — real visitors never touch it, a bot scripting
+  // Hidden decoy field. Real visitors never touch it. A bot scripting
   // through every input field will.
   const [honeypot, setHoneypot] = useState("");
 
@@ -168,8 +169,8 @@ export default function StartQuestionnaire({
         <p className="mb-4 font-mono text-xs uppercase tracking-widest text-neutral-500">
           Thanks, {answers.name.split(" ")[0]}
         </p>
-        <h1 className="mb-6 max-w-lg font-serif text-4xl text-black md:text-5xl">
-          Got it. <span className="italic text-brand-pink">We'll be in touch.</span>
+        <h1 className="mb-6 max-w-lg font-display font-medium tracking-tight text-4xl text-black md:text-5xl">
+          Got it. <span className="italic text-brand-pink">We&apos;ll be in touch.</span>
         </h1>
         <p className="mb-10 max-w-md font-mono text-sm text-neutral-500">
           We read every one of these properly. Expect to hear from us shortly,
@@ -187,7 +188,7 @@ export default function StartQuestionnaire({
 
   return (
     <div className="flex min-h-screen flex-col">
-      {/* Honeypot — hidden from real visitors and screen readers. */}
+      {/* Honeypot. Hidden from real visitors and screen readers. */}
       <div
         aria-hidden="true"
         style={{ position: "absolute", left: "-9999px", width: "1px", height: "1px", overflow: "hidden" }}
@@ -204,8 +205,8 @@ export default function StartQuestionnaire({
         />
       </div>
       <div className="flex items-center justify-between px-6 py-6 md:px-10">
-        <Link href="/" className="font-serif text-xl text-black">
-          skapa <span className="italic text-brand-pink">Creative</span>
+        <Link href="/" aria-label="Skapa Creative, home" className="inline-flex">
+          <SkapaSignature tone="ink" alt="" className="h-7" />
         </Link>
         <p className="font-mono text-xs text-neutral-400">
           {stepIndex + 1} / {STEPS.length}
@@ -238,7 +239,7 @@ export default function StartQuestionnaire({
                     onChange={(e) => update("name", e.target.value)}
                     onKeyDown={handleTextKeyDown}
                     placeholder="Your name"
-                    className="w-full border-b-2 border-neutral-300 bg-transparent pb-3 font-serif text-2xl text-black outline-none focus:border-brand-pink md:text-3xl"
+                    className="w-full border-b-2 border-neutral-300 bg-transparent pb-3 font-display font-medium tracking-tight text-2xl text-black outline-none focus:border-brand-pink md:text-3xl"
                   />
                 </Question>
               )}
@@ -252,7 +253,7 @@ export default function StartQuestionnaire({
                     onChange={(e) => update("email", e.target.value)}
                     onKeyDown={handleTextKeyDown}
                     placeholder="you@example.com"
-                    className="w-full border-b-2 border-neutral-300 bg-transparent pb-3 font-serif text-2xl text-black outline-none focus:border-brand-pink md:text-3xl"
+                    className="w-full border-b-2 border-neutral-300 bg-transparent pb-3 font-display font-medium tracking-tight text-2xl text-black outline-none focus:border-brand-pink md:text-3xl"
                   />
                 </Question>
               )}
@@ -265,7 +266,7 @@ export default function StartQuestionnaire({
                     onChange={(e) => update("brandName", e.target.value)}
                     onKeyDown={handleTextKeyDown}
                     placeholder="Optional"
-                    className="w-full border-b-2 border-neutral-300 bg-transparent pb-3 font-serif text-2xl text-black outline-none focus:border-brand-pink md:text-3xl"
+                    className="w-full border-b-2 border-neutral-300 bg-transparent pb-3 font-display font-medium tracking-tight text-2xl text-black outline-none focus:border-brand-pink md:text-3xl"
                   />
                 </Question>
               )}
@@ -292,7 +293,7 @@ export default function StartQuestionnaire({
                     onChange={(e) => update("trigger", e.target.value)}
                     rows={3}
                     placeholder="Optional: a launch, a rebrand, a website that's finally annoyed you enough…"
-                    className="w-full border-b-2 border-neutral-300 bg-transparent pb-3 font-serif text-xl text-black outline-none focus:border-brand-pink"
+                    className="w-full border-b-2 border-neutral-300 bg-transparent pb-3 font-display font-medium tracking-tight text-xl text-black outline-none focus:border-brand-pink"
                   />
                 </Question>
               )}
@@ -333,7 +334,7 @@ export default function StartQuestionnaire({
                     onChange={(e) => update("extra", e.target.value)}
                     rows={3}
                     placeholder="Optional"
-                    className="w-full border-b-2 border-neutral-300 bg-transparent pb-3 font-serif text-xl text-black outline-none focus:border-brand-pink"
+                    className="w-full border-b-2 border-neutral-300 bg-transparent pb-3 font-display font-medium tracking-tight text-xl text-black outline-none focus:border-brand-pink"
                   />
                 </Question>
               )}
@@ -343,7 +344,7 @@ export default function StartQuestionnaire({
                   <p className="mb-2 font-mono text-xs uppercase tracking-widest text-neutral-500">
                     Last check
                   </p>
-                  <h2 className="mb-8 font-serif text-3xl text-black">
+                  <h2 className="mb-8 font-display font-medium tracking-tight text-3xl text-black">
                     Ready to send this over?
                   </h2>
                   <dl className="mb-10 space-y-3 font-mono text-sm">
@@ -404,7 +405,7 @@ function Question({
 }) {
   return (
     <div>
-      <p className="mb-6 font-serif text-2xl leading-snug text-black md:text-3xl">
+      <p className="mb-6 font-display font-medium tracking-tight text-2xl leading-snug text-black md:text-3xl">
         {label}
         {optional && (
           <span className="ml-2 font-mono text-xs font-normal uppercase tracking-widest text-neutral-400">

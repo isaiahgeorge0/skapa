@@ -115,7 +115,7 @@ export default function ChapterQuestions() {
           <p className="mb-5 font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-500">
             10 · Questions
           </p>
-          <h2 className="font-serif text-3xl leading-snug tracking-tight text-black md:text-5xl">
+          <h2 className="font-display font-medium text-3xl leading-snug tracking-tight text-black md:text-5xl">
             The practical questions usually come next.
           </h2>
           <p className="mt-5 font-mono text-sm leading-relaxed text-neutral-600 md:text-base">
@@ -160,7 +160,7 @@ export default function ChapterQuestions() {
                     className="relative z-10 flex w-full items-start justify-between gap-6 px-0 py-6 text-left outline-none transition-colors duration-300 focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2 md:px-5"
                     style={{ color: open ? accent.fg : "#111111" }}
                   >
-                    <span className="font-serif text-xl md:text-2xl">{faq.q}</span>
+                    <span className="font-display font-medium tracking-tight text-xl md:text-2xl">{faq.q}</span>
                     <span
                       aria-hidden="true"
                       className="mt-1 font-mono text-sm transition-opacity duration-300"

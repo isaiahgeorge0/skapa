@@ -12,7 +12,7 @@ export default function ChapterLogoOrIdentity() {
           <p className="mb-5 font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-500">
             07 · A logo is part of the picture
           </p>
-          <h2 className="font-serif text-3xl leading-snug tracking-tight text-black md:text-5xl">
+          <h2 className="font-display font-medium text-3xl leading-snug tracking-tight text-black md:text-5xl">
             Sometimes you need a logo.
             <br />
             Sometimes you need the whole identity.
@@ -24,7 +24,7 @@ export default function ChapterLogoOrIdentity() {
             <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-bs-purple">
               Logo design
             </p>
-            <h3 className="mt-4 font-serif text-2xl tracking-tight text-black md:text-3xl">
+            <h3 className="mt-4 font-display font-medium text-2xl tracking-tight text-black md:text-3xl">
               A distinctive mark
             </h3>
             <p className="mt-4 font-mono text-sm leading-relaxed text-neutral-600 md:text-base">
@@ -37,7 +37,7 @@ export default function ChapterLogoOrIdentity() {
             <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-bs-yellow">
               Brand identity
             </p>
-            <h3 className="mt-4 font-serif text-2xl tracking-tight md:text-3xl">
+            <h3 className="mt-4 font-display font-medium text-2xl tracking-tight md:text-3xl">
               The wider system
             </h3>
             <p className="mt-4 font-mono text-sm leading-relaxed text-bs-offwhite/80 md:text-base">

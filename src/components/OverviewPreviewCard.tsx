@@ -36,7 +36,7 @@ export default function OverviewPreviewCard({
           <p className="font-mono text-[11px] uppercase tracking-widest text-neutral-500">
             {title}
           </p>
-          <p className="mt-1.5 font-serif text-xl tracking-tight text-black">
+          <p className="mt-1.5 font-display font-medium text-xl tracking-tight text-black">
             {countLabel}
           </p>
         </div>
@@ -55,7 +55,7 @@ export default function OverviewPreviewCard({
                 <li key={item.id} className="py-3.5 first:pt-0 last:pb-0">
                   {deepLink ? (
                     <Link href={deepLink} className="group block">
-                      <p className="font-serif text-base text-black group-hover:underline group-hover:decoration-dotted">
+                      <p className="font-display font-medium text-base text-black group-hover:underline group-hover:decoration-dotted">
                         {item.title}
                       </p>
                       {item.meta ? (
@@ -66,7 +66,7 @@ export default function OverviewPreviewCard({
                     </Link>
                   ) : (
                     <>
-                      <p className="font-serif text-base text-black">{item.title}</p>
+                      <p className="font-display font-medium text-base text-black">{item.title}</p>
                       {item.meta ? (
                         <p className="mt-1 font-mono text-[11px] uppercase tracking-[0.08em] text-neutral-400">
                           {item.meta}

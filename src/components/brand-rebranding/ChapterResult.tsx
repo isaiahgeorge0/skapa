@@ -35,7 +35,7 @@ export default function ChapterResult() {
             <p className="mb-5 font-mono text-[11px] uppercase tracking-[0.2em] text-bs-purple">
               09 · Result
             </p>
-            <h2 className="max-w-2xl font-serif text-3xl leading-snug tracking-tight text-black md:text-5xl">
+            <h2 className="max-w-2xl font-display font-medium text-3xl leading-snug tracking-tight text-black md:text-5xl">
               A brand ready for the business you&apos;re becoming.
             </h2>
             <p className="mt-5 max-w-xl font-mono text-sm leading-relaxed text-neutral-600 md:text-base">
@@ -90,7 +90,7 @@ export default function ChapterResult() {
                         {panel.label}
                       </p>
                       <div>
-                        <p className="font-serif text-2xl leading-none md:text-3xl">
+                        <p className="font-display font-medium tracking-tight text-2xl leading-none md:text-3xl">
                           {panel.detail}
                         </p>
                       </div>

@@ -84,7 +84,7 @@ export default function PortalWorkingOn({
           </span>
           <span className="min-w-0 flex-1">
             <span
-              className={`block break-words font-serif text-base leading-snug group-hover:underline group-hover:decoration-dotted group-hover:underline-offset-4 ${
+              className={`block break-words font-display font-medium text-base leading-snug group-hover:underline group-hover:decoration-dotted group-hover:underline-offset-4 ${
                 done ? "text-neutral-400 line-through" : "text-black"
               }`}
             >

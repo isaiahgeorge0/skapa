@@ -112,6 +112,11 @@ export default function DocumentsPanel({
   const router = useRouter();
   const supabase = useMemo(() => createClient(), []);
   const [docs, setDocs] = useState<Doc[]>(initialDocuments);
+  const [syncedDocuments, setSyncedDocuments] = useState(initialDocuments);
+  if (initialDocuments !== syncedDocuments) {
+    setSyncedDocuments(initialDocuments);
+    setDocs(initialDocuments);
+  }
   const [pendingType, setPendingType] = useState<DocType>("proposal");
   const [pendingRequiresSignature, setPendingRequiresSignature] = useState(
     () => defaultRequiresSignature("proposal"),
@@ -133,18 +138,16 @@ export default function DocumentsPanel({
   const [signatureImageUrls, setSignatureImageUrls] = useState<Record<string, string>>({});
   const [error, setError] = useState<string | null>(null);
   const autoOpenedRef = useRef<string | null>(null);
+  const signedFlags =
+    !canManage || docs.length === 0 ? {} : docsWithSignedData;
 
-  // Keep local list in sync when the server revalidates after mutations.
-  useEffect(() => {
-    setDocs(initialDocuments);
-  }, [initialDocuments]);
+  function signedDataFor(id: string) {
+    return Boolean(signedFlags[id]);
+  }
 
-  // Track which documents have signed field values (blocks Delete; Void only).
+  // Track which documents have signed field values (blocks Delete. Void only).
   useEffect(() => {
-    if (!canManage || docs.length === 0) {
-      setDocsWithSignedData({});
-      return;
-    }
+    if (!canManage || docs.length === 0) return;
 
     let cancelled = false;
 
@@ -405,16 +408,19 @@ export default function DocumentsPanel({
     if (!target) return;
     autoOpenedRef.current = autoOpenDocumentId;
 
-    if (
-      target.requires_signature &&
-      ACTIVE_SIGNING_STATUSES.includes(target.status)
-    ) {
-      void openSignExperience(target);
-      return;
-    }
+    const openLater = window.setTimeout(() => {
+      if (
+        target.requires_signature &&
+        ACTIVE_SIGNING_STATUSES.includes(target.status)
+      ) {
+        void openSignExperience(target);
+        return;
+      }
 
-    // Share-only (or settled) docs: open the file the same way Download does.
-    void downloadDoc(target);
+      // Share-only (or settled) docs: open the file the same way Download does.
+      void downloadDoc(target);
+    }, 0);
+    return () => window.clearTimeout(openLater);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoOpenDocumentId, initialDocuments]);
 
@@ -529,7 +535,7 @@ export default function DocumentsPanel({
   }
 
   async function confirmDeleteDocument(id: string) {
-    if (docsWithSignedData[id]) {
+    if (signedDataFor(id)) {
       setError(DOCUMENT_SIGNED_DATA_DELETE_MESSAGE);
       setDeleteConfirmId(null);
       return;
@@ -558,7 +564,7 @@ export default function DocumentsPanel({
   }
 
   function canDeleteDocument(doc: Doc): boolean {
-    return !docsWithSignedData[doc.id];
+    return !signedDataFor(doc.id);
   }
 
   function canOpenForSigning(doc: Doc): boolean {
@@ -648,7 +654,7 @@ export default function DocumentsPanel({
           <p className="font-mono text-sm text-neutral-600">
             This permanently removes the document and its file. Only use this for
             drafts or unsent uploads with no signed field values. Documents with
-            signed data can&apos;t be deleted — use Void instead.
+            signed data can&apos;t be deleted. Use Void instead.
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
             <button
@@ -717,7 +723,7 @@ export default function DocumentsPanel({
 
         {docs.length === 0 ? (
           <div className="surface-raised-soft px-6 py-7 md:px-7 md:py-8">
-            <p className="font-serif text-lg text-black">Documents are on the way.</p>
+            <p className="font-display font-medium text-lg text-black">Documents are on the way.</p>
             <p className="mt-2 max-w-prose text-sm leading-relaxed text-neutral-500">
               When proposals, contracts or proofs are ready, they appear here for you
               to review and sign. Nothing needs doing until then.
@@ -734,7 +740,7 @@ export default function DocumentsPanel({
                   >
                     <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
                       <div className="min-w-0">
-                        <p className="font-serif text-2xl tracking-tight text-black">
+                        <p className="font-display font-medium text-2xl tracking-tight text-black">
                           {documentTypeLabel(doc.type)}
                         </p>
                         <p className="mt-2 font-mono text-xs text-neutral-500">
@@ -786,7 +792,7 @@ export default function DocumentsPanel({
                     <li key={doc.id} className="surface-raised-soft px-5 py-4 md:px-6">
                       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                         <div className="min-w-0">
-                          <p className="font-serif text-xl text-black">
+                          <p className="font-display font-medium tracking-tight text-xl text-black">
                             {documentTypeLabel(doc.type)}
                           </p>
                           <p className="mt-1 font-mono text-xs text-neutral-500">

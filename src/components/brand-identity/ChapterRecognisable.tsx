@@ -44,7 +44,7 @@ function WebsiteApp() {
             Brand identity
           </p>
           <div>
-            <p className="font-serif text-[1.35rem] leading-[1.1] tracking-tight text-black">
+            <p className="font-display font-medium text-[1.35rem] leading-[1.1] tracking-tight text-black">
               Good design gets attention.
             </p>
             <p className="mt-2 max-w-[18ch] font-mono text-[8px] leading-relaxed text-neutral-500">
@@ -78,7 +78,7 @@ function SocialApp() {
             </span>
           </div>
           <div className="absolute inset-x-0 bottom-[30%] px-4">
-            <p className="max-w-[10ch] font-serif text-[1.55rem] leading-[1.05] tracking-tight text-bs-offwhite">
+            <p className="max-w-[10ch] font-display font-medium text-[1.55rem] leading-[1.05] tracking-tight text-bs-offwhite">
               Clarity has a look.
             </p>
           </div>
@@ -132,7 +132,7 @@ function DeckApp() {
             <p className="font-mono text-[7px] uppercase tracking-[0.16em] text-bs-purple">
               Brand position
             </p>
-            <p className="mt-2 font-serif text-[1.15rem] leading-snug tracking-tight text-black">
+            <p className="mt-2 font-display font-medium text-[1.15rem] leading-snug tracking-tight text-black">
               Before it looks different, it needs a reason.
             </p>
           </div>
@@ -167,7 +167,7 @@ function PrintApp() {
           </div>
         </div>
         <div className="flex flex-1 flex-col justify-between p-4">
-          <p className="font-serif text-[1.45rem] leading-[1.05] tracking-tight text-black">
+          <p className="font-display font-medium text-[1.45rem] leading-[1.05] tracking-tight text-black">
             Form.
             <br />
             Voice.
@@ -212,7 +212,7 @@ function SignageApp() {
           <div className="flex items-center justify-between gap-3">
             <Mark className="h-9 w-9 shrink-0" />
             <div className="min-w-0 text-right">
-              <p className="font-serif text-[1.65rem] leading-none tracking-tight text-bs-offwhite">
+              <p className="font-display font-medium text-[1.65rem] leading-none tracking-tight text-bs-offwhite">
                 skapa
               </p>
               <p className="mt-1 font-mono text-[7px] uppercase tracking-[0.2em] text-bs-offwhite/50">
@@ -282,7 +282,7 @@ function AppCard({
       </div>
       <div className="border-t border-black/10 px-4 py-3">
         <div className="flex items-baseline justify-between gap-3">
-          <p className="font-serif text-xl tracking-tight text-black">
+          <p className="font-display font-medium text-xl tracking-tight text-black">
             {app.label}
           </p>
           <span className="font-mono text-[9px] tracking-[0.14em] text-neutral-400">
@@ -388,7 +388,7 @@ export default function ChapterRecognisable() {
           <p className="mb-5 font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-500">
             06 · Make it recognisable
           </p>
-          <h2 className="max-w-3xl font-serif text-3xl leading-snug tracking-tight text-black md:text-5xl">
+          <h2 className="max-w-3xl font-display font-medium text-3xl leading-snug tracking-tight text-black md:text-5xl">
             Different contexts. Same identity.
           </h2>
           <p className="mt-6 max-w-2xl font-mono text-sm leading-relaxed text-neutral-600 md:text-base">
@@ -415,7 +415,7 @@ export default function ChapterRecognisable() {
         <p className="mb-5 font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-500">
           06 · Make it recognisable
         </p>
-        <h2 className="max-w-3xl font-serif text-3xl leading-snug tracking-tight text-black md:text-5xl">
+        <h2 className="max-w-3xl font-display font-medium text-3xl leading-snug tracking-tight text-black md:text-5xl">
           Different contexts. Same identity.
         </h2>
         <p className="mt-6 max-w-2xl font-mono text-sm leading-relaxed text-neutral-600 md:text-base">
@@ -442,7 +442,7 @@ export default function ChapterRecognisable() {
               <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-bs-offwhite/60">
                 System complete
               </p>
-              <p className="mt-4 font-serif text-3xl leading-snug">
+              <p className="mt-4 font-display font-medium tracking-tight text-3xl leading-snug">
                 Logo. Type. Colour. Language. Application.
               </p>
             </div>

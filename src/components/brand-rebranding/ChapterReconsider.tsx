@@ -37,7 +37,7 @@ export default function ChapterReconsider() {
             <p className="mb-5 font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-500">
               04 · Reconsider
             </p>
-            <h2 className="max-w-3xl font-serif text-3xl leading-snug tracking-tight text-black md:text-5xl">
+            <h2 className="max-w-3xl font-display font-medium text-3xl leading-snug tracking-tight text-black md:text-5xl">
               Changing how you look is easy. Changing what you mean takes more
               thought.
             </h2>
@@ -67,7 +67,7 @@ export default function ChapterReconsider() {
                   <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-neutral-500">
                     {topic.label}
                   </p>
-                  <p className="mt-3 max-w-[28ch] font-serif text-[1.55rem] leading-snug tracking-tight text-black md:text-[1.9rem]">
+                  <p className="mt-3 max-w-[28ch] font-display font-medium text-[1.55rem] leading-snug tracking-tight text-black md:text-[1.9rem]">
                     {topic.text}
                   </p>
                 </li>

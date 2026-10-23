@@ -78,7 +78,7 @@ function AppWebsite() {
       {/* Hero */}
       <div className="flex flex-1 flex-col justify-end p-4">
         <div className="mb-1 h-px w-12 bg-bs-purple" />
-        <p className="font-serif text-[clamp(1.1rem,2.5vw,1.6rem)] leading-[1.05] tracking-tight text-black">
+        <p className="font-display font-medium text-[clamp(1.1rem,2.5vw,1.6rem)] leading-[1.05] tracking-tight text-black">
           Specimen A
         </p>
         <p className="mt-1 font-mono text-[8px] uppercase tracking-[0.16em] text-neutral-500">
@@ -107,7 +107,7 @@ function AppSocial() {
       </div>
       <div>
         <div className="mb-2 h-px w-10 bg-bs-yellow" />
-        <p className="font-serif text-[clamp(1rem,2.2vw,1.4rem)] leading-[1.08] tracking-tight text-bs-offwhite">
+        <p className="font-display font-medium text-[clamp(1rem,2.2vw,1.4rem)] leading-[1.08] tracking-tight text-bs-offwhite">
           Clear enough to lead.
         </p>
         <p className="mt-1.5 font-mono text-[7px] uppercase tracking-[0.14em] text-bs-offwhite/50">
@@ -130,7 +130,7 @@ function AppPrint() {
       </div>
       <div className="mt-auto">
         <div className="mb-2 h-px w-full bg-black/10" />
-        <p className="font-serif text-[clamp(0.9rem,2vw,1.3rem)] leading-[1.08] tracking-tight text-black">
+        <p className="font-display font-medium text-[clamp(0.9rem,2vw,1.3rem)] leading-[1.08] tracking-tight text-black">
           Specimen A
         </p>
         <div className="mt-2 flex gap-1.5">
@@ -157,7 +157,7 @@ function AppPresentation() {
         </p>
       </div>
       <div>
-        <p className="font-serif text-[clamp(1rem,2.2vw,1.5rem)] leading-[1.05] tracking-tight text-bs-offwhite">
+        <p className="font-display font-medium text-[clamp(1rem,2.2vw,1.5rem)] leading-[1.05] tracking-tight text-bs-offwhite">
           Brand positioning review
         </p>
         <div className="mt-2 h-px w-16 bg-bs-purple" />
@@ -182,7 +182,7 @@ function AppCampaign() {
   return (
     <div className="relative flex h-full flex-col overflow-hidden bg-bs-pink">
       <div className="flex flex-1 flex-col justify-center p-4">
-        <p className="font-serif text-[clamp(1.2rem,3vw,2rem)] leading-[0.95] tracking-tight text-white">
+        <p className="font-display font-medium text-[clamp(1.2rem,3vw,2rem)] leading-[0.95] tracking-tight text-white">
           Ready for what comes next.
         </p>
         <div className="mt-2 h-px w-14 bg-bs-yellow" />
@@ -211,7 +211,7 @@ function AppInternal() {
         <p className="font-mono text-[8px] uppercase tracking-[0.16em] text-bs-purple">
           Brand guidelines
         </p>
-        <p className="mt-2 font-serif text-[clamp(0.85rem,1.8vw,1.1rem)] leading-[1.15] tracking-tight text-black">
+        <p className="mt-2 font-display font-medium text-[clamp(0.85rem,1.8vw,1.1rem)] leading-[1.15] tracking-tight text-black">
           Voice, colour and application rules for the updated system.
         </p>
         <div className="mt-3 space-y-1.5">
@@ -302,7 +302,7 @@ export default function ChapterApply() {
             <p className="mb-5 font-mono text-[11px] uppercase tracking-[0.2em] text-bs-purple">
               06 · Apply
             </p>
-            <h2 className="max-w-lg font-serif text-3xl leading-snug tracking-tight text-black md:text-5xl">
+            <h2 className="max-w-lg font-display font-medium text-3xl leading-snug tracking-tight text-black md:text-5xl">
               A rebrand has to work somewhere other than the presentation.
             </h2>
             <p className="mt-5 max-w-md font-mono text-sm leading-relaxed text-neutral-600 md:text-base">

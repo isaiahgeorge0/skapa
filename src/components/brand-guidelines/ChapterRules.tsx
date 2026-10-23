@@ -67,14 +67,14 @@ const RULES = [
     dontLabel: "Don\u2019t",
     do: (
       <div className="flex h-28 flex-col justify-center gap-2 px-4">
-        <p className="font-serif text-2xl text-black">Headline</p>
+        <p className="font-display font-medium tracking-tight text-2xl text-black">Headline</p>
         <p className="font-mono text-xs text-neutral-500">Supporting line</p>
       </div>
     ),
     dont: (
       <div className="flex h-28 flex-col justify-center gap-1 px-4">
         <p className="font-mono text-sm font-bold uppercase text-black">Headline</p>
-        <p className="font-serif text-lg italic text-black">Supporting line</p>
+        <p className="font-display font-medium text-lg italic text-black">Supporting line</p>
       </div>
     ),
   },
@@ -91,7 +91,7 @@ export default function ChapterRules() {
           <p className="mb-5 font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-500">
             04 · The rules
           </p>
-          <h2 className="font-serif text-3xl leading-snug tracking-tight text-black md:text-5xl">
+          <h2 className="font-display font-medium text-3xl leading-snug tracking-tight text-black md:text-5xl">
             Clear enough to follow.
             <br />
             Flexible enough to use.

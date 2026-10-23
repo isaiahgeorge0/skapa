@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import { connection } from "next/server";
 import ContactForm from "@/components/ContactForm";
+import { serverNow } from "@/lib/server-clock";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = pageMetadata({
@@ -14,8 +14,7 @@ export const metadata: Metadata = pageMetadata({
 export default async function ContactPage() {
   // Per-request render so startedAt is read on the server's clock at page load,
   // not baked in at build time.
-  await connection();
-  const startedAt = Date.now();
+  const startedAt = await serverNow();
 
   return (
     <div className="grid site-container items-start gap-12 py-24 md:grid-cols-12 md:gap-14 md:py-32">
@@ -36,7 +35,7 @@ export default async function ContactPage() {
         <p className="mb-8 font-mono text-sm uppercase tracking-widest text-brand-blue">
           Contact
         </p>
-        <h1 className="font-serif text-5xl leading-[1.05] tracking-tight md:text-6xl">
+        <h1 className="font-display font-medium text-5xl leading-[1.05] tracking-tight md:text-6xl">
           Let&apos;s talk{" "}
           <span className="italic text-brand-pink">costs.</span>
         </h1>
