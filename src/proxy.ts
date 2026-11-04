@@ -41,8 +41,12 @@ export async function proxy(request: NextRequest) {
   return response
 }
 
+// Only run on routes that need a session. The marketing site, /start,
+// /contact, /api/submit-lead, robots, sitemap and assets are public and
+// static or session-free, so running the proxy there only cost a Supabase
+// round trip and function CPU on every visit (including bots).
+// /login and /invite are kept so sessions stay fresh on the way in.
+// ':path*' also matches the bare path, e.g. '/portal'.
 export const config = {
-  matcher: [
-    '/((?!_next/static|_next/image|favicon.ico|sentry-tunnel|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
-  ],
+  matcher: ['/portal/:path*', '/admin/:path*', '/login', '/invite/:path*'],
 }
